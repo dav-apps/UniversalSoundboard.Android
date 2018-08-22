@@ -3,18 +3,22 @@ package app.dav.universalsoundboard
 import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.NavigationView
+import android.support.v4.app.FragmentActivity
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
+import app.dav.universalsoundboard.Fragments.SoundFragment
+import app.dav.universalsoundboard.Fragments.dummy.DummyContent
 import app.dav.universalsoundboard.databinding.ActivityMainBinding
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SoundFragment.OnListFragmentInteractionListener {
 
-    var itemViewHolder: ItemViewHolder = ItemViewHolder("All Sounds")
+    var itemViewHolder: ItemViewHolder = ItemViewHolder("Hello World")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,7 +40,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        mainActivityBinding.itemViewHolder = itemViewHolder
+        mainActivityBinding.itemViewHolder = ItemViewHolder("Test")
+
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, SoundFragment()).commit()
     }
 
     override fun onBackPressed() {
@@ -88,6 +94,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
+
     }
 }
 
