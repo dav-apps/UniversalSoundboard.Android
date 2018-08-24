@@ -1,6 +1,8 @@
 package app.dav.universalsoundboard.Fragments
 
+import android.content.Context
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,20 +20,21 @@ import kotlinx.android.synthetic.main.fragment_sound_list_item.view.*
  * specified [OnListFragmentInteractionListener].
  * TODO: Replace the implementation with code for your data type.
  */
+private const val TAG = "RecyclerViewAdapter"
+
 class SoundListRecyclerViewAdapter(
         private val mValues: List<DummyItem>,
-        private val mListener: OnListFragmentInteractionListener?)
+        private val onItemClickListener: OnItemClickListener,
+        private val onItemLongClickListener: OnItemLongClickListener
+        )
     : RecyclerView.Adapter<SoundListRecyclerViewAdapter.ViewHolder>() {
 
-    private val mOnClickListener: View.OnClickListener
+    interface OnItemClickListener {
+        fun onItemClicked(sound: DummyItem)
+    }
 
-    init {
-        mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as DummyItem
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
-            mListener?.onListFragmentInteraction(item)
-        }
+    interface OnItemLongClickListener {
+        fun onItemLongClicked(sound: DummyItem)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -46,8 +49,13 @@ class SoundListRecyclerViewAdapter(
         holder.mContentView.text = item.content
 
         with(holder.mView) {
-            tag = item
-            setOnClickListener(mOnClickListener)
+            setOnClickListener {
+                onItemClickListener.onItemClicked(item)
+            }
+            setOnLongClickListener {
+                onItemLongClickListener.onItemLongClicked(item)
+                true
+            }
         }
     }
 

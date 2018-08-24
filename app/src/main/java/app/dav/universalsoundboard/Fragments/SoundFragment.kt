@@ -16,7 +16,7 @@ import app.dav.universalsoundboard.Fragments.dummy.DummyContent
 import app.dav.universalsoundboard.Fragments.dummy.DummyContent.DummyItem
 import android.widget.Toast
 import app.dav.universalsoundboard.MainActivity
-
+import app.dav.universalsoundboard.Models.Sound
 
 
 /**
@@ -26,11 +26,12 @@ import app.dav.universalsoundboard.MainActivity
  */
 private const val TAG = "SoundFragment"
 
-class SoundFragment : Fragment() {
+class SoundFragment : Fragment(), SoundListRecyclerViewAdapter.OnItemClickListener, SoundListRecyclerViewAdapter.OnItemLongClickListener {
     // TODO: Customize parameters
     private var columnCount = 1
 
-    private var listener: OnListFragmentInteractionListener? = null
+    private var clickListener: SoundListRecyclerViewAdapter.OnItemClickListener = this
+    private var longClickListener: SoundListRecyclerViewAdapter.OnItemLongClickListener = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,26 +52,26 @@ class SoundFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = SoundListRecyclerViewAdapter(DummyContent.ITEMS, listener)
+                adapter = SoundListRecyclerViewAdapter(DummyContent.ITEMS, clickListener, longClickListener)
             }
-
-            //view.addOnItemTouchListener(listener: RecyclerView.OnItemTouchListener)
         }
         return view
     }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        if (context is OnListFragmentInteractionListener) {
-            listener = context
-        } else {
-            throw RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener")
-        }
     }
 
     override fun onDetach() {
         super.onDetach()
-        listener = null
+    }
+
+    override fun onItemClicked(sound: DummyItem) {
+        Log.d(TAG, "Item clicked: $sound")
+    }
+
+    override fun onItemLongClicked(sound: DummyItem) {
+        Log.d(TAG, "Item long clicked: $sound")
     }
 
     /**
@@ -103,12 +104,4 @@ class SoundFragment : Fragment() {
                     }
                 }
     }
-}
-
-private fun View.addOnItemTouchListener(listener: RecyclerView.OnItemTouchListener) {
-    listener.onTouchEvent()
-}
-
-private fun RecyclerView.OnItemTouchListener.onTouchEvent() {
-    TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
 }
