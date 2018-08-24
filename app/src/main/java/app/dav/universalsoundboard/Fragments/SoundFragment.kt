@@ -24,10 +24,9 @@ import app.dav.universalsoundboard.MainActivity
  * Activities containing this fragment MUST implement the
  * [SoundFragment.OnListFragmentInteractionListener] interface.
  */
+private const val TAG = "SoundFragment"
+
 class SoundFragment : Fragment() {
-
-    private val TAG = "SoundFragment"
-
     // TODO: Customize parameters
     private var columnCount = 1
 

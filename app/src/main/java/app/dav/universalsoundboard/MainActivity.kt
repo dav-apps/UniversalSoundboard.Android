@@ -1,28 +1,30 @@
 package app.dav.universalsoundboard
 
-import android.databinding.DataBindingUtil
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.v4.app.FragmentActivity
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.RecyclerView
 import android.view.Menu
 import android.view.MenuItem
+import app.dav.universalsoundboard.DataAccess.FileManager
 import app.dav.universalsoundboard.Fragments.SoundFragment
 import app.dav.universalsoundboard.Fragments.dummy.DummyContent
-import app.dav.universalsoundboard.databinding.ActivityMainBinding
+import app.dav.universalsoundboard.ViewModels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
+private const val TAG = "MainActivity"
+
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SoundFragment.OnListFragmentInteractionListener {
 
-    var itemViewHolder: ItemViewHolder = ItemViewHolder("Hello World")
+    private val mainViewModel: MainViewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val mainActivityBinding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
         fab_menu_new_sound.setOnClickListener{view ->
@@ -40,9 +42,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        mainActivityBinding.itemViewHolder = ItemViewHolder("Test")
-
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, SoundFragment()).commit()
+
+        // Bind the itemViewHolder properties to the UI
+        FileManager.itemViewHolder.title.observe(this, Observer<String> { title -> supportActionBar?.setTitle(title) })
     }
 
     override fun onBackPressed() {
@@ -100,5 +103,3 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     }
 }
-
-data class ItemViewHolder(val title: String)
