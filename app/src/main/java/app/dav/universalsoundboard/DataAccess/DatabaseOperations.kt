@@ -1,4 +1,5 @@
 package app.dav.universalsoundboard.DataAccess
 
-class DatabaseOperations {
+object DatabaseOperations {
+    
 }
