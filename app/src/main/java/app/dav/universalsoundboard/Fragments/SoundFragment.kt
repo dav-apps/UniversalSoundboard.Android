@@ -10,13 +10,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import app.dav.universalsoundboard.R
-
-import app.dav.universalsoundboard.Fragments.dummy.DummyContent
-import app.dav.universalsoundboard.Fragments.dummy.DummyContent.DummyItem
-import android.widget.Toast
-import app.dav.universalsoundboard.MainActivity
+import app.dav.universalsoundboard.DataAccess.FileManager
 import app.dav.universalsoundboard.Models.Sound
+import app.dav.universalsoundboard.R
+import kotlinx.android.synthetic.main.content_main.*
+import java.util.*
 
 
 /**
@@ -27,11 +25,13 @@ import app.dav.universalsoundboard.Models.Sound
 private const val TAG = "SoundFragment"
 
 class SoundFragment : Fragment(), SoundListRecyclerViewAdapter.OnItemClickListener, SoundListRecyclerViewAdapter.OnItemLongClickListener {
-    // TODO: Customize parameters
     private var columnCount = 1
-
     private var clickListener: SoundListRecyclerViewAdapter.OnItemClickListener = this
     private var longClickListener: SoundListRecyclerViewAdapter.OnItemLongClickListener = this
+
+    init {
+        FileManager.itemViewHolder.soundListRecyclerViewAdapter = SoundListRecyclerViewAdapter(FileManager.itemViewHolder.sounds, clickListener, longClickListener)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,7 +52,7 @@ class SoundFragment : Fragment(), SoundListRecyclerViewAdapter.OnItemClickListen
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = SoundListRecyclerViewAdapter(DummyContent.ITEMS, clickListener, longClickListener)
+                adapter = FileManager.itemViewHolder.soundListRecyclerViewAdapter
             }
         }
         return view
@@ -66,28 +66,12 @@ class SoundFragment : Fragment(), SoundListRecyclerViewAdapter.OnItemClickListen
         super.onDetach()
     }
 
-    override fun onItemClicked(sound: DummyItem) {
+    override fun onItemClicked(sound: Sound) {
         Log.d(TAG, "Item clicked: $sound")
     }
 
-    override fun onItemLongClicked(sound: DummyItem) {
+    override fun onItemLongClicked(sound: Sound) {
         Log.d(TAG, "Item long clicked: $sound")
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson
-     * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: DummyItem?)
     }
 
     companion object {

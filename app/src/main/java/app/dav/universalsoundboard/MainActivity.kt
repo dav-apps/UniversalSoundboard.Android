@@ -7,19 +7,19 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import app.dav.universalsoundboard.DataAccess.FileManager
 import app.dav.universalsoundboard.Fragments.SoundFragment
-import app.dav.universalsoundboard.Fragments.dummy.DummyContent
+import app.dav.universalsoundboard.Models.Sound
 import app.dav.universalsoundboard.ViewModels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import java.util.*
 
 private const val TAG = "MainActivity"
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SoundFragment.OnListFragmentInteractionListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val mainViewModel: MainViewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
 
@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         setSupportActionBar(toolbar)
 
         fab_menu_new_sound.setOnClickListener{view ->
+            FileManager.itemViewHolder.sounds.add(Sound(UUID.randomUUID(), "Sound", null, false, null))
+            FileManager.itemViewHolder.soundListRecyclerViewAdapter?.notifyDataSetChanged()
             fab_menu.close(true)
         }
 
@@ -98,9 +100,5 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
-    }
-
-    override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
-        Log.d(TAG, "Item clicked: ${item}")
     }
 }
