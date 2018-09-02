@@ -9,12 +9,14 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import app.dav.universalsoundboard.DataAccess.FileManager
-import app.dav.universalsoundboard.Fragments.SoundFragment
-import app.dav.universalsoundboard.Models.Sound
-import app.dav.universalsoundboard.ViewModels.MainViewModel
+import app.dav.davandroidlibrary.Dav
+import app.dav.universalsoundboard.data.FileManager
+import app.dav.universalsoundboard.fragments.SoundFragment
+import app.dav.universalsoundboard.models.Sound
+import app.dav.universalsoundboard.viewmodels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.fragment_sound.*
 import java.util.*
 
 private const val TAG = "MainActivity"
@@ -27,16 +29,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-        fab_menu_new_sound.setOnClickListener{view ->
-            FileManager.itemViewHolder.sounds.add(Sound(UUID.randomUUID(), "Sound", null, false, null))
-            FileManager.itemViewHolder.soundListRecyclerViewAdapter?.notifyDataSetChanged()
-            fab_menu.close(true)
-        }
-
-        fab_menu_new_category.setOnClickListener{view ->
-            fab_menu.close(true)
-        }
+        Dav.init(this)
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -44,6 +37,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+        fab_menu_new_sound.setOnClickListener{view ->
+            //FileManager.itemViewHolder.sounds.add(Sound(UUID.randomUUID(), "Sound", null, false, null))
+            //FileManager.itemViewHolder.soundListRecyclerViewAdapter?.notifyDataSetChanged()
+            FileManager.addSound(null, "Hello World", null)
+            fab_menu.close(true)
+        }
+
+        fab_menu_new_category.setOnClickListener{view ->
+            fab_menu.close(true)
+        }
 
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, SoundFragment()).commit()
 

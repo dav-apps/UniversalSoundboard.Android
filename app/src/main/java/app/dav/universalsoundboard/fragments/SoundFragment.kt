@@ -1,5 +1,6 @@
-package app.dav.universalsoundboard.Fragments
+package app.dav.universalsoundboard.fragments
 
+import android.arch.lifecycle.Observer
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -10,17 +11,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import app.dav.universalsoundboard.DataAccess.FileManager
-import app.dav.universalsoundboard.Models.Sound
+import app.dav.davandroidlibrary.Dav
+import app.dav.davandroidlibrary.data.TableObject
+import app.dav.universalsoundboard.models.Sound
 import app.dav.universalsoundboard.R
-import kotlinx.android.synthetic.main.content_main.*
-import java.util.*
+import app.dav.universalsoundboard.data.FileManager
 
 
 /**
  * A fragment representing a list of Items.
- * Activities containing this fragment MUST implement the
- * [SoundFragment.OnListFragmentInteractionListener] interface.
  */
 private const val TAG = "SoundFragment"
 
@@ -28,10 +27,7 @@ class SoundFragment : Fragment(), SoundListRecyclerViewAdapter.OnItemClickListen
     private var columnCount = 1
     private var clickListener: SoundListRecyclerViewAdapter.OnItemClickListener = this
     private var longClickListener: SoundListRecyclerViewAdapter.OnItemLongClickListener = this
-
-    init {
-        FileManager.itemViewHolder.soundListRecyclerViewAdapter = SoundListRecyclerViewAdapter(FileManager.itemViewHolder.sounds, clickListener, longClickListener)
-    }
+    private val soundListRecyclerViewAdapter = SoundListRecyclerViewAdapter(clickListener, longClickListener)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,11 +35,17 @@ class SoundFragment : Fragment(), SoundListRecyclerViewAdapter.OnItemClickListen
         arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
         }
+
+        FileManager.getAllSounds().observe(this, Observer {
+            Log.d(TAG, "SoundsList changed!")
+            Log.d(TAG, "SoundsList count: " + FileManager.itemViewHolder.sounds.value?.count())
+            if(it != null && it.isNotEmpty()) soundListRecyclerViewAdapter.submitList(it)
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_sound_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_sound, container, false)
 
         // Set the adapter
         if (view is RecyclerView) {
@@ -52,9 +54,11 @@ class SoundFragment : Fragment(), SoundListRecyclerViewAdapter.OnItemClickListen
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = FileManager.itemViewHolder.soundListRecyclerViewAdapter
+                //adapter = FileManager.itemViewHolder.soundListRecyclerViewAdapter
+                adapter = soundListRecyclerViewAdapter
             }
         }
+
         return view
     }
 

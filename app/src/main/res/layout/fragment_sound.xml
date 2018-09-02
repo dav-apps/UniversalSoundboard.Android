@@ -6,5 +6,9 @@
     android:name="app.dav.universalsoundboard.Fragments.SoundFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.SoundFragment"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:context=".fragments.SoundFragment"
     tools:listitem="@layout/fragment_sound_list_item" />
