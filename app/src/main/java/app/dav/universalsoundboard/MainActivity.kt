@@ -12,19 +12,22 @@ import android.view.MenuItem
 import app.dav.davandroidlibrary.Dav
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.fragments.SoundFragment
-import app.dav.universalsoundboard.viewmodels.MainViewModel
+import app.dav.universalsoundboard.viewmodels.SoundViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private val mainViewModel: MainViewModel by lazy { ViewModelProviders.of(this).get(MainViewModel::class.java) }
+    private lateinit var viewModel: SoundViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProviders.of(this).get(SoundViewModel::class.java)
+        Dav.init(this)
+
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-        Dav.init(this)
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -42,7 +45,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             fab_menu.close(true)
         }
 
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, SoundFragment()).commit()
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, SoundFragment.newInstance(1)).commit()
 
         // Bind the itemViewHolder properties to the UI
         FileManager.itemViewHolder.title.observe(this, Observer<String> { title -> supportActionBar?.setTitle(title) })

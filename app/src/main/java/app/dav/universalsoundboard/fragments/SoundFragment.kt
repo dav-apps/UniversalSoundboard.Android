@@ -1,6 +1,7 @@
 package app.dav.universalsoundboard.fragments
 
 import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -12,30 +13,28 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import app.dav.universalsoundboard.R
-import app.dav.universalsoundboard.data.FileManager
-import app.dav.universalsoundboard.models.Sound
+import app.dav.universalsoundboard.viewmodels.MainViewModel
 
 /**
  * A fragment representing a list of Items.
  */
 private const val TAG = "SoundFragment"
 
-class SoundFragment : Fragment(), SoundListRecyclerViewAdapter.OnItemClickListener, SoundListRecyclerViewAdapter.OnItemLongClickListener {
+class SoundFragment : Fragment() {
     private var columnCount = 1
-    private var clickListener: SoundListRecyclerViewAdapter.OnItemClickListener = this
-    private var longClickListener: SoundListRecyclerViewAdapter.OnItemLongClickListener = this
-    private val soundListRecyclerViewAdapter = SoundListRecyclerViewAdapter(clickListener, longClickListener)
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
 
         arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
         }
 
-        FileManager.getAllSounds().observe(this, Observer{
+        viewModel.getSounds().observe(this, Observer{
             Log.d(TAG, "Sounds list changed")
-            soundListRecyclerViewAdapter.submitList(it)
+            viewModel.soundListRecyclerViewAdapter.submitList(it)
         })
     }
 
@@ -50,7 +49,7 @@ class SoundFragment : Fragment(), SoundListRecyclerViewAdapter.OnItemClickListen
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = soundListRecyclerViewAdapter
+                adapter = viewModel.soundListRecyclerViewAdapter
             }
         }
 
@@ -65,20 +64,9 @@ class SoundFragment : Fragment(), SoundListRecyclerViewAdapter.OnItemClickListen
         super.onDetach()
     }
 
-    override fun onItemClicked(sound: Sound) {
-        Log.d(TAG, "Item clicked: $sound")
-    }
-
-    override fun onItemLongClicked(sound: Sound) {
-        Log.d(TAG, "Item long clicked: $sound")
-    }
-
     companion object {
-
-        // TODO: Customize parameter argument names
         const val ARG_COLUMN_COUNT = "column-count"
 
-        // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
                 SoundFragment().apply {
