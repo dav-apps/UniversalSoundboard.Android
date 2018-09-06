@@ -3,7 +3,6 @@ package app.dav.universalsoundboard.data
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
-import app.dav.davandroidlibrary.data.TableObject
 import app.dav.universalsoundboard.models.Sound
 import java.util.*
 import kotlin.collections.ArrayList
@@ -63,7 +62,24 @@ object FileManager{
                 val favouriteString = obj.getPropertyValue(soundTableFavouritePropertyName)
                 if(favouriteString != null) favourite = favouriteString.toBoolean()
 
-                sounds.add(Sound(obj.uuid, name, null, favourite, null))
+                val sound = Sound(obj.uuid, name, null, favourite, null)
+
+                obj.properties.observeForever {
+                    if(it != null){
+                        for(p in it){
+                            when(p.name){
+                                soundTableFavouritePropertyName -> {
+                                    sound.favourite = p.value.toBoolean()
+                                }
+                                soundTableNamePropertyName -> {
+                                    sound.name = p.value
+                                }
+                            }
+                        }
+                    }
+                }
+
+                sounds.add(sound)
             }
 
             sounds
@@ -74,36 +90,13 @@ object FileManager{
 class ItemViewHolder(){
     constructor(title: String) : this() {
         titleData.value = title
-        soundsData.value = ArrayList<Sound>()
     }
 
     private val titleData = MutableLiveData<String>()
     val title: LiveData<String>
         get() =  titleData
-    //val sounds = ArrayList<Sound>()
-    private val soundsData = MutableLiveData<ArrayList<Sound>>()
-    val sounds: LiveData<ArrayList<Sound>>
-        get() = soundsData
-    private val allSoundsData = MutableLiveData<ArrayList<Sound>>()
-    val allSounds: LiveData<ArrayList<Sound>>
-        get() = allSoundsData
 
     fun setTitle(value: String){
         titleData.value = value
     }
-
-    /*
-    fun addSound(sound: Sound){
-        Log.d("ItemViewHolder", "SoundsData: ${soundsData.value}")
-        var list = soundsData.value
-        //if(soundsData.value != null) for(s in soundsData.value) list.add(s)
-
-        if(list == null){
-            list = ArrayList<Sound>()
-        }
-
-        list.add(sound)
-        soundsData.value = list
-    }
-    */
 }

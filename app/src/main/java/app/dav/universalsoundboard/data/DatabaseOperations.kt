@@ -1,12 +1,9 @@
 package app.dav.universalsoundboard.data
 
 import android.arch.lifecycle.LiveData
-import android.os.AsyncTask
-import android.util.Log
 import app.dav.davandroidlibrary.Dav
 import app.dav.davandroidlibrary.data.Property
 import app.dav.davandroidlibrary.data.TableObject
-import app.dav.davandroidlibrary.data.TableObjectEntity
 import java.util.*
 
 object DatabaseOperations {
@@ -25,13 +22,4 @@ object DatabaseOperations {
         return Dav.Database.getAllTableObjects(FileManager.soundTableId, false)
     }
     // End sound methods
-}
-
-private class CreateSoundTask : AsyncTask<TableObject, Void, Unit>() {
-    override fun doInBackground(vararg params: TableObject?) {
-        val tableObject = params[0]
-        if (tableObject != null) {
-
-        }
-    }
 }

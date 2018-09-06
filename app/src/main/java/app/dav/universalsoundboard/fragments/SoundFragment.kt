@@ -11,12 +11,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import app.dav.davandroidlibrary.Dav
-import app.dav.davandroidlibrary.data.TableObject
-import app.dav.universalsoundboard.models.Sound
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
-
+import app.dav.universalsoundboard.models.Sound
 
 /**
  * A fragment representing a list of Items.
@@ -36,10 +33,9 @@ class SoundFragment : Fragment(), SoundListRecyclerViewAdapter.OnItemClickListen
             columnCount = it.getInt(ARG_COLUMN_COUNT)
         }
 
-        FileManager.getAllSounds().observe(this, Observer {
-            Log.d(TAG, "SoundsList changed!")
-            Log.d(TAG, "SoundsList count: " + FileManager.itemViewHolder.sounds.value?.count())
-            if(it != null && it.isNotEmpty()) soundListRecyclerViewAdapter.submitList(it)
+        FileManager.getAllSounds().observe(this, Observer{
+            Log.d(TAG, "Sounds list changed")
+            soundListRecyclerViewAdapter.submitList(it)
         })
     }
 
@@ -54,7 +50,6 @@ class SoundFragment : Fragment(), SoundListRecyclerViewAdapter.OnItemClickListen
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                //adapter = FileManager.itemViewHolder.soundListRecyclerViewAdapter
                 adapter = soundListRecyclerViewAdapter
             }
         }
