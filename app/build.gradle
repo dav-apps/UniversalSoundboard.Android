@@ -20,7 +20,15 @@ android {
     }
     productFlavors {
     }
+    dataBinding {
+        enabled = true
+    }
     buildToolsVersion '28.0.2'
+}
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
 }
 
 dependencies {
@@ -39,6 +47,9 @@ dependencies {
 
     // ViewModel and LiveData
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+
+    // Kotlin coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.24.0'
 
     implementation 'com.github.clans:fab:1.6.4'
     implementation project(":davandroidlibrary")
