@@ -1,31 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="?android:attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/sound_list_item_image"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:contentDescription="@string/sound_list_item_image_description"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/btn_dialog" />
+    <data>
+        <variable
+            name="onClickListener"
+            type="android.view.View.OnClickListener" />
+        <variable
+            name="onLongClickListener"
+            type="android.view.View.OnLongClickListener" />
+        <variable
+            name="sound"
+            type="app.dav.universalsoundboard.models.Sound" />
+    </data>
 
-    <TextView
-        android:id="@+id/sound_list_item_name"
-        android:layout_width="0dp"
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/sound_list_item_image"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="TextView" />
-</android.support.constraint.ConstraintLayout>
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClickListener="@{onClickListener}"
+        android:onLongClickListener="@{onLongClickListener}">
+
+        <ImageView
+            android:id="@+id/sound_list_item_image"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:contentDescription="@string/sound_list_item_image_description"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/btn_dialog" />
+
+        <TextView
+            android:id="@+id/sound_list_item_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@{sound.name}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/sound_list_item_image"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="TextView" />
+    </android.support.constraint.ConstraintLayout>
+</layout>

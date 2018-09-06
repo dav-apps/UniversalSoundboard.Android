@@ -10,12 +10,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import app.dav.universalsoundboard.models.Sound
 import app.dav.universalsoundboard.R
+import app.dav.universalsoundboard.databinding.FragmentSoundListItemBinding
 import kotlinx.android.synthetic.main.fragment_sound_list_item.view.*
 
-private const val TAG = "RecyclerViewAdapter"
-
 class SoundListRecyclerViewAdapter(
-        //private val mValues: ArrayList<Sound>?,
         private val onItemClickListener: OnItemClickListener,
         private val onItemLongClickListener: OnItemLongClickListener)
     : ListAdapter<Sound, SoundListRecyclerViewAdapter.ViewHolder>(SoundDiffCallback()) {
@@ -29,40 +27,24 @@ class SoundListRecyclerViewAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.fragment_sound_list_item, parent, false)
-        return ViewHolder(view)
+        return ViewHolder(FragmentSoundListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = getItem(position)
-        holder.nameTextView.text = item.name
-
-        with(holder.mView) {
-            setOnClickListener {
-                onItemClickListener.onItemClicked(item)
-            }
-            setOnLongClickListener {
-                onItemLongClickListener.onItemLongClicked(item)
-                true
-            }
-        }
+        holder.bind(View.OnClickListener{
+            onItemClickListener.onItemClicked(item)
+        }, View.OnLongClickListener {
+            onItemLongClickListener.onItemLongClicked(item)
+            true
+        }, item)
     }
 
-    //override fun getItemCount(): Int = if(mValues != null) mValues.size else 0
-/*
-    fun updateData(sounds: ArrayList<Sound>){
-        if(mValues != null){
-            mValues.clear()
-            for (sound in sounds) mValues.add(sound)
-            Log.d(TAG, "Sounds count: ${mValues.count()}")
-            notifyDataSetChanged()
+    inner class ViewHolder(private val binding: FragmentSoundListItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(onClickListener: View.OnClickListener, onLongClickListener: View.OnLongClickListener, item: Sound){
+            binding.onClickListener = onClickListener
+            binding.onLongClickListener = onLongClickListener
+            binding.sound = item
         }
-    }
-    */
-
-    inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val imageView: ImageView = mView.sound_list_item_image
-        val nameTextView: TextView = mView.sound_list_item_name
     }
 }
