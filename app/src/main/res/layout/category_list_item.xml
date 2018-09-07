@@ -14,7 +14,11 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClickListener="@{onClickListener}">
 
         <ImageView
             android:id="@+id/category_list_item_icon"
@@ -36,6 +40,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
+            android:text="@{category.name}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/category_list_item_icon"
             app:layout_constraintTop_toTopOf="parent"
