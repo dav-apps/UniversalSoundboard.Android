@@ -3,14 +3,14 @@ package app.dav.universalsoundboard.viewmodels
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.ViewModel
 import app.dav.universalsoundboard.data.FileManager
-import app.dav.universalsoundboard.fragments.SoundListRecyclerViewAdapter
+import app.dav.universalsoundboard.adapters.SoundListAdapter
 import app.dav.universalsoundboard.models.Sound
 import java.util.*
 
-class MainViewModel : ViewModel(), SoundListRecyclerViewAdapter.OnItemClickListener, SoundListRecyclerViewAdapter.OnItemLongClickListener{
-    private var clickListener: SoundListRecyclerViewAdapter.OnItemClickListener = this
-    private var longClickListener: SoundListRecyclerViewAdapter.OnItemLongClickListener = this
-    val soundListRecyclerViewAdapter = SoundListRecyclerViewAdapter(clickListener, longClickListener)
+class MainViewModel : ViewModel(), SoundListAdapter.OnItemClickListener, SoundListAdapter.OnItemLongClickListener{
+    private var clickListener: SoundListAdapter.OnItemClickListener = this
+    private var longClickListener: SoundListAdapter.OnItemLongClickListener = this
+    val soundListRecyclerViewAdapter = SoundListAdapter(clickListener, longClickListener)
     var currentCategory: UUID? = null
 
     override fun onItemClicked(sound: Sound) {

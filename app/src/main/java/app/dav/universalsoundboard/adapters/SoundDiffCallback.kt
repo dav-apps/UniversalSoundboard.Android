@@ -1,4 +1,4 @@
-package app.dav.universalsoundboard.fragments
+package app.dav.universalsoundboard.adapters
 
 import android.support.v7.util.DiffUtil
 import app.dav.universalsoundboard.models.Sound

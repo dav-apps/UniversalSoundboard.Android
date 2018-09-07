@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import app.dav.universalsoundboard.models.Sound
 import app.dav.universalsoundboard.databinding.FragmentSoundListItemBinding
 
-class SoundListRecyclerViewAdapter(
+class SoundListAdapter(
         private val onItemClickListener: OnItemClickListener,
         private val onItemLongClickListener: OnItemLongClickListener)
-    : ListAdapter<Sound, SoundListRecyclerViewAdapter.ViewHolder>(SoundDiffCallback()) {
+    : ListAdapter<Sound, SoundListAdapter.ViewHolder>(SoundDiffCallback()) {
 
     interface OnItemClickListener {
         fun onItemClicked(sound: Sound)
