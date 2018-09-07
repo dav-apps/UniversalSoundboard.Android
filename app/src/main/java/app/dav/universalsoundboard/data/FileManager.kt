@@ -3,6 +3,8 @@ package app.dav.universalsoundboard.data
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import app.dav.davandroidlibrary.data.TableObject
+import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.Sound
 import java.util.*
 import kotlin.collections.ArrayList
@@ -54,36 +56,102 @@ object FileManager{
             val sounds = ArrayList<Sound>()
 
             for(obj in it){
-                // Convert the table object to a sound
-                val name: String = obj.getPropertyValue(soundTableNamePropertyName) ?: ""
-
-                // Get favourite
-                var favourite = false
-                val favouriteString = obj.getPropertyValue(soundTableFavouritePropertyName)
-                if(favouriteString != null) favourite = favouriteString.toBoolean()
-
-                val sound = Sound(obj.uuid, name, null, favourite, null)
-
-                obj.properties.observeForever {
-                    if(it != null){
-                        for(p in it){
-                            when(p.name){
-                                soundTableFavouritePropertyName -> {
-                                    sound.favourite = p.value.toBoolean()
-                                }
-                                soundTableNamePropertyName -> {
-                                    sound.name = p.value
-                                }
-                            }
-                        }
-                    }
-                }
-
-                sounds.add(sound)
+                val sound = convertTableObjectToSound(obj)
+                if(sound != null) sounds.add(sound)
             }
 
             sounds
         }
+    }
+
+    fun getSoundsOfCategory(categoryUuid: UUID) : LiveData<ArrayList<Sound>>{
+        val tableObjects = DatabaseOperations.getAllSounds()
+
+        return Transformations.map(tableObjects){
+            val sounds = ArrayList<Sound>()
+
+            for(obj in it){
+                val sound = convertTableObjectToSound(obj)
+                if(sound != null) sounds.add(sound)
+            }
+
+            sounds
+        }
+    }
+
+    fun getAllCategories() : LiveData<ArrayList<Category>>{
+        val tableObjects = DatabaseOperations.getAllCategories()
+
+        return Transformations.map(tableObjects) {
+            val categories = ArrayList<Category>()
+
+            for(obj in it){
+                val category = convertTableObjectToCategory(obj)
+                if(category != null) categories.add(category)
+            }
+
+            categories
+        }
+    }
+
+    private fun convertTableObjectToSound(tableObject: TableObject) : Sound?{
+        if(tableObject.tableId != FileManager.soundTableId) return null
+
+        // Get name
+        val name = tableObject.getPropertyValue(soundTableNamePropertyName) ?: ""
+
+        // Get favourite
+        var favourite = false
+        val favouriteString = tableObject.getPropertyValue(soundTableFavouritePropertyName)
+        if(favouriteString != null) favourite = favouriteString.toBoolean()
+
+        val sound = Sound(tableObject.uuid, name, null, favourite, null)
+
+        tableObject.properties.observeForever {
+            if(it != null){
+                for(p in it){
+                    when(p.name){
+                        soundTableFavouritePropertyName -> {
+                            sound.favourite = p.value.toBoolean()
+                        }
+                        soundTableNamePropertyName -> {
+                            sound.name = p.value
+                        }
+                    }
+                }
+            }
+        }
+
+        return sound
+    }
+
+    private fun convertTableObjectToCategory(tableObject: TableObject) : Category? {
+        if(tableObject.tableId != FileManager.categoryTableId) return null
+
+        // Get name
+        val name = tableObject.getPropertyValue(categoryTableNamePropertyName) ?: ""
+
+        // Get icon
+        val icon = tableObject.getPropertyValue(categoryTableIconPropertyName) ?: ""
+
+        val category = Category(tableObject.uuid, name, icon)
+
+        tableObject.properties.observeForever {
+            if(it != null){
+                for(p in it){
+                    when(p.name){
+                        categoryTableNamePropertyName -> {
+                            category.name = p.value
+                        }
+                        categoryTableIconPropertyName -> {
+                            category.icon = p.value
+                        }
+                    }
+                }
+            }
+        }
+
+        return category
     }
 }
 

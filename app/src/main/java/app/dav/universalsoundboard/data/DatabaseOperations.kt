@@ -15,11 +15,30 @@ object DatabaseOperations {
         nameProperty.value = name
 
         val properties = arrayListOf(nameProperty)
-        TableObject(uuid = uuid, tableId = FileManager.soundTableId, properties = properties)
+        TableObject(uuid, FileManager.soundTableId, properties)
     }
 
     fun getAllSounds() : LiveData<ArrayList<TableObject>>{
         return Dav.Database.getAllTableObjects(FileManager.soundTableId, false)
     }
-    // End sound methods
+    // End Sound methods
+
+    // Category methods
+    fun createCategory(uuid: UUID, name: String, icon: String){
+        val nameProperty = Property()
+        nameProperty.name = FileManager.categoryTableNamePropertyName
+        nameProperty.value = name
+
+        val iconProperty = Property()
+        iconProperty.name = FileManager.categoryTableIconPropertyName
+        iconProperty.value = icon
+
+        val properties = arrayListOf<Property>(nameProperty, iconProperty)
+        TableObject(uuid, FileManager.categoryTableId, properties)
+    }
+
+    fun getAllCategories() : LiveData<ArrayList<TableObject>>{
+        return Dav.Database.getAllTableObjects(FileManager.categoryTableId, false)
+    }
+    // End Category methods
 }
