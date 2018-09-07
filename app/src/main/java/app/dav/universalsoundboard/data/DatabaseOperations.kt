@@ -7,6 +7,12 @@ import app.dav.davandroidlibrary.data.TableObject
 import java.util.*
 
 object DatabaseOperations {
+    // General methods
+    fun getObject(uuid: UUID) : TableObject?{
+        return Dav.Database.getTableObject(uuid)
+    }
+    // End General methods
+
     // Sound methods
     fun createSound(uuid: UUID, name: String, soundUuid: String, categoryUuid: String){
         // Create the properties of the table object

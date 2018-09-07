@@ -34,7 +34,7 @@ class SoundFragment : Fragment() {
 
         viewModel.getSounds().observe(this, Observer{
             Log.d(TAG, "Sounds list changed")
-            viewModel.soundListRecyclerViewAdapter.submitList(it)
+            viewModel.soundListAdapter.submitList(it)
         })
     }
 
@@ -49,7 +49,7 @@ class SoundFragment : Fragment() {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
-                adapter = viewModel.soundListRecyclerViewAdapter
+                adapter = viewModel.soundListAdapter
             }
         }
 

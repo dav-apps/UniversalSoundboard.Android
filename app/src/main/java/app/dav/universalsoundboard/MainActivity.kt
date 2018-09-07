@@ -7,23 +7,29 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import app.dav.davandroidlibrary.Dav
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.fragments.SoundFragment
+import app.dav.universalsoundboard.viewmodels.MainViewModel
 import app.dav.universalsoundboard.viewmodels.SoundViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.category_list.*
+
+private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var viewModel: SoundViewModel
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this).get(SoundViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         Dav.init(this)
 
         setContentView(R.layout.activity_main)
@@ -42,6 +48,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         fab_menu_new_category.setOnClickListener{view ->
+            FileManager.addCategory(null, "TestCategory", "bla")
             fab_menu.close(true)
         }
 
@@ -49,6 +56,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         // Bind the itemViewHolder properties to the UI
         FileManager.itemViewHolder.title.observe(this, Observer<String> { title -> supportActionBar?.setTitle(title) })
+
+        category_list.layoutManager = LinearLayoutManager(this)
+        category_list.adapter = viewModel.categoryListAdapter
+
+        viewModel.getCategories().observe(this, Observer{
+            Log.d(TAG, "Categories list changed!")
+            viewModel.categoryListAdapter.submitList(it)
+        })
     }
 
     override fun onBackPressed() {

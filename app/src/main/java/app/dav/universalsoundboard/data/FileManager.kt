@@ -3,6 +3,7 @@ package app.dav.universalsoundboard.data
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.Transformations
+import app.dav.davandroidlibrary.Dav
 import app.dav.davandroidlibrary.data.TableObject
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.Sound
@@ -92,6 +93,17 @@ object FileManager{
 
             categories
         }
+    }
+
+    fun addCategory(uuid: UUID?, name: String, icon: String) : Category?{
+        // Generate a new uuid if necessary
+        val newUuid: UUID = if(uuid == null) UUID.randomUUID() else uuid
+
+        // Check if an object with the uuid already exists
+        if(DatabaseOperations.getObject(newUuid) != null) return null
+
+        DatabaseOperations.createCategory(newUuid, name, icon)
+        return Category(newUuid, name, icon)
     }
 
     private fun convertTableObjectToSound(tableObject: TableObject) : Sound?{
