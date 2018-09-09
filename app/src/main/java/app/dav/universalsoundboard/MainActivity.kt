@@ -13,7 +13,9 @@ import android.view.Menu
 import android.view.MenuItem
 import app.dav.davandroidlibrary.Dav
 import app.dav.universalsoundboard.data.FileManager
+import app.dav.universalsoundboard.fragments.CreateCategoryDialogFragment
 import app.dav.universalsoundboard.fragments.SoundFragment
+import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.viewmodels.MainViewModel
 import app.dav.universalsoundboard.viewmodels.SoundViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -46,8 +48,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         fab_menu_new_category.setOnClickListener{view ->
-            FileManager.addCategory(null, "TestCategory", "bla")
             fab_menu.close(true)
+            CreateCategoryDialogFragment().show(fragmentManager, "create_category")
         }
 
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, SoundFragment.newInstance(1)).commit()
