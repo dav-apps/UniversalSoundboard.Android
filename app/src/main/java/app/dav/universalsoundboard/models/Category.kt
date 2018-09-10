@@ -1,14 +1,13 @@
 package app.dav.universalsoundboard.models
 
 import app.dav.universalsoundboard.R
-import app.dav.universalsoundboard.data.FileManager
 import java.util.*
 
 
 class Category(val uuid: UUID, var name: String, var icon: String){
 
     fun getIconImageResource() : Int{
-        return Category.convertStringToCategoryIcon(icon)
+        return Category.convertStringToIconResourceId(icon)
     }
 
     companion object {
@@ -91,7 +90,87 @@ class Category(val uuid: UUID, var name: String, var icon: String){
             )
         }
 
-        fun convertStringToCategoryIcon(icon: String) : Int{
+        fun convertIconResourceIdToString(icon: Int) : String{
+            return when(icon){
+                R.drawable.ic_add -> Category.Icons.ADD
+                R.drawable.ic_edit -> Category.Icons.EDIT
+                R.drawable.ic_clear -> Category.Icons.CLEAR
+                R.drawable.ic_search -> Category.Icons.SEARCH
+                R.drawable.ic_check -> Category.Icons.CHECK
+                R.drawable.ic_check_circle_outline -> Category.Icons.CHECK_CIRCLE_OUTLINE
+                R.drawable.ic_person -> Category.Icons.PERSON
+                R.drawable.ic_people -> Category.Icons.PEOPLE
+                R.drawable.ic_portrait -> Category.Icons.PORTRAIT
+                R.drawable.ic_person_pin_circle -> Category.Icons.PERSON_PIN_CIRCLE
+                R.drawable.ic_mood -> Category.Icons.MOOD
+                R.drawable.ic_sentiment_satisfied -> Category.Icons.MOOD
+                R.drawable.ic_thumb_up -> Category.Icons.THUMB_UP
+                R.drawable.ic_thumb_down -> Category.Icons.THUMB_DOWN
+                R.drawable.ic_star_border -> Category.Icons.STAR_BORDER
+                R.drawable.ic_star -> Category.Icons.STAR
+                R.drawable.ic_phone -> Category.Icons.PHONE
+                R.drawable.ic_mail_outline -> Category.Icons.MAIL_OUTLINE
+                R.drawable.ic_drafts -> Category.Icons.DRAFTS
+                R.drawable.ic_alternate_email -> Category.Icons.ALTERNATE_EMAIL
+                R.drawable.ic_photo_camera -> Category.Icons.PHOTO_CAMERA
+                R.drawable.ic_videocam -> Category.Icons.VIDEOCAM
+                R.drawable.ic_duo -> Category.Icons.DUO
+                R.drawable.ic_slideshow -> Category.Icons.SLIDESHOW
+                R.drawable.ic_mic -> Category.Icons.MIC
+                R.drawable.ic_music_note -> Category.Icons.MUSIC_NOTE
+                R.drawable.ic_queue_music -> Category.Icons.QUEUE_MUSIC
+                R.drawable.ic_volume_up -> Category.Icons.VOLUME_UP
+                R.drawable.ic_volume_off -> Category.Icons.VOLUME_OFF
+                R.drawable.ic_play_arrow -> Category.Icons.PLAY_ARROW
+                R.drawable.ic_pause -> Category.Icons.PAUSE
+                R.drawable.ic_shuffle -> Category.Icons.SHUFFLE
+                R.drawable.ic_bookmark -> Category.Icons.BOOKMARK
+                R.drawable.ic_bookmark_border -> Category.Icons.BOOKMARK_BORDER
+                R.drawable.ic_refresh -> Category.Icons.REFRESH
+                R.drawable.ic_sync -> Category.Icons.SYNC
+                R.drawable.ic_rotate_left -> Category.Icons.ROTATE_LEFT
+                R.drawable.ic_repeat -> Category.Icons.REPEAT
+                R.drawable.ic_share -> Category.Icons.SHARE
+                R.drawable.ic_chat_bubble_outline -> Category.Icons.CHAT_BUBBLE_OUTLINE
+                R.drawable.ic_comment -> Category.Icons.COMMENT
+                R.drawable.ic_announcement -> Category.Icons.ANNOUNCEMENT
+                R.drawable.ic_outlined_flag -> Category.Icons.OUTLINED_FLAG
+                R.drawable.ic_note -> Category.Icons.NOTE
+                R.drawable.ic_description -> Category.Icons.DESCRIPTION
+                R.drawable.ic_bug_report -> Category.Icons.BUG_REPORT
+                R.drawable.ic_report -> Category.Icons.REPORT
+                R.drawable.ic_visibility -> Category.Icons.VISIBILITY
+                R.drawable.ic_my_location -> Category.Icons.MY_LOCATION
+                R.drawable.ic_vertical_align_bottom -> Category.Icons.VERTICAL_ALIGN_BOTTOM
+                R.drawable.ic_help_outline -> Category.Icons.HELP_OUTLINE
+                R.drawable.ic_priority_high -> Category.Icons.PRIORITY_HIGH
+                R.drawable.ic_filter_list -> Category.Icons.FILTER_LIST
+                R.drawable.ic_link -> Category.Icons.LINK
+                R.drawable.ic_attach_file -> Category.Icons.ATTACH_FILE
+                R.drawable.ic_vpn_key -> Category.Icons.VPN_KEY
+                R.drawable.ic_settings -> Category.Icons.SETTINGS
+                R.drawable.ic_keyboard -> Category.Icons.KEYBOARD
+                R.drawable.ic_smartphone -> Category.Icons.SMARTPHONE
+                R.drawable.ic_save -> Category.Icons.SAVE
+                R.drawable.ic_delete -> Category.Icons.DELETE
+                R.drawable.ic_local_offer -> Category.Icons.LOCAL_OFFER
+                R.drawable.ic_school -> Category.Icons.SCHOOL
+                R.drawable.ic_import_contacts -> Category.Icons.IMPORT_CONTACTS
+                R.drawable.ic_shop -> Category.Icons.SHOP
+                R.drawable.ic_build -> Category.Icons.BUILD
+                R.drawable.ic_restaurant -> Category.Icons.RESTAURANT
+                R.drawable.ic_language -> Category.Icons.LANGUAGE
+                R.drawable.ic_public -> Category.Icons.PUBLIC
+                R.drawable.ic_location_on -> Category.Icons.LOCATION_ON
+                R.drawable.ic_navigation -> Category.Icons.NAVIGATION
+                R.drawable.ic_home -> Category.Icons.HOME
+                R.drawable.ic_nature_people -> Category.Icons.NATURE_PEOPLE
+                R.drawable.ic_cloud_queue -> Category.Icons.CLOUD_QUEUE
+                else -> Category.Icons.HOME
+            }
+        }
+
+        fun convertStringToIconResourceId(icon: String) : Int{
             return when(icon){
                 Category.Icons.ADD -> R.drawable.ic_add
                 Category.Icons.EDIT -> R.drawable.ic_edit
