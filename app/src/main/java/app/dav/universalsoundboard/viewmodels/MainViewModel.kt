@@ -1,6 +1,7 @@
 package app.dav.universalsoundboard.viewmodels
 
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.Transformations
 import android.arch.lifecycle.ViewModel
 import app.dav.universalsoundboard.adapters.CategoryListAdapter
 import app.dav.universalsoundboard.data.FileManager
@@ -39,6 +40,9 @@ class MainViewModel :
     }
 
     fun getCategories() : LiveData<ArrayList<Category>>{
-        return FileManager.getAllCategories()
+        return Transformations.map(FileManager.getAllCategories()) {
+            it.add(0, Category.allSoundsCategory)
+            it
+        }
     }
 }

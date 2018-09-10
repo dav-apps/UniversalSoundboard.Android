@@ -31,11 +31,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-        Dav.init(this)
-
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
+
+        init()
+    }
+
+    fun init(){
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        Dav.init(this)
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -52,18 +56,19 @@ class MainActivity : AppCompatActivity() {
             CreateCategoryDialogFragment().show(fragmentManager, "create_category")
         }
 
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, SoundFragment.newInstance(1)).commit()
-
         // Bind the itemViewHolder properties to the UI
+        FileManager.itemViewHolder.setTitle(resources.getString(R.string.all_sounds))
         FileManager.itemViewHolder.title.observe(this, Observer<String> { title -> supportActionBar?.setTitle(title) })
 
+        Category.allSoundsCategory.name = resources.getString(R.string.all_sounds)
         category_list.layoutManager = LinearLayoutManager(this)
         category_list.adapter = viewModel.categoryListAdapter
 
         viewModel.getCategories().observe(this, Observer{
-            Log.d(TAG, "Categories list changed!")
             viewModel.categoryListAdapter.submitList(it)
         })
+
+        supportFragmentManager.beginTransaction().add(R.id.fragment_container, SoundFragment.newInstance(1)).commit()
     }
 
     override fun onBackPressed() {

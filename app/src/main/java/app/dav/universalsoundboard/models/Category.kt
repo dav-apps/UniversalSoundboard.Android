@@ -1,5 +1,6 @@
 package app.dav.universalsoundboard.models
 
+import android.content.Context
 import app.dav.universalsoundboard.R
 import java.util.*
 
@@ -11,6 +12,8 @@ class Category(val uuid: UUID, var name: String, var icon: String){
     }
 
     companion object {
+        val allSoundsCategory = Category(UUID.fromString("edaa6f06-37bb-41d3-9c1d-484956057dd5"), "", Icons.HOME)
+
         fun getIconResourceIds() : Array<Int>{
             return arrayOf(
                     R.drawable.ic_add,
