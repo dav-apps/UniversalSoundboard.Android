@@ -79,7 +79,7 @@
             android:id="@+id/fab_menu_new_category"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_category_white"
+            android:src="@drawable/ic_local_offer_white"
             fab:fab_label="New Category"
             fab:fab_size="mini" />
     </com.github.clans.fab.FloatingActionMenu>
