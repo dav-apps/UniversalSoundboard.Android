@@ -3,7 +3,6 @@ package app.dav.universalsoundboard
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -17,12 +16,11 @@ import app.dav.universalsoundboard.fragments.CreateCategoryDialogFragment
 import app.dav.universalsoundboard.fragments.SoundFragment
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.viewmodels.MainViewModel
-import app.dav.universalsoundboard.viewmodels.SoundViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.category_list.*
-
-private const val TAG = "MainActivity"
+import kotlinx.coroutines.experimental.launch
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,13 +39,13 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         Dav.init(this)
 
-        val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
         fab_menu_new_sound.setOnClickListener{view ->
-            FileManager.addSound(null, "Hello World", null)
+            Log.d("NewSound", "Current sound: ${FileManager.itemViewHolder.currentCategory.value}")
+            FileManager.addSound(null, "Sound", FileManager.itemViewHolder.currentCategory.value)
             fab_menu.close(true)
         }
 
@@ -60,9 +58,18 @@ class MainActivity : AppCompatActivity() {
         FileManager.itemViewHolder.setTitle(resources.getString(R.string.all_sounds))
         FileManager.itemViewHolder.title.observe(this, Observer<String> { title -> supportActionBar?.setTitle(title) })
 
-        Category.allSoundsCategory.name = resources.getString(R.string.all_sounds)
+        Category.allSoundsCategory.setNameLiveData(resources.getString(R.string.all_sounds))
         category_list.layoutManager = LinearLayoutManager(this)
         category_list.adapter = viewModel.categoryListAdapter
+
+        //viewModel.navigateToCategory(Category.allSoundsCategory)
+
+        viewModel.closeDrawer.observe(this, Observer {
+            if(it != null && it){
+                drawer_layout.closeDrawers()
+                viewModel.drawerClosed()
+            }
+        })
 
         viewModel.getCategories().observe(this, Observer{
             viewModel.categoryListAdapter.submitList(it)

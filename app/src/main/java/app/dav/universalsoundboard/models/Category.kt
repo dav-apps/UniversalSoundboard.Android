@@ -1,16 +1,53 @@
 package app.dav.universalsoundboard.models
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
+import android.arch.lifecycle.Transformations
 import android.content.Context
+import android.databinding.ObservableField
+import android.util.Log
 import app.dav.universalsoundboard.R
 import java.util.*
 
 
-class Category(val uuid: UUID, var name: String, var icon: String){
+class Category(var uuid: UUID){
+    private val nameData = MutableLiveData<String>()
+    val name: LiveData<String>
+        get() = nameData
+    private val iconData = MutableLiveData<String>()
+    val icon: LiveData<String>
+        get() = iconData
+    private val iconResourceIdData = MutableLiveData<Int>()
+    val iconResourceId: LiveData<Int>
+        get() = iconResourceIdData
 
-    fun getIconImageResource() : Int{
-        return Category.convertStringToIconResourceId(icon)
+    constructor(uuid: UUID, name: String, icon: String) : this(uuid) {
+        this.uuid = uuid
+        nameData.value = name
+        iconData.value = icon
+        iconResourceIdData.value = Category.convertStringToIconResourceId(icon)
     }
 
+    fun setNameLiveData(name: String){
+        nameData.value = name
+    }
+
+    fun setIconLiveData(icon: String){
+        iconData.value = icon
+        iconResourceIdData.value = Category.convertStringToIconResourceId(icon)
+    }
+    /*
+    fun getIconImageResource() : LiveData<Int> {
+        return Transformations.map(iconData) {
+            Category.convertStringToIconResourceId(it)
+        }
+    }
+    */
+/*
+    fun getIconImageResource() : Int {
+        return Category.convertStringToIconResourceId(iconData.value ?: "")
+    }
+*/
     companion object {
         val allSoundsCategory = Category(UUID.fromString("edaa6f06-37bb-41d3-9c1d-484956057dd5"), "", Icons.HOME)
 

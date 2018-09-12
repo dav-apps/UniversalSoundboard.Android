@@ -13,12 +13,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import app.dav.universalsoundboard.R
+import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.viewmodels.MainViewModel
 
 /**
  * A fragment representing a list of Items.
  */
-private const val TAG = "SoundFragment"
 
 class SoundFragment : Fragment() {
     private var columnCount = 1
@@ -32,8 +32,8 @@ class SoundFragment : Fragment() {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
         }
 
-        viewModel.getSounds().observe(this, Observer{
-            Log.d(TAG, "Sounds list changed")
+        FileManager.itemViewHolder.soundsData.observe(this, Observer{
+            Log.d("SoundFragment", "Soundslist changed!")
             viewModel.soundListAdapter.submitList(it)
         })
     }

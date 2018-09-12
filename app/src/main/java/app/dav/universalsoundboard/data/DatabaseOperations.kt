@@ -8,8 +8,8 @@ import java.util.*
 
 object DatabaseOperations {
     // General methods
-    fun getObject(uuid: UUID) : TableObject?{
-        return Dav.Database.getTableObject(uuid)
+    suspend fun getObject(uuid: UUID) : TableObject?{
+        return Dav.Database.getNonObservableTableObject(uuid).await()
     }
     // End General methods
 
@@ -21,6 +21,14 @@ object DatabaseOperations {
         nameProperty.value = name
 
         val properties = arrayListOf(nameProperty)
+
+        if(!categoryUuid.isEmpty()){
+            val categoryProperty = Property()
+            categoryProperty.name = FileManager.soundTableCategoryUuidPropertyName
+            categoryProperty.value = categoryUuid
+            properties.add(categoryProperty)
+        }
+
         TableObject(uuid, FileManager.soundTableId, properties)
     }
 

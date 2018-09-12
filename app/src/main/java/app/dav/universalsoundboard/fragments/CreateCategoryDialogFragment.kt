@@ -13,6 +13,8 @@ import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.utilities.ImageArrayAdapter
+import kotlinx.coroutines.experimental.launch
+import java.util.*
 import java.util.concurrent.ThreadLocalRandom
 
 
@@ -20,7 +22,7 @@ class CreateCategoryDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return createDialog()
     }
-    
+
     fun createDialog() : AlertDialog{
         val layout = activity.layoutInflater.inflate(R.layout.dialog_create_category, null)
         val spinner = layout.findViewById<Spinner>(R.id.create_category_dialog_icon_spinner)
@@ -33,11 +35,11 @@ class CreateCategoryDialogFragment : DialogFragment() {
         spinner.adapter = adapter
 
         // Select a random icon
-        spinner.setSelection(ThreadLocalRandom.current().nextInt(0, resourcesArray.size))
+        spinner.setSelection(Random().nextInt(resourcesArray.size))
 
         val alertDialog =  AlertDialog.Builder(activity).setView(layout)
                 .setPositiveButton(R.string.create_category_dialog_positive_button_text, DialogInterface.OnClickListener{ dialog, which ->
-                    FileManager.addCategory(null, nameEditText.text.toString(), Category.convertIconResourceIdToString(spinner.selectedItem as Int))
+                    launch { FileManager.addCategory(null, nameEditText.text.toString(), Category.convertIconResourceIdToString(spinner.selectedItem as Int)) }
                 })
                 .setNegativeButton(R.string.create_category_dialog_negative_button_text, null)
                 .create()
