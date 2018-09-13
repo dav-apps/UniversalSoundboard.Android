@@ -97,7 +97,9 @@ object FileManager{
         if(DatabaseOperations.getObject(newUuid) != null) return null
 
         DatabaseOperations.createCategory(newUuid, name, icon)
-        return Category(newUuid, name, icon)
+        val category = Category(newUuid, name, icon)
+        itemViewHolder.addCategory(category)
+        return category
     }
 
     private suspend fun convertTableObjectToSound(tableObject: TableObject) : Sound?{
@@ -164,9 +166,18 @@ class ItemViewHolder(){
             if(sounds != null){
                 sounds.add(sound)
 
-                // Set the value of the soundsData
+                // Set the value of soundsData
                 soundsData.value = sounds
             }
+        }
+    }
+
+    fun addCategory(category: Category){
+        val categories = categoriesData.value
+        if(categories != null){
+            categories.add(category)
+
+            // Set the value of categoriesData
         }
     }
 
