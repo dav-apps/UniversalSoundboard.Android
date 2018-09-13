@@ -20,7 +20,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.category_list.*
 import kotlinx.coroutines.experimental.launch
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -44,8 +43,8 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         fab_menu_new_sound.setOnClickListener{view ->
-            Log.d("NewSound", "Current sound: ${FileManager.itemViewHolder.currentCategory.value}")
-            FileManager.addSound(null, "Sound", FileManager.itemViewHolder.currentCategory.value)
+            Log.d("NewSound", "Current sound: ${FileManager.itemViewHolder.currentCategory}")
+            FileManager.addSound(null, "Sound", FileManager.itemViewHolder.currentCategory)
             fab_menu.close(true)
         }
 
@@ -58,11 +57,9 @@ class MainActivity : AppCompatActivity() {
         FileManager.itemViewHolder.setTitle(resources.getString(R.string.all_sounds))
         FileManager.itemViewHolder.title.observe(this, Observer<String> { title -> supportActionBar?.setTitle(title) })
 
-        Category.allSoundsCategory.setNameLiveData(resources.getString(R.string.all_sounds))
+        Category.allSoundsCategory.name = resources.getString(R.string.all_sounds)
         category_list.layoutManager = LinearLayoutManager(this)
         category_list.adapter = viewModel.categoryListAdapter
-
-        //viewModel.navigateToCategory(Category.allSoundsCategory)
 
         viewModel.closeDrawer.observe(this, Observer {
             if(it != null && it){
@@ -71,8 +68,9 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.getCategories().observe(this, Observer{
-            viewModel.categoryListAdapter.submitList(it)
+        launch { FileManager.itemViewHolder.loadCategories() }
+        FileManager.itemViewHolder.categories.observe(this, Observer {
+            if(it != null) viewModel.categoryListAdapter.submitList(it)
         })
 
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, SoundFragment.newInstance(1)).commit()

@@ -8,13 +8,13 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.viewmodels.MainViewModel
+import kotlinx.coroutines.experimental.launch
 
 /**
  * A fragment representing a list of Items.
@@ -32,9 +32,9 @@ class SoundFragment : Fragment() {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
         }
 
-        FileManager.itemViewHolder.soundsData.observe(this, Observer{
-            Log.d("SoundFragment", "Soundslist changed!")
-            viewModel.soundListAdapter.submitList(it)
+        launch { FileManager.itemViewHolder.loadSounds() }
+        FileManager.itemViewHolder.sounds.observe(this, Observer {
+            if(it != null) viewModel.soundListAdapter.submitList(it)
         })
     }
 

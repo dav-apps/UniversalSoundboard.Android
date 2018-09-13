@@ -1,13 +1,9 @@
 package app.dav.universalsoundboard.data
 
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MediatorLiveData
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.Transformations
 import android.util.Log
-import app.dav.davandroidlibrary.Dav
 import app.dav.davandroidlibrary.data.TableObject
-import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.Sound
 import java.util.*
@@ -53,72 +49,46 @@ object FileManager{
         DatabaseOperations.createSound(newUuid, name, soundFileUuid.toString(), categoryUuidString)
     }
 
-    fun getAllSounds() : LiveData<ArrayList<Sound>>{
+    suspend fun getAllSounds() : ArrayList<Sound>{
         val tableObjects = DatabaseOperations.getAllSounds()
+        val sounds = ArrayList<Sound>()
 
-        return Transformations.map(tableObjects) {
-            val sounds = ArrayList<Sound>()
-
-            for(obj in it){
-                val sound = convertTableObjectToSound(obj)
-                if(sound != null) sounds.add(sound)
-            }
-
-            sounds
+        for(obj in tableObjects){
+            Log.d("getAllSounds", obj.properties.toString())
+            val sound = convertTableObjectToSound(obj)
+            if(sound != null) sounds.add(sound)
         }
+
+        return sounds
     }
-/*
-    suspend fun getAllNonObservableSounds(){
-        Dav.Database.getAllNonObservableTableObjects().await()
-        //Log.d("GetAllSounds", .toString())
-    }
-    */
 
-    fun getSoundsOfCategory(categoryUuid: UUID) : LiveData<ArrayList<Sound>>{
-        return Transformations.map(getAllSounds()){
-            val sounds = ArrayList<Sound>()
+    suspend fun getSoundsOfCategory(categoryUuid: UUID) : ArrayList<Sound>{
+        val sounds = ArrayList<Sound>()
 
-            for(sound in it){
-                Log.d("getSoundsOfCategory", "Sound: ${sound.categoryUuid.value}")
-                //if(sound.categoryUuid == categoryUuid) sounds.add(sound)
-
-                sound.categoryUuid.observeForever(android.arch.lifecycle.Observer {
-                    Log.d("getSoundsOfC", "Category of sound changed! ${it}")
-                    if(it != null){
-                        if(it == categoryUuid){
-                            // Add the sound to the list
-                            sounds.add(sound)
-                        }
-                    }
-                })
+        for(sound in getAllSounds()){
+            if(sound.category?.uuid == categoryUuid){
+                sounds.add(sound)
             }
-
-            Log.d("getSoundsOfCategory", "Count: ${sounds.count()}")
-            sounds
         }
+
+        return sounds
     }
 
-    fun getAllCategories() : LiveData<ArrayList<Category>>{
-        val tableObjects = DatabaseOperations.getAllCategories()
+    suspend fun getAllCategories() : ArrayList<Category>{
+        val categories = ArrayList<Category>()
 
-        return Transformations.map(tableObjects) {
-            val categories = ArrayList<Category>()
-
-            for(obj in it){
-                val category = convertTableObjectToCategory(obj)
-                if(category != null) categories.add(category)
-            }
-
-            categories
+        for(obj in DatabaseOperations.getAllCategories()){
+            val category = convertTableObjectToCategory(obj)
+            if(category != null) categories.add(category)
         }
+
+        return categories
     }
-/*
-    fun getCategory(uuid: UUID) : Category?{
-        val category = Dav.Database.getTableObject(uuid)
-        Log.d("getCategory", "Category: $category")
-        return convertTableObjectToCategory(category)
+
+    suspend fun getCategory(uuid: UUID) : Category?{
+        val category = DatabaseOperations.getObject(uuid)
+        return if(category != null) convertTableObjectToCategory(category) else null
     }
-    */
 
     suspend fun addCategory(uuid: UUID?, name: String, icon: String) : Category?{
         // Generate a new uuid if necessary
@@ -131,39 +101,23 @@ object FileManager{
         return Category(newUuid, name, icon)
     }
 
-    private fun convertTableObjectToSound(tableObject: TableObject) : Sound?{
+    private suspend fun convertTableObjectToSound(tableObject: TableObject) : Sound?{
         if(tableObject.tableId != FileManager.soundTableId) return null
-/*
+
         // Get name
         val name = tableObject.getPropertyValue(soundTableNamePropertyName) ?: ""
 
         // Get favourite
         var favourite = false
         val favouriteString = tableObject.getPropertyValue(soundTableFavouritePropertyName)
-        if(favouriteString != null) favourite = favouriteString.toBoolean()
-        */
+        favourite = if(favouriteString != null) favouriteString.toBoolean() else false
 
-        val sound = Sound(tableObject.uuid, "", null, false, null)
+        val sound = Sound(tableObject.uuid, name, null, false, null)
 
-        tableObject.properties.observeForever {
-            if(it != null){
-                for(p in it){
-                    when(p.name){
-                        soundTableFavouritePropertyName -> {
-                            sound.setFavourite(p.value.toBoolean())
-                        }
-                        soundTableNamePropertyName -> {
-                            //sound.name = p.value
-                            sound.setNameLiveData(p.value)
-                        }
-                        soundTableCategoryUuidPropertyName -> {
-                            Log.d("Sound TableObject", "Uuid: ${p.value}")
-                            val uuid = UUID.fromString(p.value)
-                            sound.setCategory(uuid)
-                        }
-                    }
-                }
-            }
+        // Get category
+        val categoryUuidString = tableObject.getPropertyValue(soundTableCategoryUuidPropertyName)
+        if(categoryUuidString != null){
+            sound.category = getCategory(UUID.fromString(categoryUuidString))
         }
 
         return sound
@@ -171,63 +125,58 @@ object FileManager{
 
     private fun convertTableObjectToCategory(tableObject: TableObject) : Category? {
         if(tableObject.tableId != FileManager.categoryTableId) return null
-        /*
+
         // Get name
         val name = tableObject.getPropertyValue(categoryTableNamePropertyName) ?: ""
 
         // Get icon
-        val icon = tableObject.getPropertyValue(categoryTableIconPropertyName) ?: ""
-        */
+        val icon = tableObject.getPropertyValue(categoryTableIconPropertyName) ?: Category.Icons.HOME
 
-        val category = Category(tableObject.uuid, "", Category.Icons.HOME)
-
-        tableObject.properties.observeForever {
-            if(it != null){
-                for(p in it){
-                    when(p.name){
-                        categoryTableNamePropertyName -> {
-                            //category.name = p.value
-                            category.setNameLiveData(p.value)
-                        }
-                        categoryTableIconPropertyName -> {
-                            category.setIconLiveData(p.value)
-                        }
-                    }
-                }
-            }
-        }
-
-        return category
+        return Category(tableObject.uuid, name, icon)
     }
 }
 
 class ItemViewHolder(){
     constructor(title: String) : this() {
         titleData.value = title
-        currentCategory.value = Category.allSoundsCategory.uuid
-
-        currentCategory.observeForever(android.arch.lifecycle.Observer {
-            Log.d("ItemViewHolder", "Changed Category! $it")
-
-            if(it == Category.allSoundsCategory.uuid){
-                soundsData.addSource(FileManager.getAllSounds(), soundsData::setValue)
-            }else if(it != null){
-                soundsData.addSource(FileManager.getSoundsOfCategory(it), soundsData::setValue)
-            }
-        })
+        soundsData.value = ArrayList<Sound>()
+        categoriesData.value = ArrayList<Category>()
     }
 
-    val currentCategory = MutableLiveData<UUID>()
-    var soundsData = MediatorLiveData<ArrayList<Sound>>()
+    var currentCategory: UUID = Category.allSoundsCategory.uuid
     private val titleData = MutableLiveData<String>()
     val title: LiveData<String>
         get() =  titleData
+    private val soundsData = MutableLiveData<ArrayList<Sound>>()
+    val sounds: LiveData<ArrayList<Sound>>
+        get() = soundsData
+    private val categoriesData = MutableLiveData<ArrayList<Category>>()
+    val categories: LiveData<ArrayList<Category>>
+        get() = categoriesData
 
     fun setTitle(value: String){
         titleData.value = value
     }
 
-    fun getSounds() : LiveData<ArrayList<Sound>>{
-        return soundsData
+    suspend fun loadSounds(){
+        val tableObjects: ArrayList<Sound> = if(currentCategory == Category.allSoundsCategory.uuid){
+            // Get all sounds
+            FileManager.getAllSounds()
+        }else{
+            // Get the sounds of the selected category
+            FileManager.getSoundsOfCategory(currentCategory)
+        }
+
+        soundsData.value?.clear()
+        for(sound in tableObjects){
+            soundsData.value?.add(sound)
+        }
+    }
+
+    suspend fun loadCategories(){
+        categoriesData.value?.clear()
+        for(category in FileManager.getAllCategories()){
+            categoriesData.value?.add(category)
+        }
     }
 }

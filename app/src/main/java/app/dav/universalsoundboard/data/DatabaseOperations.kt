@@ -1,6 +1,5 @@
 package app.dav.universalsoundboard.data
 
-import android.arch.lifecycle.LiveData
 import app.dav.davandroidlibrary.Dav
 import app.dav.davandroidlibrary.data.Property
 import app.dav.davandroidlibrary.data.TableObject
@@ -9,7 +8,7 @@ import java.util.*
 object DatabaseOperations {
     // General methods
     suspend fun getObject(uuid: UUID) : TableObject?{
-        return Dav.Database.getNonObservableTableObject(uuid).await()
+        return Dav.Database.getTableObject(uuid).await()
     }
     // End General methods
 
@@ -32,8 +31,8 @@ object DatabaseOperations {
         TableObject(uuid, FileManager.soundTableId, properties)
     }
 
-    fun getAllSounds() : LiveData<ArrayList<TableObject>>{
-        return Dav.Database.getAllTableObjects(FileManager.soundTableId, false)
+    suspend fun getAllSounds() : ArrayList<TableObject>{
+        return Dav.Database.getAllTableObjects(FileManager.soundTableId, false).await()
     }
     // End Sound methods
 
@@ -47,12 +46,12 @@ object DatabaseOperations {
         iconProperty.name = FileManager.categoryTableIconPropertyName
         iconProperty.value = icon
 
-        val properties = arrayListOf<Property>(nameProperty, iconProperty)
+        val properties = arrayListOf(nameProperty, iconProperty)
         TableObject(uuid, FileManager.categoryTableId, properties)
     }
 
-    fun getAllCategories() : LiveData<ArrayList<TableObject>>{
-        return Dav.Database.getAllTableObjects(FileManager.categoryTableId, false)
+    suspend fun getAllCategories() : ArrayList<TableObject>{
+        return Dav.Database.getAllTableObjects(FileManager.categoryTableId, false).await()
     }
     // End Category methods
 }
