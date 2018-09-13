@@ -7,7 +7,6 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import app.dav.davandroidlibrary.Dav
@@ -43,8 +42,7 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         fab_menu_new_sound.setOnClickListener{view ->
-            Log.d("NewSound", "Current sound: ${FileManager.itemViewHolder.currentCategory}")
-            FileManager.addSound(null, "Sound", FileManager.itemViewHolder.currentCategory)
+            FileManager.addSound(null, "Sound", null)
             fab_menu.close(true)
         }
 
@@ -71,6 +69,7 @@ class MainActivity : AppCompatActivity() {
         launch { FileManager.itemViewHolder.loadCategories() }
         FileManager.itemViewHolder.categories.observe(this, Observer {
             if(it != null) viewModel.categoryListAdapter.submitList(it)
+            viewModel.categoryListAdapter.notifyDataSetChanged()
         })
 
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, SoundFragment.newInstance(1)).commit()

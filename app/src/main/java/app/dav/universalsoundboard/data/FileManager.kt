@@ -2,7 +2,6 @@ package app.dav.universalsoundboard.data
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.util.Log
 import app.dav.davandroidlibrary.data.TableObject
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.Sound
@@ -47,6 +46,7 @@ object FileManager{
         // TODO
 
         DatabaseOperations.createSound(newUuid, name, soundFileUuid.toString(), categoryUuidString)
+        itemViewHolder.addSound(Sound(newUuid, name, categoryUuid, false, null))
     }
 
     suspend fun getAllSounds() : ArrayList<Sound>{
@@ -54,7 +54,6 @@ object FileManager{
         val sounds = ArrayList<Sound>()
 
         for(obj in tableObjects){
-            Log.d("getAllSounds", obj.properties.toString())
             val sound = convertTableObjectToSound(obj)
             if(sound != null) sounds.add(sound)
         }
@@ -66,7 +65,7 @@ object FileManager{
         val sounds = ArrayList<Sound>()
 
         for(sound in getAllSounds()){
-            if(sound.category?.uuid == categoryUuid){
+            if(sound.category == categoryUuid){
                 sounds.add(sound)
             }
         }
@@ -117,7 +116,7 @@ object FileManager{
         // Get category
         val categoryUuidString = tableObject.getPropertyValue(soundTableCategoryUuidPropertyName)
         if(categoryUuidString != null){
-            sound.category = getCategory(UUID.fromString(categoryUuidString))
+            sound.category = UUID.fromString(categoryUuidString)
         }
 
         return sound
@@ -158,6 +157,19 @@ class ItemViewHolder(){
         titleData.value = value
     }
 
+    fun addSound(sound: Sound){
+        if(currentCategory == Category.allSoundsCategory.uuid
+                || currentCategory == sound.category) {
+            val sounds = soundsData.value
+            if(sounds != null){
+                sounds.add(sound)
+
+                // Set the value of the soundsData
+                soundsData.value = sounds
+            }
+        }
+    }
+
     suspend fun loadSounds(){
         val tableObjects: ArrayList<Sound> = if(currentCategory == Category.allSoundsCategory.uuid){
             // Get all sounds
@@ -175,6 +187,8 @@ class ItemViewHolder(){
 
     suspend fun loadCategories(){
         categoriesData.value?.clear()
+
+        categoriesData.value?.add(Category.allSoundsCategory)
         for(category in FileManager.getAllCategories()){
             categoriesData.value?.add(category)
         }

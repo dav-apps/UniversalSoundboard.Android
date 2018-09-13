@@ -35,6 +35,7 @@ class SoundFragment : Fragment() {
         launch { FileManager.itemViewHolder.loadSounds() }
         FileManager.itemViewHolder.sounds.observe(this, Observer {
             if(it != null) viewModel.soundListAdapter.submitList(it)
+            viewModel.soundListAdapter.notifyDataSetChanged()
         })
     }
 
