@@ -13,7 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
-import app.dav.universalsoundboard.viewmodels.MainViewModel
+import app.dav.universalsoundboard.viewmodels.SoundViewModel
 import kotlinx.coroutines.experimental.launch
 
 /**
@@ -22,11 +22,11 @@ import kotlinx.coroutines.experimental.launch
 
 class SoundFragment : Fragment() {
     private var columnCount = 1
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: SoundViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        viewModel = ViewModelProviders.of(this).get(SoundViewModel::class.java)
 
         arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
