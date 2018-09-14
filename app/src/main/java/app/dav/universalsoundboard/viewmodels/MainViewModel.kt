@@ -18,12 +18,7 @@ class MainViewModel :
         get() = closeDrawerData
 
     override fun onItemClicked(category: Category) {
-        navigateToCategory(category)
-    }
-
-    fun navigateToCategory(category: Category){
-        FileManager.itemViewHolder.currentCategory = category.uuid
-        FileManager.itemViewHolder.setTitle(category.name ?: "")
+        FileManager.showCategory(category)
         closeDrawerData.value = true
     }
 

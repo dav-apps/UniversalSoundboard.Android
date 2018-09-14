@@ -18,7 +18,11 @@ import app.dav.universalsoundboard.viewmodels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.category_list.*
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,7 +46,10 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         fab_menu_new_sound.setOnClickListener{view ->
-            FileManager.addSound(null, "Sound", null)
+            val currentCategory = FileManager.itemViewHolder.currentCategory
+            val category: UUID? = if(currentCategory == Category.allSoundsCategory.uuid) null else currentCategory
+
+            FileManager.addSound(null, "Sound", category)
             fab_menu.close(true)
         }
 
@@ -66,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        launch { FileManager.itemViewHolder.loadCategories() }
+        GlobalScope.launch(Dispatchers.Main) { FileManager.itemViewHolder.loadCategories() }
         FileManager.itemViewHolder.categories.observe(this, Observer {
             if(it != null) viewModel.categoryListAdapter.submitList(it)
             viewModel.categoryListAdapter.notifyDataSetChanged()

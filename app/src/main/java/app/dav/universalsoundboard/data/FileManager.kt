@@ -5,6 +5,10 @@ import android.arch.lifecycle.MutableLiveData
 import app.dav.davandroidlibrary.data.TableObject
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.Sound
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.launch
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -32,6 +36,12 @@ object FileManager{
     const val playingSoundTableVolumePropertyName = "volume"
 
     val itemViewHolder: ItemViewHolder = ItemViewHolder(title = "All Sounds")
+
+    fun showCategory(category: Category){
+        itemViewHolder.currentCategory = category.uuid
+        itemViewHolder.setTitle(category.name ?: "")
+        GlobalScope.launch(Dispatchers.Main) { itemViewHolder.loadSounds() }
+    }
 
     fun addSound(uuid: UUID?, name: String, categoryUuid: UUID?/*, audioFile: File*/){
         // Generate a new uuid if necessary
@@ -102,7 +112,7 @@ object FileManager{
         return category
     }
 
-    private suspend fun convertTableObjectToSound(tableObject: TableObject) : Sound?{
+    private fun convertTableObjectToSound(tableObject: TableObject) : Sound?{
         if(tableObject.tableId != FileManager.soundTableId) return null
 
         // Get name
@@ -178,30 +188,24 @@ class ItemViewHolder(){
             categories.add(category)
 
             // Set the value of categoriesData
+            categoriesData.value = categories
         }
     }
 
     suspend fun loadSounds(){
-        val tableObjects: ArrayList<Sound> = if(currentCategory == Category.allSoundsCategory.uuid){
+        soundsData.value = if(currentCategory == Category.allSoundsCategory.uuid){
             // Get all sounds
             FileManager.getAllSounds()
         }else{
             // Get the sounds of the selected category
             FileManager.getSoundsOfCategory(currentCategory)
         }
-
-        soundsData.value?.clear()
-        for(sound in tableObjects){
-            soundsData.value?.add(sound)
-        }
     }
 
     suspend fun loadCategories(){
-        categoriesData.value?.clear()
+        val categories = FileManager.getAllCategories()
+        categories.add(0, Category.allSoundsCategory)
 
-        categoriesData.value?.add(Category.allSoundsCategory)
-        for(category in FileManager.getAllCategories()){
-            categoriesData.value?.add(category)
-        }
+        categoriesData.value = categories
     }
 }

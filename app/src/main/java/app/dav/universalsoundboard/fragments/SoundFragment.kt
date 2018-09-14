@@ -14,6 +14,9 @@ import android.view.ViewGroup
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.viewmodels.SoundViewModel
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
 
 /**
@@ -32,7 +35,9 @@ class SoundFragment : Fragment() {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
         }
 
-        launch { FileManager.itemViewHolder.loadSounds() }
+        GlobalScope.launch(Dispatchers.Main) {
+            FileManager.itemViewHolder.loadSounds()
+        }
         FileManager.itemViewHolder.sounds.observe(this, Observer {
             if(it != null) viewModel.soundListAdapter.submitList(it)
             viewModel.soundListAdapter.notifyDataSetChanged()
