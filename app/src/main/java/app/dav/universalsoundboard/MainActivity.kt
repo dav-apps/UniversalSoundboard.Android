@@ -1,7 +1,10 @@
 package app.dav.universalsoundboard
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -22,7 +25,9 @@ import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
-import java.util.*
+
+
+const val REQUEST_FILE_GET = 1
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,21 +44,22 @@ class MainActivity : AppCompatActivity() {
 
     fun init(){
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
-        Dav.init(this)
+        Dav.init(this, FileManager.getDavDataPath(filesDir.path).path + "/")
 
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
-        fab_menu_new_sound.setOnClickListener{view ->
-            val currentCategory = FileManager.itemViewHolder.currentCategory
-            val category: UUID? = if(currentCategory == Category.allSoundsCategory.uuid) null else currentCategory
-
-            FileManager.addSound(null, "Sound", category)
+        fab_menu_new_sound.setOnClickListener{
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "audio/mpeg"
+            if (intent.resolveActivity(packageManager) != null) {
+                startActivityForResult(intent, REQUEST_FILE_GET)
+            }
             fab_menu.close(true)
         }
 
-        fab_menu_new_category.setOnClickListener{view ->
+        fab_menu_new_category.setOnClickListener{
             fab_menu.close(true)
             CreateCategoryDialogFragment().show(fragmentManager, "create_category")
         }
@@ -103,6 +109,16 @@ class MainActivity : AppCompatActivity() {
         when (item.itemId) {
             R.id.action_settings -> return true
             else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == REQUEST_FILE_GET && resultCode == Activity.RESULT_OK){
+            val fileUri: Uri? = data?.data
+
+            if(fileUri != null){
+                viewModel.copySoundFile(fileUri, contentResolver, cacheDir)
+            }
         }
     }
 }

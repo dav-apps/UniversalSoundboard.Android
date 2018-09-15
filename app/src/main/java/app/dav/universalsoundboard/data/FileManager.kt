@@ -9,6 +9,7 @@ import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
+import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -39,11 +40,11 @@ object FileManager{
 
     fun showCategory(category: Category){
         itemViewHolder.currentCategory = category.uuid
-        itemViewHolder.setTitle(category.name ?: "")
+        itemViewHolder.setTitle(category.name)
         GlobalScope.launch(Dispatchers.Main) { itemViewHolder.loadSounds() }
     }
 
-    fun addSound(uuid: UUID?, name: String, categoryUuid: UUID?/*, audioFile: File*/){
+    fun addSound(uuid: UUID?, name: String, categoryUuid: UUID?, audioFile: File){
         // Generate a new uuid if necessary
         val newUuid: UUID = if(uuid == null) UUID.randomUUID() else uuid
 
@@ -53,7 +54,7 @@ object FileManager{
         val categoryUuidString = if(categoryUuid == null) "" else categoryUuid.toString()
 
         // Copy the sound file
-        // TODO
+        DatabaseOperations.createSoundFile(soundFileUuid, audioFile)
 
         DatabaseOperations.createSound(newUuid, name, soundFileUuid.toString(), categoryUuidString)
         itemViewHolder.addSound(Sound(newUuid, name, categoryUuid, false, null))
@@ -123,7 +124,7 @@ object FileManager{
         val favouriteString = tableObject.getPropertyValue(soundTableFavouritePropertyName)
         favourite = if(favouriteString != null) favouriteString.toBoolean() else false
 
-        val sound = Sound(tableObject.uuid, name, null, false, null)
+        val sound = Sound(tableObject.uuid, name, null, favourite, null)
 
         // Get category
         val categoryUuidString = tableObject.getPropertyValue(soundTableCategoryUuidPropertyName)
@@ -144,6 +145,15 @@ object FileManager{
         val icon = tableObject.getPropertyValue(categoryTableIconPropertyName) ?: Category.Icons.HOME
 
         return Category(tableObject.uuid, name, icon)
+    }
+
+    fun getDavDataPath(filesDir: String) : File{
+        val path = filesDir + "/dav"
+        val dir = File(path)
+        if(!dir.exists()){
+            dir.mkdir()
+        }
+        return dir
     }
 }
 
