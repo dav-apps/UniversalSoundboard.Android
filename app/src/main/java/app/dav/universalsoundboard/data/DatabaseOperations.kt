@@ -3,6 +3,7 @@ package app.dav.universalsoundboard.data
 import app.dav.davandroidlibrary.Dav
 import app.dav.davandroidlibrary.data.Property
 import app.dav.davandroidlibrary.data.TableObject
+import java.io.File
 import java.util.*
 
 object DatabaseOperations {
@@ -21,6 +22,13 @@ object DatabaseOperations {
 
         val properties = arrayListOf(nameProperty)
 
+        if(!soundUuid.isEmpty()){
+            val soundFileProperty = Property()
+            soundFileProperty.name = FileManager.soundTableSoundUuidPropertyName
+            soundFileProperty.value = soundUuid
+            properties.add(soundFileProperty)
+        }
+
         if(!categoryUuid.isEmpty()){
             val categoryProperty = Property()
             categoryProperty.name = FileManager.soundTableCategoryUuidPropertyName
@@ -35,6 +43,12 @@ object DatabaseOperations {
         return Dav.Database.getAllTableObjects(FileManager.soundTableId, false).await()
     }
     // End Sound methods
+
+    // SoundFile methods
+    fun createSoundFile(uuid: UUID, audioFile: File){
+        TableObject(uuid, FileManager.soundFileTableId, audioFile)
+    }
+    // End SoundFile methods
 
     // Category methods
     fun createCategory(uuid: UUID, name: String, icon: String){
