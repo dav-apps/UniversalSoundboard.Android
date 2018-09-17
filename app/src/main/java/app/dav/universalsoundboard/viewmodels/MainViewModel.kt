@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import android.content.ContentResolver
 import android.net.Uri
+import android.provider.OpenableColumns
 import app.dav.universalsoundboard.adapters.CategoryListAdapter
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Category
@@ -32,8 +33,19 @@ class MainViewModel :
     }
 
     fun copySoundFile(fileUri: Uri, contentResolver: ContentResolver, cacheDir: File){
+        // Get the name
         val fileNameWithExt = fileUri.pathSegments.last().substringAfterLast("/")
-        val fileName = fileNameWithExt.replaceAfterLast(".", "").dropLast(1)
+        var fileName = fileNameWithExt
+
+        val cursor = contentResolver.query(fileUri, null, null, null, null)
+        try{
+            if(cursor.moveToFirst()){
+                fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+            }
+        }finally {
+            cursor.close()
+        }
+        fileName = fileName.replaceAfterLast(".", "").dropLast(1)
 
         val stream = contentResolver.openInputStream(fileUri)
         val file = File(cacheDir.path + "/" + fileNameWithExt)

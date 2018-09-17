@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         toggle.syncState()
 
         fab_menu_new_sound.setOnClickListener{
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.type = "audio/mpeg"
             if (intent.resolveActivity(packageManager) != null) {
                 startActivityForResult(intent, REQUEST_FILE_GET)
@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
             val fileUri: Uri? = data?.data
 
             if(fileUri != null){
-                viewModel.copySoundFile(fileUri, contentResolver, cacheDir)
+                viewModel.copySoundFile(fileUri, application.contentResolver, cacheDir)
             }
         }
     }
