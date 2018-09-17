@@ -48,6 +48,10 @@ object DatabaseOperations {
     fun createSoundFile(uuid: UUID, audioFile: File){
         TableObject(uuid, FileManager.soundFileTableId, audioFile)
     }
+
+    suspend fun getAllSoundFiles() : ArrayList<TableObject>{
+        return Dav.Database.getAllTableObjects(FileManager.soundFileTableId, false).await()
+    }
     // End SoundFile methods
 
     // Category methods

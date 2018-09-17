@@ -13,9 +13,11 @@ import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.utilities.ImageArrayAdapter
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
 import java.util.*
-import java.util.concurrent.ThreadLocalRandom
 
 
 class CreateCategoryDialogFragment : DialogFragment() {
@@ -39,7 +41,9 @@ class CreateCategoryDialogFragment : DialogFragment() {
 
         val alertDialog =  AlertDialog.Builder(activity).setView(layout)
                 .setPositiveButton(R.string.create_category_dialog_positive_button_text, DialogInterface.OnClickListener{ dialog, which ->
-                    launch { FileManager.addCategory(null, nameEditText.text.toString(), Category.convertIconResourceIdToString(spinner.selectedItem as Int)) }
+                    GlobalScope.launch(Dispatchers.Main) {
+                        FileManager.addCategory(null, nameEditText.text.toString(), Category.convertIconResourceIdToString(spinner.selectedItem as Int))
+                    }
                 })
                 .setNegativeButton(R.string.create_category_dialog_negative_button_text, null)
                 .create()

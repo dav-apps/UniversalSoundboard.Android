@@ -155,6 +155,22 @@ object FileManager{
         }
         return dir
     }
+
+    suspend fun getAudioFileOfSound(uuid: UUID) : File?{
+        val soundFileTableObject = getSoundFileTableObject(uuid)
+        if(soundFileTableObject == null) return null
+        return soundFileTableObject.file
+    }
+
+    private suspend fun getSoundFileTableObject(uuid: UUID) : TableObject?{
+        val soundTableObject = DatabaseOperations.getObject(uuid)
+        if(soundTableObject == null) return null
+        val soundFileUuidString = soundTableObject.getPropertyValue(soundTableSoundUuidPropertyName)
+        if(soundFileUuidString == null) return null
+        val soundFileUuid = UUID.fromString(soundFileUuidString)
+        val soundFileTableObject = DatabaseOperations.getObject(soundFileUuid)
+        return soundFileTableObject
+    }
 }
 
 class ItemViewHolder(){
