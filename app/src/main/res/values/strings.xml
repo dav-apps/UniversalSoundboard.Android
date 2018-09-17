@@ -10,4 +10,7 @@
     <string name="create_category_dialog_name_edittext_hint">Name</string>
     <string name="create_category_dialog_positive_button_text">Save</string>
     <string name="create_category_dialog_negative_button_text">Cancel</string>
+    <string name="sound_item_context_menu_change_image">Change image</string>
+    <string name="sound_item_context_menu_rename">Rename</string>
+    <string name="sound_item_context_menu_delete">Delete</string>
 </resources>

@@ -30,9 +30,10 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:contentDescription="@string/sound_list_item_image_description"
+            android:padding="3dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@android:drawable/btn_dialog" />
+            app:srcCompat="@drawable/ic_music_note" />
 
         <TextView
             android:id="@+id/sound_list_item_name"

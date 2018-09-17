@@ -5,8 +5,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import app.dav.universalsoundboard.models.Sound
 import app.dav.universalsoundboard.databinding.FragmentSoundListItemBinding
+import app.dav.universalsoundboard.models.Sound
 
 class SoundListAdapter(
         private val onItemClickListener: OnItemClickListener,
@@ -18,7 +18,7 @@ class SoundListAdapter(
     }
 
     interface OnItemLongClickListener {
-        fun onItemLongClicked(sound: Sound)
+        fun onItemLongClicked(sound: Sound, item: View)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -30,7 +30,7 @@ class SoundListAdapter(
         holder.bind(View.OnClickListener{
             onItemClickListener.onItemClicked(item)
         }, View.OnLongClickListener {
-            onItemLongClickListener.onItemLongClicked(item)
+            onItemLongClickListener.onItemLongClicked(item, holder.itemView)
             true
         }, item)
     }

@@ -81,8 +81,8 @@ class SoundFragment :
         GlobalScope.launch { viewModel.onItemClicked(context!!, sound) }
     }
 
-    override fun onItemLongClicked(sound: Sound) {
-        viewModel.onItemLongClicked(sound)
+    override fun onItemLongClicked(sound: Sound, item: View) {
+        viewModel.onItemLongClicked(context!!, sound, item)
     }
 
     companion object {
