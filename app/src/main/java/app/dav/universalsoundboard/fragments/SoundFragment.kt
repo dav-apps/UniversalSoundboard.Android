@@ -12,7 +12,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import app.dav.universalsoundboard.R
+import app.dav.universalsoundboard.adapters.SoundListAdapter
 import app.dav.universalsoundboard.data.FileManager
+import app.dav.universalsoundboard.models.Sound
 import app.dav.universalsoundboard.viewmodels.SoundViewModel
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.GlobalScope
@@ -23,13 +25,18 @@ import kotlinx.coroutines.experimental.launch
  * A fragment representing a list of Items.
  */
 
-class SoundFragment : Fragment() {
+class SoundFragment :
+        Fragment(),
+        SoundListAdapter.OnItemClickListener,
+        SoundListAdapter.OnItemLongClickListener {
+
     private var columnCount = 1
     private lateinit var viewModel: SoundViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(SoundViewModel::class.java)
+        viewModel.soundListAdapter = SoundListAdapter(this, this)
 
         arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
@@ -39,8 +46,8 @@ class SoundFragment : Fragment() {
             FileManager.itemViewHolder.loadSounds()
         }
         FileManager.itemViewHolder.sounds.observe(this, Observer {
-            if(it != null) viewModel.soundListAdapter.submitList(it)
-            viewModel.soundListAdapter.notifyDataSetChanged()
+            if(it != null) viewModel.soundListAdapter?.submitList(it)
+            viewModel.soundListAdapter?.notifyDataSetChanged()
         })
     }
 
@@ -68,6 +75,14 @@ class SoundFragment : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
+    }
+
+    override fun onItemClicked(sound: Sound) {
+        GlobalScope.launch { viewModel.onItemClicked(context!!, sound) }
+    }
+
+    override fun onItemLongClicked(sound: Sound) {
+        viewModel.onItemLongClicked(sound)
     }
 
     companion object {
