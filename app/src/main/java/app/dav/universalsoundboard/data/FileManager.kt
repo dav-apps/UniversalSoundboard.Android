@@ -2,6 +2,7 @@ package app.dav.universalsoundboard.data
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.graphics.BitmapFactory
 import app.dav.davandroidlibrary.data.TableObject
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.Sound
@@ -113,7 +114,7 @@ object FileManager{
         return category
     }
 
-    private fun convertTableObjectToSound(tableObject: TableObject) : Sound?{
+    private suspend fun convertTableObjectToSound(tableObject: TableObject) : Sound?{
         if(tableObject.tableId != FileManager.soundTableId) return null
 
         // Get name
@@ -130,6 +131,18 @@ object FileManager{
         val categoryUuidString = tableObject.getPropertyValue(soundTableCategoryUuidPropertyName)
         if(categoryUuidString != null){
             sound.category = UUID.fromString(categoryUuidString)
+        }
+
+        // Get image
+        val imageUuidString = tableObject.getPropertyValue(soundTableImageUuidPropertyName)
+        if(imageUuidString != null){
+            val imageFileTableObject = getImageFileTableObject(tableObject.uuid)
+
+            if(imageFileTableObject != null){
+                if(imageFileTableObject.isFile && imageFileTableObject.file != null){
+                    sound.image = BitmapFactory.decodeFile(imageFileTableObject.file?.path)
+                }
+            }
         }
 
         return sound
@@ -162,14 +175,22 @@ object FileManager{
         return soundFileTableObject.file
     }
 
-    private suspend fun getSoundFileTableObject(uuid: UUID) : TableObject?{
-        val soundTableObject = DatabaseOperations.getObject(uuid)
+    private suspend fun getSoundFileTableObject(soundUuid: UUID) : TableObject?{
+        val soundTableObject = DatabaseOperations.getObject(soundUuid)
         if(soundTableObject == null) return null
         val soundFileUuidString = soundTableObject.getPropertyValue(soundTableSoundUuidPropertyName)
         if(soundFileUuidString == null) return null
         val soundFileUuid = UUID.fromString(soundFileUuidString)
-        val soundFileTableObject = DatabaseOperations.getObject(soundFileUuid)
-        return soundFileTableObject
+        return DatabaseOperations.getObject(soundFileUuid)
+    }
+
+    private suspend fun getImageFileTableObject(soundUuid: UUID) : TableObject?{
+        val soundTableObject = DatabaseOperations.getObject(soundUuid)
+        if(soundTableObject == null) return null
+        val imageFileUuidString = soundTableObject.getPropertyValue(soundTableImageUuidPropertyName)
+        if(imageFileUuidString == null) return null
+        val imageFileUuid = UUID.fromString(imageFileUuidString)
+        return DatabaseOperations.getObject(imageFileUuid)
     }
 }
 

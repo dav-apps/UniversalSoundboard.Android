@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.databinding.FragmentSoundListItemBinding
 import app.dav.universalsoundboard.models.Sound
 
@@ -40,6 +42,8 @@ class SoundListAdapter(
             binding.onClickListener = onClickListener
             binding.onLongClickListener = onLongClickListener
             binding.sound = item
+
+            if(item.image != null) binding.root.findViewById<ImageView>(R.id.sound_list_item_image).setImageBitmap(item.image)
         }
     }
 }
