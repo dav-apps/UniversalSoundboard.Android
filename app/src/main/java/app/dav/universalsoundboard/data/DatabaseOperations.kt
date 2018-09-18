@@ -56,6 +56,31 @@ object DatabaseOperations {
         if(!imageUuid.isNullOrEmpty()) soundTableObject.setPropertyValue(FileManager.soundTableImageUuidPropertyName, imageUuid!!)
         if(!categoryUuid.isNullOrEmpty()) soundTableObject.setPropertyValue(FileManager.soundTableCategoryUuidPropertyName, categoryUuid!!)
     }
+
+    suspend fun deleteSound(uuid: UUID){
+        val soundTableObject = Dav.Database.getTableObject(uuid).await()
+        if(soundTableObject == null) return
+        if(soundTableObject.tableId != FileManager.soundTableId) return
+
+        // Delete the sound file and the image file table objects
+        val soundFileUuidString = soundTableObject.getPropertyValue(FileManager.soundTableSoundUuidPropertyName)
+        val imageFileUuidString = soundTableObject.getPropertyValue(FileManager.soundTableImageUuidPropertyName)
+
+        if(soundFileUuidString != null){
+            val soundFileUuid = UUID.fromString(soundFileUuidString)
+            val soundFileTableObject = Dav.Database.getTableObject(soundFileUuid).await()
+            if(soundFileTableObject != null) soundFileTableObject.delete()
+        }
+
+        if(imageFileUuidString != null){
+            val imageFileUuuid = UUID.fromString(imageFileUuidString)
+            val imageFileTableObject = Dav.Database.getTableObject(imageFileUuuid).await()
+            if(imageFileTableObject != null) imageFileTableObject.delete()
+        }
+
+        // Delete the sound itself
+        soundTableObject.delete()
+    }
     // End Sound methods
 
     // SoundFile methods
