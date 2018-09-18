@@ -42,6 +42,20 @@ object DatabaseOperations {
     suspend fun getAllSounds() : ArrayList<TableObject>{
         return Dav.Database.getAllTableObjects(FileManager.soundTableId, false).await()
     }
+
+    suspend fun updateSound(uuid: UUID, name: String?, favourite: String?, soundUuid: String?, imageUuid: String?, categoryUuid: String?){
+        // Get the sound table object
+        val soundTableObject = Dav.Database.getTableObject(uuid).await()
+
+        if(soundTableObject == null) return
+        if(soundTableObject.tableId != FileManager.soundTableId) return
+
+        if(!name.isNullOrEmpty()) soundTableObject.setPropertyValue(FileManager.soundTableNamePropertyName, name!!)
+        if(!favourite.isNullOrEmpty()) soundTableObject.setPropertyValue(FileManager.soundTableFavouritePropertyName, favourite!!)
+        if(!soundUuid.isNullOrEmpty()) soundTableObject.setPropertyValue(FileManager.soundTableSoundUuidPropertyName, soundUuid!!)
+        if(!imageUuid.isNullOrEmpty()) soundTableObject.setPropertyValue(FileManager.soundTableImageUuidPropertyName, imageUuid!!)
+        if(!categoryUuid.isNullOrEmpty()) soundTableObject.setPropertyValue(FileManager.soundTableCategoryUuidPropertyName, categoryUuid!!)
+    }
     // End Sound methods
 
     // SoundFile methods
@@ -53,6 +67,21 @@ object DatabaseOperations {
         return Dav.Database.getAllTableObjects(FileManager.soundFileTableId, false).await()
     }
     // End SoundFile methods
+
+    // ImageFile methods
+    fun createImageFile(uuid: UUID, imageFile: File){
+        TableObject(uuid, FileManager.imageFileTableId, imageFile)
+    }
+
+    suspend fun updateImageFile(uuid: UUID, imageFile: File){
+        val imageFileTableObject = Dav.Database.getTableObject(uuid).await()
+
+        if(imageFileTableObject == null) return
+        if(imageFileTableObject.tableId != FileManager.imageFileTableId) return
+
+        imageFileTableObject.setFile(imageFile)
+    }
+    // End ImageFile methods
 
     // Category methods
     fun createCategory(uuid: UUID, name: String, icon: String){

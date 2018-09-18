@@ -114,6 +114,27 @@ object FileManager{
         return category
     }
 
+    suspend fun updateImageOfSound(soundUuid: UUID, imageFile: File){
+        val soundTableObject = DatabaseOperations.getObject(soundUuid)
+        if(soundTableObject == null || soundTableObject.tableId != soundTableId) return
+
+        val imageUuidString = soundTableObject.getPropertyValue(soundTableImageUuidPropertyName)
+        var imageUuid = UUID.randomUUID()
+
+        if(imageUuidString != null){
+            imageUuid = UUID.fromString(imageUuidString)
+
+            // Update the existing imageFile
+            DatabaseOperations.updateImageFile(imageUuid, imageFile)
+        }else{
+            // Create a new imageFile
+            DatabaseOperations.createImageFile(imageUuid, imageFile)
+            DatabaseOperations.updateSound(soundUuid, null, null, null, imageUuid.toString(), null)
+        }
+
+        // itemViewHolder.allSoundsChanged = true
+    }
+
     private suspend fun convertTableObjectToSound(tableObject: TableObject) : Sound?{
         if(tableObject.tableId != FileManager.soundTableId) return null
 

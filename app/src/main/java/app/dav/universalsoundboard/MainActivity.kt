@@ -27,7 +27,7 @@ import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
 
 
-const val REQUEST_FILE_GET = 1
+const val REQUEST_AUDIO_FILE_GET = 1
 
 class MainActivity : AppCompatActivity() {
 
@@ -54,7 +54,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.type = "audio/mpeg"
             if (intent.resolveActivity(packageManager) != null) {
-                startActivityForResult(intent, REQUEST_FILE_GET)
+                startActivityForResult(intent, REQUEST_AUDIO_FILE_GET)
             }
             fab_menu.close(true)
         }
@@ -113,12 +113,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode == REQUEST_FILE_GET && resultCode == Activity.RESULT_OK){
+        if(requestCode == REQUEST_AUDIO_FILE_GET && resultCode == Activity.RESULT_OK){
             val fileUri: Uri? = data?.data
 
             if(fileUri != null){
                 viewModel.copySoundFile(fileUri, application.contentResolver, cacheDir)
             }
         }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

@@ -1,12 +1,16 @@
 package app.dav.universalsoundboard.fragments
 
+import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
+import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -25,6 +29,8 @@ import kotlinx.coroutines.experimental.launch
  * A fragment representing a list of Items.
  */
 
+const val REQUEST_IMAGE_FILE_GET = 2
+
 class SoundFragment :
         Fragment(),
         SoundListAdapter.OnItemClickListener,
@@ -32,6 +38,7 @@ class SoundFragment :
 
     private var columnCount = 1
     private lateinit var viewModel: SoundViewModel
+    private var selectedSound: Sound? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,11 +85,48 @@ class SoundFragment :
     }
 
     override fun onItemClicked(sound: Sound) {
-        GlobalScope.launch { viewModel.onItemClicked(context!!, sound) }
+        GlobalScope.launch {
+            val uri = viewModel.getAudioFileUri(sound).await()
+
+            if(uri != null){
+                val mediaPlayer = MediaPlayer.create(context, uri)
+                mediaPlayer.start()
+            }
+        }
     }
 
     override fun onItemLongClicked(sound: Sound, item: View) {
-        viewModel.onItemLongClicked(context!!, sound, item)
+        selectedSound = sound
+
+        val menu = PopupMenu(context!!, item)
+        menu.inflate(R.menu.sound_item_context_menu)
+        menu.show()
+
+        menu.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.sound_item_context_menu_change_image -> changeSoundImage()
+                R.id.sound_item_context_menu_rename -> viewModel.renameSound(sound)
+                R.id.sound_item_context_menu_delete -> viewModel.deleteSound(sound)
+            }
+            true
+        }
+    }
+
+    fun changeSoundImage(){
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+        intent.type = "image/png"
+        startActivityForResult(intent, REQUEST_IMAGE_FILE_GET)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode == REQUEST_IMAGE_FILE_GET && resultCode == Activity.RESULT_OK){
+            val fileUri = data?.data
+
+            val contentResolver = activity?.contentResolver
+            val cacheDir = activity?.cacheDir
+            if(fileUri != null && contentResolver != null && cacheDir != null) viewModel.changeSoundImage(fileUri, contentResolver, selectedSound!!, cacheDir)
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     companion object {

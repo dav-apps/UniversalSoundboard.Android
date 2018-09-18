@@ -1,57 +1,66 @@
 package app.dav.universalsoundboard.viewmodels
 
 import android.arch.lifecycle.ViewModel
-import android.content.Context
-import android.media.MediaPlayer
+import android.content.ContentResolver
 import android.net.Uri
-import android.support.v7.widget.PopupMenu
-import android.view.View
-import app.dav.universalsoundboard.R
+import android.provider.OpenableColumns
 import app.dav.universalsoundboard.adapters.SoundListAdapter
+import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Sound
+import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
+import java.io.File
+import java.io.InputStream
 
 class SoundViewModel : ViewModel(){
 
     var soundListAdapter: SoundListAdapter? = null
 
-    suspend fun onItemClicked(context: Context, sound: Sound){
-        val uri: Uri? = GlobalScope.async {
+    suspend fun getAudioFileUri(sound: Sound) : Deferred<Uri?>{
+        return GlobalScope.async {
             val file = sound.getAudioFile()
             Uri.fromFile(file)
-        }.await()
-
-        if(uri != null){
-            val mediaPlayer = MediaPlayer.create(context, uri)
-            mediaPlayer.start()
         }
     }
 
-    fun onItemLongClicked(context: Context, sound: Sound, item: View){
-        val menu = PopupMenu(context, item)
-        menu.inflate(R.menu.sound_item_context_menu)
-        menu.show()
+    fun changeSoundImage(uri: Uri, contentResolver: ContentResolver, sound: Sound, cacheDir: File){
+        // Get the name of the file
+        val fileNameWithExt = uri.pathSegments.last().substringAfterLast("/")
+        var fileName = fileNameWithExt
 
-        menu.setOnMenuItemClickListener {
-            when(it.itemId){
-                R.id.sound_item_context_menu_change_image -> changeSoundImage()
-                R.id.sound_item_context_menu_rename -> renameSound()
-                R.id.sound_item_context_menu_delete -> deleteSound()
+        val cursor = contentResolver.query(uri, null, null, null, null)
+        try{
+            if(cursor.moveToFirst()){
+                fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
             }
-            true
+        }finally {
+            cursor.close()
         }
+        fileName = fileName.replaceAfterLast(".", "").dropLast(1)
+
+        val stream = contentResolver.openInputStream(uri)
+        val file = File(cacheDir.path + "/" + fileNameWithExt)
+        file.copyInputStreamToFile(stream)
+
+        // Create the imageFile table object and update the sound
+        GlobalScope.launch { FileManager.updateImageOfSound(sound.uuid, file) }
     }
 
-    fun changeSoundImage(){
+    fun renameSound(sound: Sound){
 
     }
 
-    fun renameSound(){
+    fun deleteSound(sound: Sound){
 
     }
 
-    fun deleteSound(){
-
+    fun File.copyInputStreamToFile(inputStream: InputStream) {
+        inputStream.use { input ->
+            this.outputStream().use { fileOut ->
+                input.copyTo(fileOut)
+            }
+        }
     }
 }
