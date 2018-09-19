@@ -58,7 +58,7 @@ object FileManager{
         DatabaseOperations.createSoundFile(soundFileUuid, audioFile)
 
         DatabaseOperations.createSound(newUuid, name, soundFileUuid.toString(), categoryUuidString)
-        itemViewHolder.addSound(Sound(newUuid, name, categoryUuid, false, null))
+        GlobalScope.launch(Dispatchers.Main) { itemViewHolder.loadSounds() }
     }
 
     suspend fun getAllSounds() : ArrayList<Sound>{
@@ -77,7 +77,7 @@ object FileManager{
         val sounds = ArrayList<Sound>()
 
         for(sound in getAllSounds()){
-            if(sound.category == categoryUuid){
+            if(sound.category?.uuid == categoryUuid){
                 sounds.add(sound)
             }
         }
@@ -145,7 +145,7 @@ object FileManager{
 
         DatabaseOperations.createCategory(newUuid, name, icon)
         val category = Category(newUuid, name, icon)
-        itemViewHolder.addCategory(category)
+        itemViewHolder.loadCategories()
         return category
     }
 
@@ -165,7 +165,9 @@ object FileManager{
         // Get category
         val categoryUuidString = tableObject.getPropertyValue(soundTableCategoryUuidPropertyName)
         if(categoryUuidString != null){
-            sound.category = UUID.fromString(categoryUuidString)
+            val categoryUuid = UUID.fromString(categoryUuidString)
+            val category = getCategory(categoryUuid)
+            if(category != null) sound.category = category
         }
 
         // Get image
@@ -244,29 +246,6 @@ class ItemViewHolder(){
 
     fun setTitle(value: String){
         titleData.value = value
-    }
-
-    fun addSound(sound: Sound){
-        if(currentCategory == Category.allSoundsCategory.uuid
-                || currentCategory == sound.category) {
-            val sounds = soundsData.value
-            if(sounds != null){
-                sounds.add(sound)
-
-                // Set the value of soundsData
-                soundsData.value = sounds
-            }
-        }
-    }
-
-    fun addCategory(category: Category){
-        val categories = categoriesData.value
-        if(categories != null){
-            categories.add(category)
-
-            // Set the value of categoriesData
-            categoriesData.value = categories
-        }
     }
 
     suspend fun loadSounds(){
