@@ -1,6 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#2e7d32</color>
+    <color name="colorPrimaryLight">#60ad5e</color>
+    <color name="colorPrimaryDark">#005005</color>
+    <color name="colorSecondary">#dd2c00</color>
+    <color name="colorSecondaryLight">#ff6434</color>
+    <color name="colorSecondaryDark">#a30000</color>
+    <color name="colorFabNormal">@color/colorSecondary</color>
+    <color name="colorFabPressed">@color/colorSecondaryLight</color>
+    <!-- Blau Lila
+    <color name="colorPrimary">#1565c0</color>
+    <color name="colorPrimaryLight">#5e92f3</color>
+    <color name="colorPrimaryDark">#003c8f</color>
+    <color name="colorSecondary">#9c27b0</color>
+    <color name="colorSecondaryLight">#d05ce3</color>
+    <color name="colorSecondaryDark">#6a0080</color>
+    <color name="colorFabNormal">@color/colorSecondary</color>
+    <color name="colorFabPressed">@color/colorSecondaryLight</color>
+    -->
+    <!-- Blau Rot
+    <color name="colorPrimary">#3f51b5</color>
+    <color name="colorPrimaryLight">#757de8</color>
+    <color name="colorPrimaryDark">#002984</color>
+    <color name="colorSecondary">#bf360c</color>
+    <color name="colorSecondaryLight">#f9683a</color>
+    <color name="colorSecondaryDark">#870000</color>
+    <color name="colorFabNormal">@color/colorSecondary</color>
+    <color name="colorFabPressed">@color/colorSecondaryLight</color>
+    -->
+    <!-- Lila Rot
+    <color name="colorPrimary">#512da8</color>
+    <color name="colorPrimaryLight">#8559da</color>
+    <color name="colorPrimaryDark">#140078</color>
+    <color name="colorSecondary">#ad1457</color>
+    <color name="colorSecondaryLight">#e35183</color>
+    <color name="colorSecondaryDark">#78002e</color>
+    <color name="colorFabNormal">@color/colorSecondary</color>
+    <color name="colorFabPressed">@color/colorSecondaryLight</color>
+    -->
 </resources>

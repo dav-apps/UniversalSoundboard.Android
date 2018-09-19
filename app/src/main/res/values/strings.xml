@@ -3,9 +3,10 @@
     <string name="all_sounds">All Sounds</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_settings">Settings</string>
-    <string name="sound_list_item_image_description">Image of the sound</string>
+    <string name="action_edit_category">Edit category</string>
+    <string name="action_delete_category">Delete category</string>
     <string name="dialog_negative_button">Cancel</string>
+    <string name="sound_list_item_image_description">Image of the sound</string>
     <string name="category_list_item_icon_description">Icon of the category</string>
     <string name="create_category_dialog_title">New Category</string>
     <string name="create_category_dialog_name_edittext_hint">Name</string>
