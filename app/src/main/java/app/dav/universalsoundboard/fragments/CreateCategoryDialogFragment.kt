@@ -45,7 +45,7 @@ class CreateCategoryDialogFragment : DialogFragment() {
                         FileManager.addCategory(null, nameEditText.text.toString(), Category.convertIconResourceIdToString(spinner.selectedItem as Int))
                     }
                 })
-                .setNegativeButton(R.string.create_category_dialog_negative_button_text, null)
+                .setNegativeButton(R.string.dialog_negative_button, null)
                 .create()
         alertDialog.show()
 

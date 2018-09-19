@@ -5,11 +5,14 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>
     <string name="sound_list_item_image_description">Image of the sound</string>
+    <string name="dialog_negative_button">Cancel</string>
     <string name="category_list_item_icon_description">Icon of the category</string>
     <string name="create_category_dialog_title">New Category</string>
     <string name="create_category_dialog_name_edittext_hint">Name</string>
     <string name="create_category_dialog_positive_button_text">Save</string>
-    <string name="create_category_dialog_negative_button_text">Cancel</string>
+    <string name="delete_sound_dialog_title">Delete %1$s</string>
+    <string name="delete_sound_dialog_message">Are you sure?</string>
+    <string name="delete_sound_dialog_positive_button_text">Delete</string>
     <string name="sound_item_context_menu_change_image">Change image</string>
     <string name="sound_item_context_menu_rename">Rename</string>
     <string name="sound_item_context_menu_delete">Delete</string>

@@ -106,7 +106,7 @@ class SoundFragment :
             when(it.itemId){
                 R.id.sound_item_context_menu_change_image -> changeSoundImage()
                 R.id.sound_item_context_menu_rename -> viewModel.renameSound(sound)
-                R.id.sound_item_context_menu_delete -> viewModel.deleteSound(sound)
+                R.id.sound_item_context_menu_delete -> deleteSound(sound)
             }
             true
         }
@@ -116,6 +116,15 @@ class SoundFragment :
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         intent.type = "image/png"
         startActivityForResult(intent, REQUEST_IMAGE_FILE_GET)
+    }
+
+    fun deleteSound(sound: Sound){
+        val fragmentManager = activity?.fragmentManager
+        if(fragmentManager != null){
+            val fragment = DeleteSoundDialogFragment()
+            fragment.sound = sound
+            fragment.show(fragmentManager, "delete_sound")
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

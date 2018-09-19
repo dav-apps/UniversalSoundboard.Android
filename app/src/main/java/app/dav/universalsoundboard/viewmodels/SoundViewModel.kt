@@ -52,10 +52,6 @@ class SoundViewModel : ViewModel(){
 
     }
 
-    fun deleteSound(sound: Sound){
-        FileManager.deleteSound(sound.uuid)
-    }
-
     fun File.copyInputStreamToFile(inputStream: InputStream) {
         inputStream.use { input ->
             this.outputStream().use { fileOut ->
