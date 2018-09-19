@@ -25,7 +25,7 @@ class CreateCategoryDialogFragment : DialogFragment() {
         return createDialog()
     }
 
-    fun createDialog() : AlertDialog{
+    private fun createDialog() : AlertDialog{
         val layout = activity.layoutInflater.inflate(R.layout.dialog_create_category, null)
         val spinner = layout.findViewById<Spinner>(R.id.create_category_dialog_icon_spinner)
         val nameEditText = layout.findViewById<EditText>(R.id.create_category_dialog_name_edittext)
@@ -39,7 +39,8 @@ class CreateCategoryDialogFragment : DialogFragment() {
         // Select a random icon
         spinner.setSelection(Random().nextInt(resourcesArray.size))
 
-        val alertDialog =  AlertDialog.Builder(activity).setView(layout)
+        val alertDialog =  AlertDialog.Builder(activity)
+                .setView(layout)
                 .setPositiveButton(R.string.create_category_dialog_positive_button_text, DialogInterface.OnClickListener{ dialog, which ->
                     GlobalScope.launch(Dispatchers.Main) {
                         FileManager.addCategory(null, nameEditText.text.toString(), Category.convertIconResourceIdToString(spinner.selectedItem as Int))
@@ -52,7 +53,7 @@ class CreateCategoryDialogFragment : DialogFragment() {
         val positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
         positiveButton.isEnabled = false
 
-        // Disable the positive button when no name was entered
+        // Disable the positive button when the name is too short
         nameEditText.addTextChangedListener(object : TextWatcher{
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 

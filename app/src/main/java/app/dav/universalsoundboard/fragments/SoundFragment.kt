@@ -105,20 +105,29 @@ class SoundFragment :
         menu.setOnMenuItemClickListener {
             when(it.itemId){
                 R.id.sound_item_context_menu_change_image -> changeSoundImage()
-                R.id.sound_item_context_menu_rename -> viewModel.renameSound(sound)
+                R.id.sound_item_context_menu_rename -> renameSound(sound)
                 R.id.sound_item_context_menu_delete -> deleteSound(sound)
             }
             true
         }
     }
 
-    fun changeSoundImage(){
+    private fun changeSoundImage(){
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
         intent.type = "image/png"
         startActivityForResult(intent, REQUEST_IMAGE_FILE_GET)
     }
 
-    fun deleteSound(sound: Sound){
+    private fun renameSound(sound: Sound){
+        val fragmentManager = activity?.fragmentManager
+        if(fragmentManager != null){
+            val fragment = RenameSoundDialogFragment()
+            fragment.sound = sound
+            fragment.show(fragmentManager, "rename_sound")
+        }
+    }
+
+    private fun deleteSound(sound: Sound){
         val fragmentManager = activity?.fragmentManager
         if(fragmentManager != null){
             val fragment = DeleteSoundDialogFragment()

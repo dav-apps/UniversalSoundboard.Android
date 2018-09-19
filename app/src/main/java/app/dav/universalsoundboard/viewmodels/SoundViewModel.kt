@@ -48,10 +48,6 @@ class SoundViewModel : ViewModel(){
         GlobalScope.launch { FileManager.updateImageOfSound(sound.uuid, file) }
     }
 
-    fun renameSound(sound: Sound){
-
-    }
-
     fun File.copyInputStreamToFile(inputStream: InputStream) {
         inputStream.use { input ->
             this.outputStream().use { fileOut ->
