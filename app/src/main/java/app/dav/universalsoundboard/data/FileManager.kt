@@ -106,9 +106,18 @@ object FileManager{
         GlobalScope.launch(Dispatchers.Main) { itemViewHolder.loadSounds() }
     }
 
+    fun renameSound(uuid: UUID, newName: String){
+        GlobalScope.launch(Dispatchers.Main) {
+            DatabaseOperations.updateSound(uuid, newName, null, null, null, null)
+            itemViewHolder.loadSounds()
+        }
+    }
+
     fun deleteSound(uuid: UUID){
-        GlobalScope.launch { DatabaseOperations.deleteSound(uuid) }
-        GlobalScope.launch(Dispatchers.Main) { itemViewHolder.loadSounds() }
+        GlobalScope.launch(Dispatchers.Main) {
+            DatabaseOperations.deleteSound(uuid)
+            itemViewHolder.loadSounds()
+        }
     }
 
     suspend fun getAllCategories() : ArrayList<Category>{

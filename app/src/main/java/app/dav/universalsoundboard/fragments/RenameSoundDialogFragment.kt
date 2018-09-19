@@ -9,6 +9,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import app.dav.universalsoundboard.R
+import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Sound
 
 class RenameSoundDialogFragment : DialogFragment() {
@@ -30,7 +31,7 @@ class RenameSoundDialogFragment : DialogFragment() {
                 .setPositiveButton(R.string.rename_sound_dialog_positive_button_text, DialogInterface.OnClickListener { dialog, which ->
                     val s = sound
                     if(s != null){
-                        //FileManager.renameSound()
+                        FileManager.renameSound(s.uuid, nameEditText.text.toString())
                     }
                 })
                 .setNegativeButton(R.string.dialog_negative_button, null)
