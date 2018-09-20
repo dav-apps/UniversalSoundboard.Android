@@ -46,7 +46,7 @@ class SoundViewModel : ViewModel(){
         GlobalScope.launch(Dispatchers.Main) { FileManager.updateImageOfSound(sound.uuid, file) }
     }
 
-    fun File.copyInputStreamToFile(inputStream: InputStream) {
+    private fun File.copyInputStreamToFile(inputStream: InputStream) {
         inputStream.use { input ->
             this.outputStream().use { fileOut ->
                 input.copyTo(fileOut)

@@ -10,9 +10,11 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import app.dav.davandroidlibrary.Dav
+import app.dav.universalsoundboard.adapters.CategoryListAdapter
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.fragments.CategoryDialogFragment
 import app.dav.universalsoundboard.fragments.DeleteCategoryDialogFragment
@@ -30,8 +32,7 @@ import kotlinx.coroutines.experimental.launch
 
 const val REQUEST_AUDIO_FILE_GET = 1
 
-class MainActivity : AppCompatActivity() {
-
+class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListener {
     private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     fun init(){
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         Dav.init(this, FileManager.getDavDataPath(filesDir.path).path + "/")
+        viewModel.categoryListAdapter = CategoryListAdapter(this)
 
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
@@ -73,17 +75,10 @@ class MainActivity : AppCompatActivity() {
         category_list.layoutManager = LinearLayoutManager(this)
         category_list.adapter = viewModel.categoryListAdapter
 
-        viewModel.closeDrawer.observe(this, Observer {
-            if(it != null && it){
-                drawer_layout.closeDrawers()
-                viewModel.drawerClosed()
-            }
-        })
-
         GlobalScope.launch(Dispatchers.Main) { FileManager.itemViewHolder.loadCategories() }
         FileManager.itemViewHolder.categories.observe(this, Observer {
-            if(it != null) viewModel.categoryListAdapter.submitList(it)
-            viewModel.categoryListAdapter.notifyDataSetChanged()
+            if(it != null) viewModel.categoryListAdapter?.submitList(it)
+            viewModel.categoryListAdapter?.notifyDataSetChanged()
         })
 
         supportFragmentManager.beginTransaction().add(R.id.fragment_container, SoundFragment.newInstance(1)).commit()
@@ -100,6 +95,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
+        setCategoryIconsVisibility()
         return true
     }
 
@@ -137,5 +133,23 @@ class MainActivity : AppCompatActivity() {
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onItemClicked(category: Category) {
+        drawer_layout.closeDrawers()
+
+        GlobalScope.launch(Dispatchers.Main) {
+            FileManager.showCategory(category)
+            setCategoryIconsVisibility()
+        }
+    }
+
+    private fun setCategoryIconsVisibility(){
+        val editCategoryItem = toolbar.menu.findItem(R.id.action_edit_category)
+        val deleteCategoryItem = toolbar.menu.findItem(R.id.action_delete_category)
+        val isVisible = FileManager.itemViewHolder.currentCategory != Category.allSoundsCategory.uuid
+        Log.d("onItemClicked", "isVisible: $isVisible")
+        editCategoryItem.isVisible = isVisible
+        deleteCategoryItem.isVisible = isVisible
     }
 }
