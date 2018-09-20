@@ -3,12 +3,12 @@ package app.dav.universalsoundboard.fragments
 import android.app.AlertDialog
 import android.app.Dialog
 import android.app.DialogFragment
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.Spinner
+import android.widget.TextView
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Category
@@ -20,15 +20,18 @@ import kotlinx.coroutines.experimental.launch
 import java.util.*
 
 
-class CreateCategoryDialogFragment : DialogFragment() {
+class CategoryDialogFragment : DialogFragment() {
+    var category: Category? = null
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return createDialog()
     }
 
     private fun createDialog() : AlertDialog{
-        val layout = activity.layoutInflater.inflate(R.layout.dialog_create_category, null)
+        val layout = activity.layoutInflater.inflate(R.layout.dialog_category, null)
         val spinner = layout.findViewById<Spinner>(R.id.create_category_dialog_icon_spinner)
         val nameEditText = layout.findViewById<EditText>(R.id.create_category_dialog_name_edittext)
+        val titleTextView = layout.findViewById<TextView>(R.id.create_category_dialog_title_textview)
 
         // Create the spinner list
         val resourcesArray: Array<Int> = Category.getIconResourceIds()
@@ -36,22 +39,42 @@ class CreateCategoryDialogFragment : DialogFragment() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 
-        // Select a random icon
-        spinner.setSelection(Random().nextInt(resourcesArray.size))
+        val c = category
+        if(c != null){
+            val i = Category.convertStringToIconResourceId(c.icon)
+            val position = resourcesArray.indexOf(i)
+
+            spinner.setSelection(position)
+
+            // Set the title
+            titleTextView.setText(R.string.edit_category_dialog_title)
+
+            // Set the editText
+            nameEditText.setText(c.name)
+        }else{
+            // Select a random icon
+            spinner.setSelection(Random().nextInt(resourcesArray.size))
+        }
 
         val alertDialog =  AlertDialog.Builder(activity)
                 .setView(layout)
-                .setPositiveButton(R.string.create_category_dialog_positive_button_text, DialogInterface.OnClickListener{ dialog, which ->
-                    GlobalScope.launch(Dispatchers.Main) {
-                        FileManager.addCategory(null, nameEditText.text.toString(), Category.convertIconResourceIdToString(spinner.selectedItem as Int))
+                .setPositiveButton(R.string.create_category_dialog_positive_button_text) { dialog, which ->
+                    if(c != null){
+                        GlobalScope.launch(Dispatchers.Main) {
+                            FileManager.updateCategory(c.uuid, nameEditText.text.toString(), Category.convertIconResourceIdToString(spinner.selectedItem as Int))
+                        }
+                    }else{
+                        GlobalScope.launch(Dispatchers.Main) {
+                            FileManager.addCategory(null, nameEditText.text.toString(), Category.convertIconResourceIdToString(spinner.selectedItem as Int))
+                        }
                     }
-                })
+                }
                 .setNegativeButton(R.string.dialog_negative_button, null)
                 .create()
         alertDialog.show()
 
         val positiveButton = alertDialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        positiveButton.isEnabled = false
+        positiveButton.isEnabled = category != null
 
         // Disable the positive button when the name is too short
         nameEditText.addTextChangedListener(object : TextWatcher{

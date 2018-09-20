@@ -11,6 +11,7 @@
     <string name="create_category_dialog_title">New Category</string>
     <string name="create_category_dialog_name_edittext_hint">Name</string>
     <string name="create_category_dialog_positive_button_text">Save</string>
+    <string name="edit_category_dialog_title">Edit Category</string>
     <string name="delete_sound_dialog_title">Delete %1$s</string>
     <string name="delete_sound_dialog_message">Are you sure?</string>
     <string name="delete_sound_dialog_positive_button_text">Delete</string>
