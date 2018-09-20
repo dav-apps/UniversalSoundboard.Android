@@ -6,10 +6,6 @@ import android.graphics.BitmapFactory
 import app.dav.davandroidlibrary.data.TableObject
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.Sound
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.android.Main
-import kotlinx.coroutines.experimental.launch
 import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
@@ -39,13 +35,13 @@ object FileManager{
 
     val itemViewHolder: ItemViewHolder = ItemViewHolder(title = "All Sounds")
 
-    fun showCategory(category: Category){
+    suspend fun showCategory(category: Category){
         itemViewHolder.currentCategory = category.uuid
         itemViewHolder.setTitle(category.name)
-        GlobalScope.launch(Dispatchers.Main) { itemViewHolder.loadSounds() }
+        itemViewHolder.loadSounds()
     }
 
-    fun addSound(uuid: UUID?, name: String, categoryUuid: UUID?, audioFile: File){
+    suspend fun addSound(uuid: UUID?, name: String, categoryUuid: UUID?, audioFile: File){
         // Generate a new uuid if necessary
         val newUuid: UUID = if(uuid == null) UUID.randomUUID() else uuid
 
@@ -58,7 +54,7 @@ object FileManager{
         DatabaseOperations.createSoundFile(soundFileUuid, audioFile)
 
         DatabaseOperations.createSound(newUuid, name, soundFileUuid.toString(), categoryUuidString)
-        GlobalScope.launch(Dispatchers.Main) { itemViewHolder.loadSounds() }
+        itemViewHolder.loadSounds()
     }
 
     suspend fun getAllSounds() : ArrayList<Sound>{
@@ -103,21 +99,17 @@ object FileManager{
             DatabaseOperations.updateSound(soundUuid, null, null, null, imageUuid.toString(), null)
         }
 
-        GlobalScope.launch(Dispatchers.Main) { itemViewHolder.loadSounds() }
+        itemViewHolder.loadSounds()
     }
 
-    fun renameSound(uuid: UUID, newName: String){
-        GlobalScope.launch(Dispatchers.Main) {
-            DatabaseOperations.updateSound(uuid, newName, null, null, null, null)
-            itemViewHolder.loadSounds()
-        }
+    suspend fun renameSound(uuid: UUID, newName: String){
+        DatabaseOperations.updateSound(uuid, newName, null, null, null, null)
+        itemViewHolder.loadSounds()
     }
 
-    fun deleteSound(uuid: UUID){
-        GlobalScope.launch(Dispatchers.Main) {
-            DatabaseOperations.deleteSound(uuid)
-            itemViewHolder.loadSounds()
-        }
+    suspend fun deleteSound(uuid: UUID){
+        DatabaseOperations.deleteSound(uuid)
+        itemViewHolder.loadSounds()
     }
 
     suspend fun getAllCategories() : ArrayList<Category>{
@@ -144,9 +136,15 @@ object FileManager{
         if(DatabaseOperations.getObject(newUuid) != null) return null
 
         DatabaseOperations.createCategory(newUuid, name, icon)
-        val category = Category(newUuid, name, icon)
         itemViewHolder.loadCategories()
+        val category = Category(newUuid, name, icon)
         return category
+    }
+
+    suspend fun updateCategory(uuid: UUID, name: String, icon: String){
+        DatabaseOperations.updateCategory(uuid, name, icon)
+        itemViewHolder.setTitle(name)
+        itemViewHolder.loadCategories()
     }
 
     private suspend fun convertTableObjectToSound(tableObject: TableObject) : Sound?{

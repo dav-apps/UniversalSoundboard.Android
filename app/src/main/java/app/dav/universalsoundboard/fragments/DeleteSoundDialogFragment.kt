@@ -8,6 +8,10 @@ import android.os.Bundle
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Sound
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.launch
 
 class DeleteSoundDialogFragment : DialogFragment() {
     var sound: Sound? = null
@@ -23,7 +27,9 @@ class DeleteSoundDialogFragment : DialogFragment() {
                 .setPositiveButton(R.string.delete_sound_dialog_positive_button_text, DialogInterface.OnClickListener{ dialog, which ->
                     val s = sound
                     if(s != null){
-                        FileManager.deleteSound(s.uuid)
+                        GlobalScope.launch(Dispatchers.Main) {
+                            FileManager.deleteSound(s.uuid)
+                        }
                     }
                 })
                 .setNegativeButton(R.string.dialog_negative_button, null)

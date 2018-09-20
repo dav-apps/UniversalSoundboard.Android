@@ -7,10 +7,8 @@ import android.provider.OpenableColumns
 import app.dav.universalsoundboard.adapters.SoundListAdapter
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Sound
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.android.Main
 import java.io.File
 import java.io.InputStream
 
@@ -45,7 +43,7 @@ class SoundViewModel : ViewModel(){
         file.copyInputStreamToFile(stream)
 
         // Create the imageFile table object and update the sound
-        GlobalScope.launch { FileManager.updateImageOfSound(sound.uuid, file) }
+        GlobalScope.launch(Dispatchers.Main) { FileManager.updateImageOfSound(sound.uuid, file) }
     }
 
     fun File.copyInputStreamToFile(inputStream: InputStream) {

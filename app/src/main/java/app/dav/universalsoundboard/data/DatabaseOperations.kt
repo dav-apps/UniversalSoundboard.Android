@@ -14,7 +14,7 @@ object DatabaseOperations {
     // End General methods
 
     // Sound methods
-    fun createSound(uuid: UUID, name: String, soundUuid: String, categoryUuid: String){
+    suspend fun createSound(uuid: UUID, name: String, soundUuid: String, categoryUuid: String){
         // Create the properties of the table object
         val nameProperty = Property()
         nameProperty.name = FileManager.soundTableNamePropertyName
@@ -36,7 +36,7 @@ object DatabaseOperations {
             properties.add(categoryProperty)
         }
 
-        TableObject(uuid, FileManager.soundTableId, properties)
+        TableObject.create(uuid, FileManager.soundTableId, properties)
     }
 
     suspend fun getAllSounds() : ArrayList<TableObject>{
@@ -84,8 +84,8 @@ object DatabaseOperations {
     // End Sound methods
 
     // SoundFile methods
-    fun createSoundFile(uuid: UUID, audioFile: File){
-        TableObject(uuid, FileManager.soundFileTableId, audioFile)
+    suspend fun createSoundFile(uuid: UUID, audioFile: File){
+        TableObject.create(uuid, FileManager.soundFileTableId, audioFile)
     }
 
     suspend fun getAllSoundFiles() : ArrayList<TableObject>{
@@ -94,14 +94,12 @@ object DatabaseOperations {
     // End SoundFile methods
 
     // ImageFile methods
-    fun createImageFile(uuid: UUID, imageFile: File){
-        TableObject(uuid, FileManager.imageFileTableId, imageFile)
+    suspend fun createImageFile(uuid: UUID, imageFile: File){
+        TableObject.create(uuid, FileManager.imageFileTableId, imageFile)
     }
 
     suspend fun updateImageFile(uuid: UUID, imageFile: File){
-        val imageFileTableObject = Dav.Database.getTableObject(uuid).await()
-
-        if(imageFileTableObject == null) return
+        val imageFileTableObject = Dav.Database.getTableObject(uuid).await() ?: return
         if(imageFileTableObject.tableId != FileManager.imageFileTableId) return
 
         imageFileTableObject.setFile(imageFile)
@@ -109,7 +107,7 @@ object DatabaseOperations {
     // End ImageFile methods
 
     // Category methods
-    fun createCategory(uuid: UUID, name: String, icon: String){
+    suspend fun createCategory(uuid: UUID, name: String, icon: String){
         val nameProperty = Property()
         nameProperty.name = FileManager.categoryTableNamePropertyName
         nameProperty.value = name
@@ -119,7 +117,15 @@ object DatabaseOperations {
         iconProperty.value = icon
 
         val properties = arrayListOf(nameProperty, iconProperty)
-        TableObject(uuid, FileManager.categoryTableId, properties)
+        TableObject.create(uuid, FileManager.categoryTableId, properties)
+    }
+
+    suspend fun updateCategory(uuid: UUID, name: String?, icon: String?){
+        val categoryTableObject = getObject(uuid) ?: return
+        if(categoryTableObject.tableId != FileManager.categoryTableId) return
+
+        if(!name.isNullOrEmpty()) categoryTableObject.setPropertyValue(FileManager.categoryTableNamePropertyName, name!!)
+        if(!icon.isNullOrEmpty()) categoryTableObject.setPropertyValue(FileManager.categoryTableIconPropertyName, icon!!)
     }
 
     suspend fun getAllCategories() : ArrayList<TableObject>{

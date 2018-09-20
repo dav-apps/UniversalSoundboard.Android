@@ -11,6 +11,10 @@ import android.widget.EditText
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Sound
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.launch
 
 class RenameSoundDialogFragment : DialogFragment() {
     var sound: Sound? = null
@@ -31,7 +35,7 @@ class RenameSoundDialogFragment : DialogFragment() {
                 .setPositiveButton(R.string.rename_sound_dialog_positive_button_text, DialogInterface.OnClickListener { dialog, which ->
                     val s = sound
                     if(s != null){
-                        FileManager.renameSound(s.uuid, nameEditText.text.toString())
+                        GlobalScope.launch(Dispatchers.Main) { FileManager.renameSound(s.uuid, nameEditText.text.toString()) }
                     }
                 })
                 .setNegativeButton(R.string.dialog_negative_button, null)

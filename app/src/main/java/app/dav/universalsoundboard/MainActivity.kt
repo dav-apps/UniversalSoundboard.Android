@@ -14,7 +14,7 @@ import android.view.Menu
 import android.view.MenuItem
 import app.dav.davandroidlibrary.Dav
 import app.dav.universalsoundboard.data.FileManager
-import app.dav.universalsoundboard.fragments.CreateCategoryDialogFragment
+import app.dav.universalsoundboard.fragments.CategoryDialogFragment
 import app.dav.universalsoundboard.fragments.SoundFragment
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.viewmodels.MainViewModel
@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
 
         fab_menu_new_category.setOnClickListener{
             fab_menu.close(true)
-            CreateCategoryDialogFragment().show(fragmentManager, "create_category")
+            CategoryDialogFragment().show(fragmentManager, "create_category")
         }
 
         // Bind the itemViewHolder properties to the UI
@@ -107,7 +107,14 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
-            R.id.action_edit_category -> return true
+            R.id.action_edit_category -> {
+                GlobalScope.launch(Dispatchers.Main) {
+                    val fragment = CategoryDialogFragment()
+                    fragment.category = FileManager.getCategory(FileManager.itemViewHolder.currentCategory)
+                    fragment.show(fragmentManager, "edit_category")
+                }
+                return true
+            }
             R.id.action_delete_category -> return true
             else -> return super.onOptionsItemSelected(item)
         }

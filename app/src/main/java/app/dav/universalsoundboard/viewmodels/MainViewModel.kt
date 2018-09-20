@@ -9,6 +9,10 @@ import android.provider.OpenableColumns
 import app.dav.universalsoundboard.adapters.CategoryListAdapter
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Category
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.launch
 import java.io.File
 import java.io.InputStream
 import java.util.*
@@ -24,7 +28,7 @@ class MainViewModel :
         get() = closeDrawerData
 
     override fun onItemClicked(category: Category) {
-        FileManager.showCategory(category)
+        GlobalScope.launch(Dispatchers.Main) { FileManager.showCategory(category) }
         closeDrawerData.value = true
     }
 
@@ -55,7 +59,7 @@ class MainViewModel :
         val currentCategory = FileManager.itemViewHolder.currentCategory
         val category: UUID? = if(currentCategory == Category.allSoundsCategory.uuid) null else currentCategory
 
-        FileManager.addSound(null, fileName, category, file)
+        GlobalScope.launch(Dispatchers.Main) { FileManager.addSound(null, fileName, category, file) }
     }
 
     fun File.copyInputStreamToFile(inputStream: InputStream) {
