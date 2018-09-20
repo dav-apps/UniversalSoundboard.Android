@@ -10,7 +10,6 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import app.dav.davandroidlibrary.Dav
@@ -55,6 +54,7 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
 
         fab_menu_new_sound.setOnClickListener{
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             intent.type = "audio/mpeg"
             if (intent.resolveActivity(packageManager) != null) {
                 startActivityForResult(intent, REQUEST_AUDIO_FILE_GET)
@@ -127,9 +127,18 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode == REQUEST_AUDIO_FILE_GET && resultCode == Activity.RESULT_OK){
             val fileUri: Uri? = data?.data
+            val clipData = data?.clipData
 
-            if(fileUri != null){
-                viewModel.copySoundFile(fileUri, application.contentResolver, cacheDir)
+            GlobalScope.launch(Dispatchers.Main) {
+                if(fileUri != null){
+                    // One file selected
+                    viewModel.copySoundFile(fileUri, application.contentResolver, cacheDir)
+                }else if(clipData != null){
+                    // Multiple files selected
+                    for(i in 0 until clipData.itemCount){
+                        viewModel.copySoundFile(clipData.getItemAt(i).uri, application.contentResolver, cacheDir)
+                    }
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
@@ -148,7 +157,6 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
         val editCategoryItem = toolbar.menu.findItem(R.id.action_edit_category)
         val deleteCategoryItem = toolbar.menu.findItem(R.id.action_delete_category)
         val isVisible = FileManager.itemViewHolder.currentCategory != Category.allSoundsCategory.uuid
-        Log.d("onItemClicked", "isVisible: $isVisible")
         editCategoryItem.isVisible = isVisible
         deleteCategoryItem.isVisible = isVisible
     }
