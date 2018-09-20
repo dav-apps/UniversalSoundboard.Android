@@ -147,6 +147,11 @@ object FileManager{
         itemViewHolder.loadCategories()
     }
 
+    suspend fun deleteCategory(uuid: UUID){
+        DatabaseOperations.deleteCategory(uuid)
+        itemViewHolder.loadCategories()
+    }
+
     private suspend fun convertTableObjectToSound(tableObject: TableObject) : Sound?{
         if(tableObject.tableId != FileManager.soundTableId) return null
 

@@ -18,6 +18,9 @@
     <string name="rename_sound_dialog_title">Rename</string>
     <string name="rename_sound_dialog_name_edittext_hint">Name</string>
     <string name="rename_sound_dialog_positive_button_text">Save</string>
+    <string name="delete_category_dialog_title">Delete category %1$s</string>
+    <string name="delete_category_dialog_message">Are you sure?  Your Sounds are not impacted.</string>
+    <string name="delete_category_dialog_positive_button_text">Delete</string>
     <string name="sound_item_context_menu_change_image">Change image</string>
     <string name="sound_item_context_menu_rename">Rename</string>
     <string name="sound_item_context_menu_delete">Delete</string>

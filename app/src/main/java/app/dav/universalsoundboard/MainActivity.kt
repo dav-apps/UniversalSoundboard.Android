@@ -15,6 +15,7 @@ import android.view.MenuItem
 import app.dav.davandroidlibrary.Dav
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.fragments.CategoryDialogFragment
+import app.dav.universalsoundboard.fragments.DeleteCategoryDialogFragment
 import app.dav.universalsoundboard.fragments.SoundFragment
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.viewmodels.MainViewModel
@@ -115,7 +116,14 @@ class MainActivity : AppCompatActivity() {
                 }
                 return true
             }
-            R.id.action_delete_category -> return true
+            R.id.action_delete_category -> {
+                GlobalScope.launch(Dispatchers.Main) {
+                    val fragment = DeleteCategoryDialogFragment()
+                    fragment.category = FileManager.getCategory(FileManager.itemViewHolder.currentCategory)
+                    fragment.show(fragmentManager, "delete_category")
+                }
+                return true
+            }
             else -> return super.onOptionsItemSelected(item)
         }
     }

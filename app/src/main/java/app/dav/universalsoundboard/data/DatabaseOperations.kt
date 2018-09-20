@@ -58,8 +58,7 @@ object DatabaseOperations {
     }
 
     suspend fun deleteSound(uuid: UUID){
-        val soundTableObject = Dav.Database.getTableObject(uuid).await()
-        if(soundTableObject == null) return
+        val soundTableObject = Dav.Database.getTableObject(uuid).await() ?: return
         if(soundTableObject.tableId != FileManager.soundTableId) return
 
         // Delete the sound file and the image file table objects
@@ -126,6 +125,12 @@ object DatabaseOperations {
 
         if(!name.isNullOrEmpty()) categoryTableObject.setPropertyValue(FileManager.categoryTableNamePropertyName, name!!)
         if(!icon.isNullOrEmpty()) categoryTableObject.setPropertyValue(FileManager.categoryTableIconPropertyName, icon!!)
+    }
+
+    suspend fun deleteCategory(uuid: UUID){
+        val categoryTableObject = getObject(uuid) ?: return
+        if(categoryTableObject.tableId != FileManager.categoryTableId) return
+        categoryTableObject.delete()
     }
 
     suspend fun getAllCategories() : ArrayList<TableObject>{

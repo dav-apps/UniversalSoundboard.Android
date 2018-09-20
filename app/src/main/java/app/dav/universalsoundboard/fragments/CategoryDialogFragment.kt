@@ -60,12 +60,15 @@ class CategoryDialogFragment : DialogFragment() {
                 .setView(layout)
                 .setPositiveButton(R.string.create_category_dialog_positive_button_text) { dialog, which ->
                     if(c != null){
+                        // Update the current category
                         GlobalScope.launch(Dispatchers.Main) {
                             FileManager.updateCategory(c.uuid, nameEditText.text.toString(), Category.convertIconResourceIdToString(spinner.selectedItem as Int))
                         }
                     }else{
+                        // Create a new category
                         GlobalScope.launch(Dispatchers.Main) {
-                            FileManager.addCategory(null, nameEditText.text.toString(), Category.convertIconResourceIdToString(spinner.selectedItem as Int))
+                            val newCategory = FileManager.addCategory(null, nameEditText.text.toString(), Category.convertIconResourceIdToString(spinner.selectedItem as Int))
+                            if(newCategory != null) FileManager.showCategory(newCategory)
                         }
                     }
                 }
