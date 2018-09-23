@@ -5,6 +5,11 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_edit_category">Edit category</string>
     <string name="action_delete_category">Delete category</string>
+    <string name="notification_action_play">Play</string>
+    <string name="notification_action_pause">Pause</string>
+    <string name="notification_action_next">Next</string>
+    <string name="notification_action_previous">Previous</string>
+    <string name="notification_action_stop">Stop</string>
     <string name="dialog_negative_button">Cancel</string>
     <string name="sound_list_item_image_description">Image of the sound</string>
     <string name="category_list_item_icon_description">Icon of the category</string>
