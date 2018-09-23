@@ -7,21 +7,15 @@ import android.provider.OpenableColumns
 import app.dav.universalsoundboard.adapters.SoundListAdapter
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Sound
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.launch
 import java.io.File
 import java.io.InputStream
 
 class SoundViewModel : ViewModel(){
-
     var soundListAdapter: SoundListAdapter? = null
-
-    suspend fun getAudioFileUri(sound: Sound) : Deferred<Uri?>{
-        return GlobalScope.async {
-            val file = sound.getAudioFile()
-            Uri.fromFile(file)
-        }
-    }
 
     fun changeSoundImage(uri: Uri, contentResolver: ContentResolver, sound: Sound, cacheDir: File){
         // Get the name of the file

@@ -81,6 +81,11 @@ object FileManager{
         return sounds
     }
 
+    suspend fun getSound(uuid: UUID) : Sound?{
+        val soundTableObject = DatabaseOperations.getObject(uuid) ?: return null
+        return convertTableObjectToSound(soundTableObject)
+    }
+
     suspend fun updateImageOfSound(soundUuid: UUID, imageFile: File){
         val soundTableObject = DatabaseOperations.getObject(soundUuid)
         if(soundTableObject == null || soundTableObject.tableId != soundTableId) return
@@ -163,7 +168,7 @@ object FileManager{
         val favouriteString = tableObject.getPropertyValue(soundTableFavouritePropertyName)
         favourite = if(favouriteString != null) favouriteString.toBoolean() else false
 
-        val sound = Sound(tableObject.uuid, name, null, favourite, null)
+        val sound = Sound(tableObject.uuid, name, null, favourite, FileManager.getAudioFileOfSound(tableObject.uuid), null)
 
         // Get category
         val categoryUuidString = tableObject.getPropertyValue(soundTableCategoryUuidPropertyName)
