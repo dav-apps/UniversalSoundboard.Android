@@ -19,6 +19,7 @@ import app.dav.universalsoundboard.fragments.CategoryDialogFragment
 import app.dav.universalsoundboard.fragments.DeleteCategoryDialogFragment
 import app.dav.universalsoundboard.fragments.SoundFragment
 import app.dav.universalsoundboard.models.Category
+import app.dav.universalsoundboard.services.MediaPlaybackService
 import app.dav.universalsoundboard.viewmodels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -40,6 +41,7 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        startService(Intent(applicationContext, MediaPlaybackService::class.java))
         init()
     }
 
