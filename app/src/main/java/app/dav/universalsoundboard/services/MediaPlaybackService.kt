@@ -167,16 +167,20 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         builder
                 .setContentTitle(sound.name)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_music_note))
-                .setSmallIcon(R.drawable.ic_music_note)
+                .setSmallIcon(R.drawable.ic_usb_logo)
                 .setDeleteIntent(
                         MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP))
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
                 .setColor(getColor(R.color.colorPrimary))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setOngoing(true)
                 .setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(0)
                         .setMediaSession(mediaSession.sessionToken))
-                .addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_previous, getString(R.string.notification_action_previous), getPendingPreviousIntent()).build())
+
+        if(soundsList.count() > 1){
+            builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_previous, getString(R.string.notification_action_previous), getPendingPreviousIntent()).build())
+        }
 
         if(player.isPlaying){
             builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_pause, getString(R.string.notification_action_pause), getPendingPauseIntent()).build())
@@ -184,9 +188,11 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
             builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_play_arrow, getString(R.string.notification_action_play), getPendingPlayIntent()).build())
         }
 
-        builder
-                .addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_next, getString(R.string.notification_action_next), getPendingNextIntent()).build())
-                .addAction(NotificationCompat.Action.Builder(R.drawable.ic_clear, getString(R.string.notification_action_stop), getPendingStopIntent()).build())
+        if(soundsList.count() > 1){
+            builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_next, getString(R.string.notification_action_next), getPendingNextIntent()).build())
+        }
+
+        builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_clear, getString(R.string.notification_action_stop), getPendingStopIntent()).build())
 
         notificationManager?.notify(NOTIFICATION_ID, builder.build())
     }
