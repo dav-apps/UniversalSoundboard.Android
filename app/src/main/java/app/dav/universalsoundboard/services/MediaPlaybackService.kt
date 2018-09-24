@@ -154,7 +154,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
 
         // Build the notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val importance = NotificationManager.IMPORTANCE_LOW
             val channel = NotificationChannel(channelId, name, importance);
             channel.description = description
             notificationManager?.createNotificationChannel(channel)
@@ -171,6 +171,8 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                 .setDeleteIntent(
                         MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP))
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setColor(getColor(R.color.colorPrimary))
+                .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(0)
                         .setMediaSession(mediaSession.sessionToken))
