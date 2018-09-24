@@ -13,4 +13,10 @@
         android:orderInCategory="101"
         android:title="@string/action_delete_category"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_play_all"
+        android:icon="@drawable/ic_play_arrow_white"
+        android:orderInCategory="102"
+        android:title="@string/action_play_all"
+        app:showAsAction="ifRoom" />
 </menu>

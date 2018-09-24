@@ -32,6 +32,7 @@ private const val ACTION_NEXT = "app.dav.universalsoundboard.ACTION_NEXT"
 private const val ACTION_PREVIOUS = "app.dav.universalsoundboard.ACTION_PREVIOUS"
 private const val ACTION_STOP = "app.dav.universalsoundboard.ACTION_STOP"
 private const val NOTIFICATION_ID = 4123
+private const val NOTIFICATION_CHANNEL_ID = "app.dav.universalsoundboard.PlaybackNotificationChannel"
 const val CUSTOM_ACTION_PLAY = "play"
 const val BUNDLE_SOUNDS_KEY = "sounds"
 
@@ -148,15 +149,13 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         val sound = soundsList[currentSound]
 
         val notificationManager = getSystemService(NotificationManager::class.java)
-        val channelId = "channelId"
-        val name = "Sound Controls"
-        val description = "Notifications to control the sounds from outside the app"
+        val channelId = NOTIFICATION_CHANNEL_ID
+        val name = getString(R.string.notification_channel_name)
 
         // Build the notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             val importance = NotificationManager.IMPORTANCE_LOW
             val channel = NotificationChannel(channelId, name, importance);
-            channel.description = description
             notificationManager?.createNotificationChannel(channel)
         }
 
@@ -166,8 +165,8 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
 
         builder
                 .setContentTitle(sound.name)
-                .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.ic_music_note))
                 .setSmallIcon(R.drawable.ic_usb_logo)
+                .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.music_note))
                 .setDeleteIntent(
                         MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP))
                 .setVisibility(Notification.VISIBILITY_PUBLIC)
@@ -177,6 +176,11 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                 .setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(0)
                         .setMediaSession(mediaSession.sessionToken))
+
+        if(sound.image != null)
+            builder.setLargeIcon(sound.image)
+        else
+            builder.setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.music_note))
 
         if(soundsList.count() > 1){
             builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_previous, getString(R.string.notification_action_previous), getPendingPreviousIntent()).build())

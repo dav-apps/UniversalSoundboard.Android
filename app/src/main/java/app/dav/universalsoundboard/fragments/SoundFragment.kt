@@ -6,7 +6,6 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.media.MediaBrowserCompat
@@ -47,7 +46,7 @@ class SoundFragment :
     private lateinit var viewModel: SoundViewModel
     private var selectedSound: Sound? = null
     lateinit var mediaBrowser: MediaBrowserCompat
-    lateinit var mediaController: MediaControllerCompat
+    //lateinit var mediaController: MediaControllerCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,9 +71,9 @@ class SoundFragment :
                     override fun onConnected() {
                         super.onConnected()
 
-                        mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken)
+                        FileManager.itemViewHolder.mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken)
 
-                        mediaController.registerCallback(object : MediaControllerCompat.Callback() {
+                        FileManager.itemViewHolder.mediaController.registerCallback(object : MediaControllerCompat.Callback() {
                             override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
                                 super.onMetadataChanged(metadata)
                             }
@@ -130,13 +129,9 @@ class SoundFragment :
     }
 
     override fun onItemClicked(sound: Sound) {
-        val uri = Uri.fromFile(sound.audioFile)
-
-        if(uri != null){
-            val bundle = Bundle()
-            bundle.putStringArrayList(BUNDLE_SOUNDS_KEY, arrayListOf<String>(sound.uuid.toString()))
-            mediaController.transportControls.sendCustomAction(CUSTOM_ACTION_PLAY, bundle)
-        }
+        val bundle = Bundle()
+        bundle.putStringArrayList(BUNDLE_SOUNDS_KEY, arrayListOf<String>(sound.uuid.toString()))
+        FileManager.itemViewHolder.mediaController.transportControls.sendCustomAction(CUSTOM_ACTION_PLAY, bundle)
     }
 
     override fun onItemLongClicked(sound: Sound, item: View) {

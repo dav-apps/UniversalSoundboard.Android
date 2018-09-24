@@ -3,6 +3,7 @@ package app.dav.universalsoundboard.data
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.graphics.BitmapFactory
+import android.support.v4.media.session.MediaControllerCompat
 import app.dav.davandroidlibrary.data.TableObject
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.Sound
@@ -251,6 +252,7 @@ class ItemViewHolder(){
     private val categoriesData = MutableLiveData<ArrayList<Category>>()
     val categories: LiveData<ArrayList<Category>>
         get() = categoriesData
+    lateinit var mediaController: MediaControllerCompat
 
     fun setTitle(value: String){
         titleData.value = value

@@ -8,6 +8,7 @@
     <color name="colorSecondaryDark">#a30000</color>
     <color name="colorFabNormal">@color/colorSecondary</color>
     <color name="colorFabPressed">@color/colorSecondaryLight</color>
+    <color name="ic_launcher_background">@color/colorPrimary</color>
     <!-- Blau Lila
     <color name="colorPrimary">#1565c0</color>
     <color name="colorPrimaryLight">#5e92f3</color>

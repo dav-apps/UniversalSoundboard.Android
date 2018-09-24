@@ -19,6 +19,8 @@ import app.dav.universalsoundboard.fragments.CategoryDialogFragment
 import app.dav.universalsoundboard.fragments.DeleteCategoryDialogFragment
 import app.dav.universalsoundboard.fragments.SoundFragment
 import app.dav.universalsoundboard.models.Category
+import app.dav.universalsoundboard.services.BUNDLE_SOUNDS_KEY
+import app.dav.universalsoundboard.services.CUSTOM_ACTION_PLAY
 import app.dav.universalsoundboard.services.MediaPlaybackService
 import app.dav.universalsoundboard.viewmodels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -105,14 +107,14 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.action_edit_category -> {
                 GlobalScope.launch(Dispatchers.Main) {
                     val fragment = CategoryDialogFragment()
                     fragment.category = FileManager.getCategory(FileManager.itemViewHolder.currentCategory)
                     fragment.show(fragmentManager, "edit_category")
                 }
-                return true
+                true
             }
             R.id.action_delete_category -> {
                 GlobalScope.launch(Dispatchers.Main) {
@@ -120,9 +122,22 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
                     fragment.category = FileManager.getCategory(FileManager.itemViewHolder.currentCategory)
                     fragment.show(fragmentManager, "delete_category")
                 }
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            R.id.action_play_all -> {
+                val sounds = FileManager.itemViewHolder.sounds.value
+                if(sounds != null){
+                    val bundle = Bundle()
+                    val soundsList = ArrayList<String>()
+                    for(sound in sounds){
+                        soundsList.add(sound.uuid.toString())
+                    }
+                    bundle.putStringArrayList(BUNDLE_SOUNDS_KEY, soundsList)
+                    FileManager.itemViewHolder.mediaController.transportControls.sendCustomAction(CUSTOM_ACTION_PLAY, bundle)
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
