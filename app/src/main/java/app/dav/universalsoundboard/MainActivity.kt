@@ -43,14 +43,15 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
-        startService(Intent(applicationContext, MediaPlaybackService::class.java))
         init()
     }
 
-    fun init(){
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+    private fun init(){
         Dav.init(this, FileManager.getDavDataPath(filesDir.path).path + "/")
+        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         viewModel.categoryListAdapter = CategoryListAdapter(this)
+
+        startService(Intent(applicationContext, MediaPlaybackService::class.java))
 
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)

@@ -16,6 +16,7 @@ import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import app.dav.universalsoundboard.MainActivity
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Sound
@@ -35,6 +36,7 @@ private const val NOTIFICATION_ID = 4123
 private const val NOTIFICATION_CHANNEL_ID = "app.dav.universalsoundboard.PlaybackNotificationChannel"
 const val CUSTOM_ACTION_PLAY = "play"
 const val BUNDLE_SOUNDS_KEY = "sounds"
+private const val MEDIA_SESSION_TAG = "app.dav.universalsoundboard.MediaPlaybackService"
 
 class MediaPlaybackService : MediaBrowserServiceCompat(){
     lateinit var mediaSession: MediaSessionCompat
@@ -46,7 +48,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         super.onCreate()
 
         mediaSession = MediaSessionCompat(this,
-                "universalsoundboard.MediaPlaybackService",
+                MEDIA_SESSION_TAG,
                 ComponentName(applicationContext, MediaPlaybackService::class.java),
                 null)
         mediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
@@ -93,15 +95,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         })
 
         player.setOnCompletionListener {
-            // Play the next sound if there is one
-            currentSound++
-            if(soundsList.count() > currentSound){
-                // Play the sound
-                prepare()
-                play()
-            }else{
-                stop()
-            }
+            playNext()
         }
 
         mediaSession.isActive = true
@@ -148,6 +142,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
     private fun sendNotification(){
         val sound = soundsList[currentSound]
 
+        val pendingMainActivityIntent = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
         val notificationManager = getSystemService(NotificationManager::class.java)
         val channelId = NOTIFICATION_CHANNEL_ID
         val name = getString(R.string.notification_channel_name)
@@ -160,7 +155,6 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         }
 
         val builder = NotificationCompat.Builder(this, channelId)
-
         if(sound.category != null) builder.setContentText(sound.category?.name)
 
         builder
@@ -173,6 +167,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                 .setColor(getColor(R.color.colorPrimary))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setOngoing(true)
+                .setContentIntent(pendingMainActivityIntent)
                 .setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(0)
                         .setMediaSession(mediaSession.sessionToken))
@@ -182,7 +177,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         else
             builder.setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.music_note))
 
-        if(soundsList.count() > 1){
+        if(soundsList.count() > 1 && currentSound != 0){
             builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_previous, getString(R.string.notification_action_previous), getPendingPreviousIntent()).build())
         }
 
@@ -192,7 +187,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
             builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_play_arrow, getString(R.string.notification_action_play), getPendingPlayIntent()).build())
         }
 
-        if(soundsList.count() > 1){
+        if(soundsList.count() > 1 && currentSound != soundsList.count() - 1){
             builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_next, getString(R.string.notification_action_next), getPendingNextIntent()).build())
         }
 
@@ -208,31 +203,31 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
     private fun getPendingPlayIntent() : PendingIntent{
         val playIntent = Intent(this, MediaPlaybackService::class.java)
         playIntent.action = ACTION_PLAY
-        return PendingIntent.getService(this, 100, playIntent, 0)
+        return PendingIntent.getService(this, 0, playIntent, 0)
     }
 
     private fun getPendingPauseIntent() : PendingIntent{
         val pauseIntent = Intent(this, MediaPlaybackService::class.java)
         pauseIntent.action = ACTION_PAUSE
-        return PendingIntent.getService(this, 100, pauseIntent, 0)
+        return PendingIntent.getService(this, 0, pauseIntent, 0)
     }
 
     private fun getPendingNextIntent() : PendingIntent{
         val nextIntent = Intent(this, MediaPlaybackService::class.java)
         nextIntent.action = ACTION_NEXT
-        return PendingIntent.getService(this, 100, nextIntent, 0)
+        return PendingIntent.getService(this, 0, nextIntent, 0)
     }
 
     private fun getPendingPreviousIntent() : PendingIntent{
         val previousIntent = Intent(this, MediaPlaybackService::class.java)
         previousIntent.action = ACTION_PREVIOUS
-        return PendingIntent.getService(this, 100, previousIntent, 0)
+        return PendingIntent.getService(this, 0, previousIntent, 0)
     }
 
     private fun getPendingStopIntent() : PendingIntent{
         val stopIntent = Intent(this, MediaPlaybackService::class.java)
         stopIntent.action = ACTION_STOP
-        return PendingIntent.getService(this, 100, stopIntent, 0)
+        return PendingIntent.getService(this, 0, stopIntent, 0)
     }
 
     private fun prepare(){
@@ -263,11 +258,26 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
     }
 
     fun playNext(){
-
+        // Play the next sound if there is one
+        currentSound++
+        if(soundsList.count() > currentSound){
+            // Play the sound
+            prepare()
+            play()
+        }else{
+            stop()
+        }
     }
 
     fun playPrevious(){
+        // Play the previous sound if there is one
+        if(currentSound == 0) return
 
+        currentSound--
+
+        // Play the sound
+        prepare()
+        play()
     }
 
     fun stop(){
