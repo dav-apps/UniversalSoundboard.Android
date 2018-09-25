@@ -93,7 +93,13 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
-            super.onBackPressed()
+            if(FileManager.itemViewHolder.currentCategory != Category.allSoundsCategory.uuid){
+                // App shows a category or the settings; navigate to All Sounds
+                GlobalScope.launch(Dispatchers.Main) { FileManager.showCategory(Category.allSoundsCategory) }
+            }else{
+                // App shows All Sounds, close the app
+                super.onBackPressed()
+            }
         }
     }
 

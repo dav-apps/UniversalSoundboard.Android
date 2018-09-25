@@ -66,7 +66,7 @@ class SoundFragment :
         })
 
         mediaBrowser = MediaBrowserCompat(context,
-                ComponentName(context, MediaPlaybackService::class.java),
+                ComponentName(context!!, MediaPlaybackService::class.java),
                 object : MediaBrowserCompat.ConnectionCallback(){
                     override fun onConnected() {
                         super.onConnected()
@@ -126,6 +126,11 @@ class SoundFragment :
 
     override fun onDetach() {
         super.onDetach()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaBrowser.disconnect()
     }
 
     override fun onItemClicked(sound: Sound) {
