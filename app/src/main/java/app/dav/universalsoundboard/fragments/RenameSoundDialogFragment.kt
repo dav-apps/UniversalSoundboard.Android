@@ -2,9 +2,9 @@ package app.dav.universalsoundboard.fragments
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.app.DialogFragment
 import android.content.DialogInterface
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
@@ -20,11 +20,11 @@ class RenameSoundDialogFragment : DialogFragment() {
     var sound: Sound? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return createDialog()
+        return createDialog() ?: super.onCreateDialog(savedInstanceState)
     }
 
-    private fun createDialog() : AlertDialog{
-        val layout = activity.layoutInflater.inflate(R.layout.dialog_rename_sound, null)
+    private fun createDialog() : AlertDialog?{
+        val layout = activity?.layoutInflater?.inflate(R.layout.dialog_rename_sound, null) ?: return null
         val nameEditText = layout.findViewById<EditText>(R.id.rename_sound_dialog_name_edittext)
 
         // Set the text of the EditText

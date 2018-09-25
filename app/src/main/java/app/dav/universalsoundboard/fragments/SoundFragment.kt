@@ -46,7 +46,6 @@ class SoundFragment :
     private lateinit var viewModel: SoundViewModel
     private var selectedSound: Sound? = null
     lateinit var mediaBrowser: MediaBrowserCompat
-    //lateinit var mediaController: MediaControllerCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -163,7 +162,7 @@ class SoundFragment :
     }
 
     private fun renameSound(sound: Sound){
-        val fragmentManager = activity?.fragmentManager
+        val fragmentManager = activity?.supportFragmentManager
         if(fragmentManager != null){
             val fragment = RenameSoundDialogFragment()
             fragment.sound = sound
@@ -172,7 +171,7 @@ class SoundFragment :
     }
 
     private fun deleteSound(sound: Sound){
-        val fragmentManager = activity?.fragmentManager
+        val fragmentManager = activity?.supportFragmentManager
         if(fragmentManager != null){
             val fragment = DeleteSoundDialogFragment()
             fragment.sound = sound

@@ -2,8 +2,8 @@ package app.dav.universalsoundboard.fragments
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.app.DialogFragment
 import android.os.Bundle
+import android.support.v4.app.DialogFragment
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
@@ -24,18 +24,18 @@ class CategoryDialogFragment : DialogFragment() {
     var category: Category? = null
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return createDialog()
+        return createDialog() ?: super.onCreateDialog(savedInstanceState)
     }
 
-    private fun createDialog() : AlertDialog{
-        val layout = activity.layoutInflater.inflate(R.layout.dialog_category, null)
+    private fun createDialog() : AlertDialog?{
+        val layout = activity?.layoutInflater?.inflate(R.layout.dialog_category, null) ?: return null
         val spinner = layout.findViewById<Spinner>(R.id.create_category_dialog_icon_spinner)
         val nameEditText = layout.findViewById<EditText>(R.id.create_category_dialog_name_edittext)
         val titleTextView = layout.findViewById<TextView>(R.id.create_category_dialog_title_textview)
 
         // Create the spinner list
         val resourcesArray: Array<Int> = Category.getIconResourceIds()
-        val adapter = ImageArrayAdapter(context, resourcesArray)
+        val adapter = ImageArrayAdapter(context!!, resourcesArray)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner.adapter = adapter
 

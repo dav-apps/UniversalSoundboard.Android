@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
 
         fab_menu_new_category.setOnClickListener{
             fab_menu.close(true)
-            CategoryDialogFragment().show(fragmentManager, "create_category")
+            CategoryDialogFragment().show(supportFragmentManager, "create_category")
         }
 
         // Bind the itemViewHolder properties to the UI
@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
                 GlobalScope.launch(Dispatchers.Main) {
                     val fragment = CategoryDialogFragment()
                     fragment.category = FileManager.getCategory(FileManager.itemViewHolder.currentCategory)
-                    fragment.show(fragmentManager, "edit_category")
+                    fragment.show(supportFragmentManager, "edit_category")
                 }
                 true
             }
@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
                 GlobalScope.launch(Dispatchers.Main) {
                     val fragment = DeleteCategoryDialogFragment()
                     fragment.category = FileManager.getCategory(FileManager.itemViewHolder.currentCategory)
-                    fragment.show(fragmentManager, "delete_category")
+                    fragment.show(supportFragmentManager, "delete_category")
                 }
                 true
             }
