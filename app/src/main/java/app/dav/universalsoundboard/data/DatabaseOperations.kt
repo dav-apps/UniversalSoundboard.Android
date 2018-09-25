@@ -1,8 +1,8 @@
 package app.dav.universalsoundboard.data
 
 import app.dav.davandroidlibrary.Dav
-import app.dav.davandroidlibrary.data.Property
-import app.dav.davandroidlibrary.data.TableObject
+import app.dav.davandroidlibrary.models.Property
+import app.dav.davandroidlibrary.models.TableObject
 import java.io.File
 import java.util.*
 

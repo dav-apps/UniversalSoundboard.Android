@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.graphics.BitmapFactory
 import android.support.v4.media.session.MediaControllerCompat
-import app.dav.davandroidlibrary.data.TableObject
+import app.dav.davandroidlibrary.models.TableObject
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.Sound
 import java.io.File
@@ -38,6 +38,7 @@ object FileManager{
 
     suspend fun showCategory(category: Category){
         itemViewHolder.currentCategory = category.uuid
+        itemViewHolder.setShowCategoryIcons(category.uuid != Category.allSoundsCategory.uuid)
         itemViewHolder.setTitle(category.name)
         itemViewHolder.loadSounds()
     }
@@ -238,6 +239,7 @@ object FileManager{
 class ItemViewHolder(){
     constructor(title: String) : this() {
         titleData.value = title
+        showCategoryIconsData.value = false
         soundsData.value = ArrayList<Sound>()
         categoriesData.value = ArrayList<Category>()
     }
@@ -246,6 +248,9 @@ class ItemViewHolder(){
     private val titleData = MutableLiveData<String>()
     val title: LiveData<String>
         get() =  titleData
+    private val showCategoryIconsData = MutableLiveData<Boolean>()
+    val showCategoryIcons: LiveData<Boolean>
+        get() = showCategoryIconsData
     private val soundsData = MutableLiveData<ArrayList<Sound>>()
     val sounds: LiveData<ArrayList<Sound>>
         get() = soundsData
@@ -256,6 +261,10 @@ class ItemViewHolder(){
 
     fun setTitle(value: String){
         titleData.value = value
+    }
+
+    fun setShowCategoryIcons(showCategoryIcons: Boolean){
+        showCategoryIconsData.value = showCategoryIcons
     }
 
     suspend fun loadSounds(){

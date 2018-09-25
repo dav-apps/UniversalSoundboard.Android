@@ -127,6 +127,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         super.onDestroy()
         player.release()
         mediaSession.isActive = false
+        removeNotification()
     }
 
     private suspend fun updateSoundsList(soundsList: ArrayList<String>){

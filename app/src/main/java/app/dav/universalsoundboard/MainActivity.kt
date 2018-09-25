@@ -100,7 +100,14 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
-        setCategoryIconsVisibility()
+
+        FileManager.itemViewHolder.showCategoryIcons.observe(this, Observer {
+            val editCategoryItem = toolbar.menu.findItem(R.id.action_edit_category)
+            val deleteCategoryItem = toolbar.menu.findItem(R.id.action_delete_category)
+            editCategoryItem.isVisible = it == true
+            deleteCategoryItem.isVisible = it == true
+        })
+
         return true
     }
 
@@ -167,15 +174,6 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
 
         GlobalScope.launch(Dispatchers.Main) {
             FileManager.showCategory(category)
-            setCategoryIconsVisibility()
         }
-    }
-
-    private fun setCategoryIconsVisibility(){
-        val editCategoryItem = toolbar.menu.findItem(R.id.action_edit_category)
-        val deleteCategoryItem = toolbar.menu.findItem(R.id.action_delete_category)
-        val isVisible = FileManager.itemViewHolder.currentCategory != Category.allSoundsCategory.uuid
-        editCategoryItem.isVisible = isVisible
-        deleteCategoryItem.isVisible = isVisible
     }
 }
