@@ -37,7 +37,7 @@ object FileManager{
     val itemViewHolder: ItemViewHolder = ItemViewHolder(title = "All Sounds")
 
     suspend fun showCategory(category: Category){
-        itemViewHolder.currentCategory = category.uuid
+        itemViewHolder.currentCategory = category
         itemViewHolder.setShowCategoryIcons(category.uuid != Category.allSoundsCategory.uuid)
         itemViewHolder.setTitle(category.name)
         itemViewHolder.loadSounds()
@@ -244,7 +244,7 @@ class ItemViewHolder(){
         categoriesData.value = ArrayList<Category>()
     }
 
-    var currentCategory: UUID = Category.allSoundsCategory.uuid
+    var currentCategory: Category = Category.allSoundsCategory
     private val titleData = MutableLiveData<String>()
     val title: LiveData<String>
         get() =  titleData
@@ -268,12 +268,12 @@ class ItemViewHolder(){
     }
 
     suspend fun loadSounds(){
-        soundsData.value = if(currentCategory == Category.allSoundsCategory.uuid){
+        soundsData.value = if(currentCategory.uuid == Category.allSoundsCategory.uuid){
             // Get all sounds
             FileManager.getAllSounds()
         }else{
             // Get the sounds of the selected category
-            FileManager.getSoundsOfCategory(currentCategory)
+            FileManager.getSoundsOfCategory(currentCategory.uuid)
         }
     }
 

@@ -19,23 +19,22 @@ class MainViewModel : ViewModel(){
         val fileNameWithExt = fileUri.pathSegments.last().substringAfterLast("/")
         var fileName = fileNameWithExt
 
-        val cursor = contentResolver.query(fileUri, null, null, null, null)
-        try{
+        val cursor = contentResolver.query(fileUri, null, null, null, null) ?: return
+        cursor.use { cursor ->
             if(cursor.moveToFirst()){
                 fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
             }
-        }finally {
-            cursor.close()
         }
+        cursor.close()
         fileName = fileName.replaceAfterLast(".", "").dropLast(1)
 
-        val stream = contentResolver.openInputStream(fileUri)
+        val stream = contentResolver.openInputStream(fileUri) ?: return
         val file = File(cacheDir.path + "/" + fileNameWithExt)
         file.copyInputStreamToFile(stream)
 
         // Create the sound
         val currentCategory = FileManager.itemViewHolder.currentCategory
-        val category: UUID? = if(currentCategory == Category.allSoundsCategory.uuid) null else currentCategory
+        val category: UUID? = if(currentCategory.uuid == Category.allSoundsCategory.uuid) null else currentCategory.uuid
 
         FileManager.addSound(null, fileName, category, file)
     }
