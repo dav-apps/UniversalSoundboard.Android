@@ -17,6 +17,7 @@ import app.dav.universalsoundboard.adapters.CategoryListAdapter
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.fragments.CategoryDialogFragment
 import app.dav.universalsoundboard.fragments.DeleteCategoryDialogFragment
+import app.dav.universalsoundboard.fragments.SettingsFragment
 import app.dav.universalsoundboard.fragments.SoundFragment
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.services.BUNDLE_SOUNDS_KEY
@@ -36,6 +37,9 @@ const val REQUEST_AUDIO_FILE_GET = 1
 
 class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListener {
     private lateinit var viewModel: MainViewModel
+    private var soundFragment: SoundFragment = SoundFragment.newInstance(1)
+    private var settingsFragment: SettingsFragment = SettingsFragment.newInstance()
+    private var currentFragment: CurrentFragment = CurrentFragment.SoundFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,6 +61,11 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
+        bottom_category_list_settings_item.setOnClickListener {
+            drawer_layout.closeDrawers()
+            showSettingsFragment()
+        }
+
         fab_menu_new_sound.setOnClickListener{
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
@@ -74,7 +83,7 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
 
         // Bind the itemViewHolder properties to the UI
         FileManager.itemViewHolder.setTitle(resources.getString(R.string.all_sounds))
-        FileManager.itemViewHolder.title.observe(this, Observer<String> { title -> supportActionBar?.setTitle(title) })
+        FileManager.itemViewHolder.title.observe(this, Observer<String> { title -> supportActionBar?.title = title })
 
         Category.allSoundsCategory.name = resources.getString(R.string.all_sounds)
         category_list.layoutManager = LinearLayoutManager(this)
@@ -86,14 +95,21 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
             viewModel.categoryListAdapter?.notifyDataSetChanged()
         })
 
-        supportFragmentManager.beginTransaction().add(R.id.fragment_container, SoundFragment.newInstance(1)).commit()
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.add(R.id.fragment_container, soundFragment)
+        transaction.add(R.id.fragment_container, settingsFragment)
+        transaction.hide(settingsFragment)
+        transaction.commit()
     }
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
-            if(FileManager.itemViewHolder.currentCategory != Category.allSoundsCategory.uuid){
+            if(currentFragment == CurrentFragment.SettingsFragment){
+                // Show the SoundFragment
+                showSoundFragment()
+            }else if(FileManager.itemViewHolder.currentCategory.uuid != Category.allSoundsCategory.uuid){
                 // App shows a category or the settings; navigate to All Sounds
                 GlobalScope.launch(Dispatchers.Main) { FileManager.showCategory(Category.allSoundsCategory) }
             }else{
@@ -123,19 +139,15 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
             R.id.action_edit_category -> {
-                GlobalScope.launch(Dispatchers.Main) {
-                    val fragment = CategoryDialogFragment()
-                    fragment.category = FileManager.getCategory(FileManager.itemViewHolder.currentCategory)
-                    fragment.show(supportFragmentManager, "edit_category")
-                }
+                val fragment = CategoryDialogFragment()
+                fragment.category = FileManager.itemViewHolder.currentCategory
+                fragment.show(supportFragmentManager, "edit_category")
                 true
             }
             R.id.action_delete_category -> {
-                GlobalScope.launch(Dispatchers.Main) {
-                    val fragment = DeleteCategoryDialogFragment()
-                    fragment.category = FileManager.getCategory(FileManager.itemViewHolder.currentCategory)
-                    fragment.show(supportFragmentManager, "delete_category")
-                }
+                val fragment = DeleteCategoryDialogFragment()
+                fragment.category = FileManager.itemViewHolder.currentCategory
+                fragment.show(supportFragmentManager, "delete_category")
                 true
             }
             R.id.action_play_all -> {
@@ -177,9 +189,39 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
 
     override fun onItemClicked(category: Category) {
         drawer_layout.closeDrawers()
+        showSoundFragment()
 
         GlobalScope.launch(Dispatchers.Main) {
             FileManager.showCategory(category)
         }
     }
+
+    private fun showSoundFragment(){
+        supportFragmentManager
+                .beginTransaction()
+                .hide(settingsFragment)
+                .show(soundFragment)
+                .commit()
+        currentFragment = CurrentFragment.SoundFragment
+
+        // Set the title
+        FileManager.itemViewHolder.setTitle(FileManager.itemViewHolder.currentCategory.name)
+    }
+
+    private fun showSettingsFragment(){
+        supportFragmentManager
+                .beginTransaction()
+                .hide(soundFragment)
+                .show(settingsFragment)
+                .commit()
+        currentFragment = CurrentFragment.SettingsFragment
+
+        // Set the title
+        FileManager.itemViewHolder.setTitle(getString(R.string.settings))
+    }
+}
+
+enum class CurrentFragment(){
+    SoundFragment(),
+    SettingsFragment()
 }

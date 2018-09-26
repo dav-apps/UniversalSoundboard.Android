@@ -1,4 +1,4 @@
-package app.dav.universalsoundboard.fragments
+package app.dav.universalsoundboard.viewmodels
 
 import android.arch.lifecycle.ViewModel;
 
