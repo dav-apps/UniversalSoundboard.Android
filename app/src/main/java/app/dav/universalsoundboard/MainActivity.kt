@@ -212,6 +212,12 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
 
         // Set the title
         FileManager.itemViewHolder.setTitle(FileManager.itemViewHolder.currentCategory.name)
+
+        // Show the icons
+        if(FileManager.itemViewHolder.currentCategory.uuid != Category.allSoundsCategory.uuid){
+            // Show the Category icons
+            FileManager.itemViewHolder.setShowCategoryIcons(true)
+        }
         FileManager.itemViewHolder.setShowPlayAllIcon(true)
         fab_menu.visibility = View.VISIBLE
     }
@@ -226,6 +232,8 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
 
         // Set the title
         FileManager.itemViewHolder.setTitle(getString(R.string.settings))
+
+        // Hide the icons
         FileManager.itemViewHolder.setShowCategoryIcons(false)
         FileManager.itemViewHolder.setShowPlayAllIcon(false)
         fab_menu.visibility = View.INVISIBLE
