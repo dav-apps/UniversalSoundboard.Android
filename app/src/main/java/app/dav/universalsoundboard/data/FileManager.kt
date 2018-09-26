@@ -251,6 +251,9 @@ class ItemViewHolder(){
     private val showCategoryIconsData = MutableLiveData<Boolean>()
     val showCategoryIcons: LiveData<Boolean>
         get() = showCategoryIconsData
+    private val showPlayAllIconData = MutableLiveData<Boolean>()
+    val showPlayAllIcon: LiveData<Boolean>
+        get() = showPlayAllIconData
     private val soundsData = MutableLiveData<ArrayList<Sound>>()
     val sounds: LiveData<ArrayList<Sound>>
         get() = soundsData
@@ -265,6 +268,10 @@ class ItemViewHolder(){
 
     fun setShowCategoryIcons(showCategoryIcons: Boolean){
         showCategoryIconsData.value = showCategoryIcons
+    }
+
+    fun setShowPlayAllIcon(showPlayAllIcon: Boolean){
+        showPlayAllIconData.value = showPlayAllIcon
     }
 
     suspend fun loadSounds(){

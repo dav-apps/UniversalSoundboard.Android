@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import app.dav.davandroidlibrary.Dav
 import app.dav.universalsoundboard.adapters.CategoryListAdapter
 import app.dav.universalsoundboard.data.FileManager
@@ -130,6 +131,11 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
             deleteCategoryItem.isVisible = it == true
         })
 
+        FileManager.itemViewHolder.showPlayAllIcon.observe(this, Observer {
+            val playAllItem = toolbar.menu.findItem(R.id.action_play_all)
+            playAllItem.isVisible = it == true
+        })
+
         return true
     }
 
@@ -206,6 +212,8 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
 
         // Set the title
         FileManager.itemViewHolder.setTitle(FileManager.itemViewHolder.currentCategory.name)
+        FileManager.itemViewHolder.setShowPlayAllIcon(true)
+        fab_menu.visibility = View.VISIBLE
     }
 
     private fun showSettingsFragment(){
@@ -218,6 +226,9 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
 
         // Set the title
         FileManager.itemViewHolder.setTitle(getString(R.string.settings))
+        FileManager.itemViewHolder.setShowCategoryIcons(false)
+        FileManager.itemViewHolder.setShowPlayAllIcon(false)
+        fab_menu.visibility = View.INVISIBLE
     }
 }
 
