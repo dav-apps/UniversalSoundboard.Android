@@ -165,7 +165,7 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
                         soundsList.add(sound.uuid.toString())
                     }
                     bundle.putStringArrayList(BUNDLE_SOUNDS_KEY, soundsList)
-                    FileManager.itemViewHolder.mediaController.transportControls.sendCustomAction(CUSTOM_ACTION_PLAY, bundle)
+                    if(soundsList.count() > 0) FileManager.itemViewHolder.mediaController.transportControls.sendCustomAction(CUSTOM_ACTION_PLAY, bundle)
                 }
                 true
             }
