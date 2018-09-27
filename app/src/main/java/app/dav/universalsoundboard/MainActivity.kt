@@ -15,6 +15,7 @@ import android.view.MenuItem
 import android.view.View
 import app.dav.davandroidlibrary.Dav
 import app.dav.universalsoundboard.adapters.CategoryListAdapter
+import app.dav.universalsoundboard.adapters.PlayingSoundListAdapter
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.fragments.CategoryDialogFragment
 import app.dav.universalsoundboard.fragments.DeleteCategoryDialogFragment
@@ -55,6 +56,7 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
         Dav.init(this, FileManager.getDavDataPath(filesDir.path).path + "/")
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         viewModel.categoryListAdapter = CategoryListAdapter(this)
+        viewModel.playingSoundListAdapter = PlayingSoundListAdapter()
 
         startService(Intent(applicationContext, MediaPlaybackService::class.java))
 
@@ -94,6 +96,11 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
         FileManager.itemViewHolder.categories.observe(this, Observer {
             if(it != null) viewModel.categoryListAdapter?.submitList(it)
             viewModel.categoryListAdapter?.notifyDataSetChanged()
+        })
+
+        FileManager.itemViewHolder.playingSounds.observe(this, Observer {
+            if(it != null) viewModel.playingSoundListAdapter?.submitList(it)
+            viewModel.playingSoundListAdapter?.notifyDataSetChanged()
         })
 
         val transaction = supportFragmentManager.beginTransaction()

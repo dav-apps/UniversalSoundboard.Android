@@ -5,6 +5,7 @@ import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
 import app.dav.universalsoundboard.adapters.CategoryListAdapter
+import app.dav.universalsoundboard.adapters.PlayingSoundListAdapter
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Category
 import java.io.File
@@ -13,6 +14,7 @@ import java.util.*
 
 class MainViewModel : ViewModel(){
     var categoryListAdapter: CategoryListAdapter? = null
+    var playingSoundListAdapter: PlayingSoundListAdapter? = null
 
     suspend fun copySoundFile(fileUri: Uri, contentResolver: ContentResolver, cacheDir: File){
         // Get the name

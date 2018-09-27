@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import android.support.v4.media.session.MediaControllerCompat
 import app.dav.davandroidlibrary.models.TableObject
 import app.dav.universalsoundboard.models.Category
+import app.dav.universalsoundboard.models.PlayingSound
 import app.dav.universalsoundboard.models.Sound
 import java.io.File
 import java.util.*
@@ -43,6 +44,7 @@ object FileManager{
         itemViewHolder.loadSounds()
     }
 
+    // Sound functions
     suspend fun addSound(uuid: UUID?, name: String, categoryUuid: UUID?, audioFile: File){
         // Generate a new uuid if necessary
         val newUuid: UUID = if(uuid == null) UUID.randomUUID() else uuid
@@ -64,8 +66,8 @@ object FileManager{
         val sounds = ArrayList<Sound>()
 
         for(obj in tableObjects){
-            val sound = convertTableObjectToSound(obj)
-            if(sound != null) sounds.add(sound)
+            val sound = convertTableObjectToSound(obj) ?: continue
+            sounds.add(sound)
         }
 
         return sounds
@@ -118,13 +120,15 @@ object FileManager{
         DatabaseOperations.deleteSound(uuid)
         itemViewHolder.loadSounds()
     }
+    // End Sound functions
 
+    // Category functions
     suspend fun getAllCategories() : ArrayList<Category>{
         val categories = ArrayList<Category>()
 
         for(obj in DatabaseOperations.getAllCategories()){
-            val category = convertTableObjectToCategory(obj)
-            if(category != null) categories.add(category)
+            val category = convertTableObjectToCategory(obj) ?: continue
+            categories.add(category)
         }
 
         return categories
@@ -158,6 +162,40 @@ object FileManager{
         DatabaseOperations.deleteCategory(uuid)
         itemViewHolder.loadCategories()
     }
+    // End Category functions
+
+    // PlayingSound functions
+    suspend fun addPlayingSound(uuid: UUID?, sounds: ArrayList<Sound>, current: Int, repetitions: Int, randomly: Boolean, volume: Double) : PlayingSound?{
+        val newUuid: UUID = if(uuid == null) UUID.randomUUID() else uuid
+
+        // Check if an object with the uuid already exists
+        if(DatabaseOperations.getObject(newUuid) != null) return null
+
+        // TODO: Check if playing sounds should be saved
+
+        var newVolume = volume
+        if(newVolume >= 1) newVolume = 1.0
+        if(newVolume <= 0) newVolume = 0.0
+
+        val soundIds = ArrayList<String>()
+        for(sound in sounds)
+            soundIds.add(sound.uuid.toString())
+
+        DatabaseOperations.createPlayingSound(newUuid, soundIds, current, repetitions, randomly, volume)
+        return PlayingSound(newUuid, current, sounds, repetitions, randomly, volume)
+    }
+
+    suspend fun getAllPlayingSounds() : ArrayList<PlayingSound>{
+        val playingSounds = ArrayList<PlayingSound>()
+
+        for(obj in DatabaseOperations.getAllPlayingSounds()){
+            val playingSound = convertTableObjectToPlayingSound(obj) ?: continue
+            playingSounds.add(playingSound)
+        }
+
+        return playingSounds
+    }
+    // End PlayingSound functions
 
     private suspend fun convertTableObjectToSound(tableObject: TableObject) : Sound?{
         if(tableObject.tableId != FileManager.soundTableId) return null
@@ -205,6 +243,46 @@ object FileManager{
         val icon = tableObject.getPropertyValue(categoryTableIconPropertyName) ?: Category.Icons.HOME
 
         return Category(tableObject.uuid, name, icon)
+    }
+
+    private suspend fun convertTableObjectToPlayingSound(tableObject: TableObject) : PlayingSound?{
+        if(tableObject.tableId != FileManager.playingSoundTableId) return null
+
+        // Get the sounds
+        val soundIds = tableObject.getPropertyValue(FileManager.playingSoundTableSoundIdsPropertyName)
+        val sounds = ArrayList<Sound>()
+
+        if(soundIds != null){
+            for (uuidString in soundIds.split(',')){
+                val uuid = UUID.fromString(uuidString)
+                val sound = getSound(uuid)
+                if(sound != null) sounds.add(sound)
+            }
+        }
+
+        if(sounds.count() == 0){
+            // Delete the PlayingSound
+            // TODO DeletePlayingSound()
+            // return null
+        }
+
+        // Get current
+        val currentString = tableObject.getPropertyValue(FileManager.playingSoundTableCurrentPropertyName)
+        val current = currentString?.toIntOrNull() ?: 0
+
+        // Get volume
+        val volumeString = tableObject.getPropertyValue(FileManager.playingSoundTableVolumePropertyName)
+        val volume = volumeString?.toDoubleOrNull() ?: 1.0
+
+        // Get repetitions
+        val repetitionsString = tableObject.getPropertyValue(FileManager.playingSoundTableRepetitionsPropertyName)
+        val repetitions = repetitionsString?.toIntOrNull() ?: 1
+
+        // Get randomly
+        val randomlyString = tableObject.getPropertyValue(FileManager.playingSoundTableRandomlyPropertyName)
+        val randomly = randomlyString?.toBoolean() ?: false
+
+        return PlayingSound(tableObject.uuid, current, sounds, repetitions, randomly, volume)
     }
 
     fun getDavDataPath(filesDir: String) : File{
@@ -260,6 +338,9 @@ class ItemViewHolder(){
     private val categoriesData = MutableLiveData<ArrayList<Category>>()
     val categories: LiveData<ArrayList<Category>>
         get() = categoriesData
+    private val playingSoundsData = MutableLiveData<ArrayList<PlayingSound>>()
+    val playingSounds: LiveData<ArrayList<PlayingSound>>
+        get() = playingSoundsData
     lateinit var mediaController: MediaControllerCompat
 
     fun setTitle(value: String){
@@ -289,5 +370,9 @@ class ItemViewHolder(){
         categories.add(0, Category.allSoundsCategory)
 
         categoriesData.value = categories
+    }
+
+    suspend fun loadPlayingSounds(){
+        playingSoundsData.value = FileManager.getAllPlayingSounds()
     }
 }

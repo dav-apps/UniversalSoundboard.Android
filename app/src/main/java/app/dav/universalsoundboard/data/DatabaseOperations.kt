@@ -137,4 +137,27 @@ object DatabaseOperations {
         return Dav.Database.getAllTableObjects(FileManager.categoryTableId, false).await()
     }
     // End Category methods
+
+    // PlayingSound methods
+    suspend fun createPlayingSound(uuid: UUID, soundIds: ArrayList<String>, current: Int, repetitions: Int, randomly: Boolean, volume: Double){
+        val properties = ArrayList<Property>()
+
+        // SoundIds Property
+        var soundIdsString = ""
+        for(id in soundIds){
+            soundIdsString += id
+        }
+        properties.add(Property(0, FileManager.playingSoundTableSoundIdsPropertyName, soundIdsString))
+        properties.add(Property(0, FileManager.playingSoundTableCurrentPropertyName, current.toString()))
+        properties.add(Property(0, FileManager.playingSoundTableRepetitionsPropertyName, repetitions.toString()))
+        properties.add(Property(0, FileManager.playingSoundTableRandomlyPropertyName, randomly.toString()))
+        properties.add(Property(0, FileManager.playingSoundTableVolumePropertyName, volume.toString()))
+
+        TableObject.create(uuid, FileManager.playingSoundTableId, properties)
+    }
+
+    suspend fun getAllPlayingSounds() : ArrayList<TableObject>{
+        return Dav.Database.getAllTableObjects(FileManager.playingSoundTableId, false).await()
+    }
+    // End PlayingSound methods
 }
