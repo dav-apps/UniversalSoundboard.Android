@@ -119,6 +119,10 @@ object DatabaseOperations {
         TableObject.create(uuid, FileManager.categoryTableId, properties)
     }
 
+    suspend fun getAllCategories() : ArrayList<TableObject>{
+        return Dav.Database.getAllTableObjects(FileManager.categoryTableId, false).await()
+    }
+
     suspend fun updateCategory(uuid: UUID, name: String?, icon: String?){
         val categoryTableObject = getObject(uuid) ?: return
         if(categoryTableObject.tableId != FileManager.categoryTableId) return
@@ -131,10 +135,6 @@ object DatabaseOperations {
         val categoryTableObject = getObject(uuid) ?: return
         if(categoryTableObject.tableId != FileManager.categoryTableId) return
         categoryTableObject.delete()
-    }
-
-    suspend fun getAllCategories() : ArrayList<TableObject>{
-        return Dav.Database.getAllTableObjects(FileManager.categoryTableId, false).await()
     }
     // End Category methods
 
@@ -158,6 +158,12 @@ object DatabaseOperations {
 
     suspend fun getAllPlayingSounds() : ArrayList<TableObject>{
         return Dav.Database.getAllTableObjects(FileManager.playingSoundTableId, false).await()
+    }
+
+    suspend fun deletePlayingSound(uuid: UUID){
+        val playingSoundTableObject = getObject(uuid) ?: return
+        if(playingSoundTableObject.tableId != FileManager.playingSoundTableId) return
+        playingSoundTableObject.delete()
     }
     // End PlayingSound methods
 }

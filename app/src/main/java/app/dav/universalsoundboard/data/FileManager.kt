@@ -196,6 +196,11 @@ object FileManager{
 
         return playingSounds
     }
+
+    suspend fun deletePlayingSound(uuid: UUID){
+        DatabaseOperations.deletePlayingSound(uuid)
+        itemViewHolder.loadPlayingSounds()
+    }
     // End PlayingSound functions
 
     private suspend fun convertTableObjectToSound(tableObject: TableObject) : Sound?{

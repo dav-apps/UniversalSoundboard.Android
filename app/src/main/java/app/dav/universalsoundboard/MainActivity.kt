@@ -232,7 +232,7 @@ class MainActivity :
     }
 
     override fun removeButtonClicked(playingSound: PlayingSound) {
-        Log.d("remove", "Clicked! " + playingSound.uuid)
+        GlobalScope.launch(Dispatchers.Main) { FileManager.deletePlayingSound(playingSound.uuid) }
     }
 
     override fun menuButtonClicked(playingSound: PlayingSound) {
