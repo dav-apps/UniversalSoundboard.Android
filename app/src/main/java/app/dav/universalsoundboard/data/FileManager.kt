@@ -182,6 +182,7 @@ object FileManager{
             soundIds.add(sound.uuid.toString())
 
         DatabaseOperations.createPlayingSound(newUuid, soundIds, current, repetitions, randomly, volume)
+        itemViewHolder.loadPlayingSounds()
         return PlayingSound(newUuid, current, sounds, repetitions, randomly, volume)
     }
 
@@ -320,6 +321,7 @@ class ItemViewHolder(){
         showCategoryIconsData.value = false
         soundsData.value = ArrayList<Sound>()
         categoriesData.value = ArrayList<Category>()
+        playingSoundsData.value = ArrayList<PlayingSound>()
     }
 
     var currentCategory: Category = Category.allSoundsCategory

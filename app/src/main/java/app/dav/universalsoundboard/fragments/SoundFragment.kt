@@ -4,7 +4,6 @@ import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -119,14 +118,6 @@ class SoundFragment :
         return view
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         mediaBrowser.disconnect()
@@ -136,6 +127,9 @@ class SoundFragment :
         val bundle = Bundle()
         bundle.putStringArrayList(BUNDLE_SOUNDS_KEY, arrayListOf<String>(sound.uuid.toString()))
         FileManager.itemViewHolder.mediaController.transportControls.sendCustomAction(CUSTOM_ACTION_PLAY, bundle)
+        GlobalScope.launch(Dispatchers.Main) {
+            FileManager.addPlayingSound(null, arrayListOf(sound), 0, 1, false, 1.0)
+        }
     }
 
     override fun onItemLongClicked(sound: Sound, item: View) {

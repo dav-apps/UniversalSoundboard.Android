@@ -29,6 +29,7 @@ import app.dav.universalsoundboard.viewmodels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.category_list.*
+import kotlinx.android.synthetic.main.playing_sound_bottom_sheet.*
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.android.Main
@@ -98,6 +99,10 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
             viewModel.categoryListAdapter?.notifyDataSetChanged()
         })
 
+        playing_sound_list.layoutManager = LinearLayoutManager(this)
+        playing_sound_list.adapter = viewModel.playingSoundListAdapter
+
+        GlobalScope.launch(Dispatchers.Main) { FileManager.itemViewHolder.loadPlayingSounds() }
         FileManager.itemViewHolder.playingSounds.observe(this, Observer {
             if(it != null) viewModel.playingSoundListAdapter?.submitList(it)
             viewModel.playingSoundListAdapter?.notifyDataSetChanged()

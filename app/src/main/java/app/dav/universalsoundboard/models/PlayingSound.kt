@@ -8,4 +8,9 @@ class PlayingSound(val uuid: UUID,
                     /*val mediaBrowser: MediaBrowser, */
                    val repetitions: Int,
                    val randomly: Boolean,
-                   val volume: Double)
+                   val volume: Double){
+
+    fun getCurrentSoundObject() : Sound{
+        return sounds[currentSound]
+    }
+}
