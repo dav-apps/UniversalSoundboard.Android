@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="playingSound"
+            type="app.dav.universalsoundboard.models.PlayingSound" />
+    </data>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/playing_sound_list_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/playing_sound_list_item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/playing_sound_list_item_name_description"
+            android:text="@{playingSound.currentSoundObject.name}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Sound Name" />
+
+        <ImageButton
+            android:id="@+id/playing_sound_list_item_skip_previous"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:padding="4dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
+            app:srcCompat="@drawable/ic_skip_previous" />
+
+        <ImageButton
+            android:id="@+id/playing_sound_list_item_play_pause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:padding="4dp"
+            app:layout_constraintStart_toEndOf="@+id/playing_sound_list_item_skip_previous"
+            app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
+            app:srcCompat="@drawable/ic_play_arrow" />
+
+        <ImageButton
+            android:id="@+id/playing_sound_list_item_skip_next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:padding="4dp"
+            app:layout_constraintStart_toEndOf="@+id/playing_sound_list_item_play_pause"
+            app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
+            app:srcCompat="@drawable/ic_skip_next" />
+
+        <SeekBar
+            android:id="@+id/playing_sound_list_item_seekbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/playing_sound_list_item_skip_next"
+            app:layout_constraintEnd_toStartOf="@+id/playing_sound_list_item_clear"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/playing_sound_list_item_skip_next"
+            app:layout_constraintTop_toTopOf="@+id/playing_sound_list_item_skip_next" />
+
+        <ImageButton
+            android:id="@+id/playing_sound_list_item_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:padding="4dp"
+            app:layout_constraintEnd_toStartOf="@+id/playing_sound_list_item_more"
+            app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
+            app:srcCompat="@drawable/ic_clear" />
+
+        <ImageButton
+            android:id="@+id/playing_sound_list_item_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@android:color/transparent"
+            android:padding="4dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
+            app:srcCompat="@drawable/ic_more_vert" />
+    </android.support.constraint.ConstraintLayout>
+</layout>
