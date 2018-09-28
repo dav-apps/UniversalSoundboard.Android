@@ -10,6 +10,7 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -22,6 +23,7 @@ import app.dav.universalsoundboard.fragments.DeleteCategoryDialogFragment
 import app.dav.universalsoundboard.fragments.SettingsFragment
 import app.dav.universalsoundboard.fragments.SoundFragment
 import app.dav.universalsoundboard.models.Category
+import app.dav.universalsoundboard.models.PlayingSound
 import app.dav.universalsoundboard.services.BUNDLE_SOUNDS_KEY
 import app.dav.universalsoundboard.services.CUSTOM_ACTION_PLAY
 import app.dav.universalsoundboard.services.MediaPlaybackService
@@ -38,7 +40,10 @@ import kotlinx.coroutines.experimental.launch
 
 const val REQUEST_AUDIO_FILE_GET = 1
 
-class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListener {
+class MainActivity :
+        AppCompatActivity(),
+        CategoryListAdapter.OnItemClickListener,
+        PlayingSoundListAdapter.PlayingSoundButtonClickListeners {
     private lateinit var viewModel: MainViewModel
     private var soundFragment: SoundFragment = SoundFragment.newInstance(1)
     private var settingsFragment: SettingsFragment = SettingsFragment.newInstance()
@@ -57,7 +62,7 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
         Dav.init(this, FileManager.getDavDataPath(filesDir.path).path + "/")
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         viewModel.categoryListAdapter = CategoryListAdapter(this)
-        viewModel.playingSoundListAdapter = PlayingSoundListAdapter()
+        viewModel.playingSoundListAdapter = PlayingSoundListAdapter(this)
 
         startService(Intent(applicationContext, MediaPlaybackService::class.java))
 
@@ -212,6 +217,26 @@ class MainActivity : AppCompatActivity(), CategoryListAdapter.OnItemClickListene
         GlobalScope.launch(Dispatchers.Main) {
             FileManager.showCategory(category)
         }
+    }
+
+    override fun skipPreviousButtonClicked(playingSound: PlayingSound) {
+        Log.d("skipPrevious", "Clicked! " + playingSound.uuid)
+    }
+
+    override fun playPauseButtonClicked(playingSound: PlayingSound) {
+        Log.d("play pause", "Clicked! " + playingSound.uuid)
+    }
+
+    override fun skipNextButtonClicked(playingSound: PlayingSound) {
+        Log.d("skipNext", "Clicked! " + playingSound.uuid)
+    }
+
+    override fun removeButtonClicked(playingSound: PlayingSound) {
+        Log.d("remove", "Clicked! " + playingSound.uuid)
+    }
+
+    override fun menuButtonClicked(playingSound: PlayingSound) {
+        Log.d("menu", "Clicked! " + playingSound.uuid)
     }
 
     private fun showSoundFragment(){
