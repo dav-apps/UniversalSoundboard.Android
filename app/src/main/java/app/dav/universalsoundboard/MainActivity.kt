@@ -115,8 +115,10 @@ class MainActivity :
 
         GlobalScope.launch(Dispatchers.Main) { FileManager.itemViewHolder.loadPlayingSounds() }
         FileManager.itemViewHolder.playingSounds.observe(this, Observer {
-            if(it != null) viewModel.playingSoundListAdapter?.submitList(it)
+            if(it == null) return@Observer
+            viewModel.playingSoundListAdapter?.submitList(it)
             viewModel.playingSoundListAdapter?.notifyDataSetChanged()
+            sheetBehavior.isHideable = it.count() == 0
         })
 
         val transaction = supportFragmentManager.beginTransaction()
