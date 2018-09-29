@@ -6,6 +6,8 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.BottomSheetBehavior
+import android.support.design.widget.CoordinatorLayout
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -28,6 +30,7 @@ import app.dav.universalsoundboard.services.BUNDLE_SOUNDS_KEY
 import app.dav.universalsoundboard.services.CUSTOM_ACTION_PLAY
 import app.dav.universalsoundboard.services.MediaPlaybackService
 import app.dav.universalsoundboard.viewmodels.MainViewModel
+import com.gordonwong.materialsheetfab.MaterialSheetFab
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.category_list.*
@@ -66,6 +69,9 @@ class MainActivity :
 
         startService(Intent(applicationContext, MediaPlaybackService::class.java))
 
+        val sheetBehavior = BottomSheetBehavior.from(playing_sound_bottom_sheet)
+        val materialSheetFab = MaterialSheetFab(fab, fab_sheet, overlay, R.color.colorSecondary, R.color.colorPrimary)
+
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
@@ -75,19 +81,19 @@ class MainActivity :
             showSettingsFragment()
         }
 
-        fab_menu_new_sound.setOnClickListener{
+        fab_sheet_item_new_sound.setOnClickListener{
+            materialSheetFab.hideSheet()
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             intent.type = "audio/mpeg"
             if (intent.resolveActivity(packageManager) != null) {
                 startActivityForResult(intent, REQUEST_AUDIO_FILE_GET)
             }
-            fab_menu.close(true)
         }
 
-        fab_menu_new_category.setOnClickListener{
-            fab_menu.close(true)
+        fab_sheet_item_new_category.setOnClickListener{
             CategoryDialogFragment().show(supportFragmentManager, "create_category")
+            materialSheetFab.hideSheet()
         }
 
         // Bind the itemViewHolder properties to the UI
@@ -256,7 +262,7 @@ class MainActivity :
             FileManager.itemViewHolder.setShowCategoryIcons(true)
         }
         FileManager.itemViewHolder.setShowPlayAllIcon(true)
-        fab_menu.visibility = View.VISIBLE
+        showBottomSheet()
     }
 
     private fun showSettingsFragment(){
@@ -273,7 +279,23 @@ class MainActivity :
         // Hide the icons
         FileManager.itemViewHolder.setShowCategoryIcons(false)
         FileManager.itemViewHolder.setShowPlayAllIcon(false)
-        fab_menu.visibility = View.INVISIBLE
+        hideBottomSheet()
+    }
+
+    private fun showBottomSheet(){
+        playing_sound_bottom_sheet.visibility = View.VISIBLE
+        val layoutParams = fab.layoutParams as CoordinatorLayout.LayoutParams
+        layoutParams.anchorId = R.id.playing_sound_bottom_sheet
+        fab.layoutParams = layoutParams
+        fab.show()
+    }
+
+    private fun hideBottomSheet(){
+        playing_sound_bottom_sheet.visibility = View.GONE
+        val layoutParams = fab.layoutParams as CoordinatorLayout.LayoutParams
+        layoutParams.anchorId = View.NO_ID
+        fab.layoutParams = layoutParams
+        fab.hide()
     }
 }
 

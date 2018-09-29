@@ -52,6 +52,6 @@ dependencies {
     // Kotlin coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:0.26.0'
 
-    implementation 'com.github.clans:fab:1.6.4'
+    implementation 'com.gordonwong:material-sheet-fab:1.2.1'
     implementation project(":davandroidlibrary")
 }
