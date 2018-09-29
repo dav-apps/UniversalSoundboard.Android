@@ -26,8 +26,6 @@ import app.dav.universalsoundboard.fragments.SettingsFragment
 import app.dav.universalsoundboard.fragments.SoundFragment
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.PlayingSound
-import app.dav.universalsoundboard.services.BUNDLE_SOUNDS_KEY
-import app.dav.universalsoundboard.services.CUSTOM_ACTION_PLAY
 import app.dav.universalsoundboard.services.MediaPlaybackService
 import app.dav.universalsoundboard.viewmodels.MainViewModel
 import com.gordonwong.materialsheetfab.MaterialSheetFab
@@ -184,13 +182,11 @@ class MainActivity :
             R.id.action_play_all -> {
                 val sounds = FileManager.itemViewHolder.sounds.value
                 if(sounds != null){
-                    val bundle = Bundle()
-                    val soundsList = ArrayList<String>()
-                    for(sound in sounds){
-                        soundsList.add(sound.uuid.toString())
+                    GlobalScope.launch(Dispatchers.Main) {
+                        // Create a PlayingSound
+                        val playingSound = FileManager.addPlayingSound(null, sounds, 0, 0, false, 1.0)
+                        playingSound?.playOrPause(applicationContext)
                     }
-                    bundle.putStringArrayList(BUNDLE_SOUNDS_KEY, soundsList)
-                    if(soundsList.count() > 0) FileManager.itemViewHolder.mediaController.transportControls.sendCustomAction(CUSTOM_ACTION_PLAY, bundle)
                 }
                 true
             }
@@ -228,18 +224,19 @@ class MainActivity :
     }
 
     override fun skipPreviousButtonClicked(playingSound: PlayingSound) {
-        Log.d("skipPrevious", "Clicked! " + playingSound.uuid)
+        playingSound.skipPrevious(applicationContext)
     }
 
     override fun playPauseButtonClicked(playingSound: PlayingSound) {
-        Log.d("play pause", "Clicked! " + playingSound.uuid)
+        playingSound.playOrPause(applicationContext)
     }
 
     override fun skipNextButtonClicked(playingSound: PlayingSound) {
-        Log.d("skipNext", "Clicked! " + playingSound.uuid)
+        playingSound.skipNext(applicationContext)
     }
 
     override fun removeButtonClicked(playingSound: PlayingSound) {
+        playingSound.stop(applicationContext)
         GlobalScope.launch(Dispatchers.Main) { FileManager.deletePlayingSound(playingSound.uuid) }
     }
 

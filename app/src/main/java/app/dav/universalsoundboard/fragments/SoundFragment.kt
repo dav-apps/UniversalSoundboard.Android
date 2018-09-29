@@ -3,14 +3,9 @@ package app.dav.universalsoundboard.fragments
 import android.app.Activity
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
-import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaControllerCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.PopupMenu
@@ -22,9 +17,6 @@ import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.adapters.SoundListAdapter
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Sound
-import app.dav.universalsoundboard.services.BUNDLE_SOUNDS_KEY
-import app.dav.universalsoundboard.services.CUSTOM_ACTION_PLAY
-import app.dav.universalsoundboard.services.MediaPlaybackService
 import app.dav.universalsoundboard.viewmodels.SoundViewModel
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.GlobalScope
@@ -44,7 +36,6 @@ class SoundFragment :
     private var columnCount = 1
     private lateinit var viewModel: SoundViewModel
     private var selectedSound: Sound? = null
-    lateinit var mediaBrowser: MediaBrowserCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,42 +53,6 @@ class SoundFragment :
             if(it != null) viewModel.soundListAdapter?.submitList(it)
             viewModel.soundListAdapter?.notifyDataSetChanged()
         })
-
-        mediaBrowser = MediaBrowserCompat(context,
-                ComponentName(context!!, MediaPlaybackService::class.java),
-                object : MediaBrowserCompat.ConnectionCallback(){
-                    override fun onConnected() {
-                        super.onConnected()
-
-                        FileManager.itemViewHolder.mediaController = MediaControllerCompat(context, mediaBrowser.sessionToken)
-
-                        FileManager.itemViewHolder.mediaController.registerCallback(object : MediaControllerCompat.Callback() {
-                            override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
-                                super.onMetadataChanged(metadata)
-                            }
-
-                            override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
-                                super.onPlaybackStateChanged(state)
-                            }
-                        })
-
-                        mediaBrowser.subscribe(mediaBrowser.root, object : MediaBrowserCompat.SubscriptionCallback(){
-                            override fun onChildrenLoaded(parentId: String, children: MutableList<MediaBrowserCompat.MediaItem>) {
-                                super.onChildrenLoaded(parentId, children)
-                            }
-                        })
-                    }
-
-                    override fun onConnectionFailed() {
-                        super.onConnectionFailed()
-                    }
-
-                    override fun onConnectionSuspended() {
-                        super.onConnectionSuspended()
-                    }
-                }, null)
-
-        mediaBrowser.connect()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -120,15 +75,12 @@ class SoundFragment :
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaBrowser.disconnect()
     }
 
     override fun onItemClicked(sound: Sound) {
-        val bundle = Bundle()
-        bundle.putStringArrayList(BUNDLE_SOUNDS_KEY, arrayListOf<String>(sound.uuid.toString()))
-        FileManager.itemViewHolder.mediaController.transportControls.sendCustomAction(CUSTOM_ACTION_PLAY, bundle)
         GlobalScope.launch(Dispatchers.Main) {
-            FileManager.addPlayingSound(null, arrayListOf(sound), 0, 1, false, 1.0)
+            val playingSound = FileManager.addPlayingSound(null, arrayListOf(sound), 0, 1, false, 1.0)
+            playingSound?.playOrPause(context!!)
         }
     }
 
