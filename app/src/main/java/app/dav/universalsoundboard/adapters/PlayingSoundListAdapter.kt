@@ -5,6 +5,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.databinding.PlayingSoundListItemBinding
 import app.dav.universalsoundboard.models.PlayingSound
 
@@ -45,6 +47,20 @@ class PlayingSoundListAdapter(val clickListeners: PlayingSoundButtonClickListene
             binding.skipNextClickListener = skipNextClickListener
             binding.removeClickListener = removeClickListener
             binding.menuClickListener = menuClickListener
+
+            val playPauseButton = binding.root.findViewById<ImageView>(R.id.playing_sound_list_item_play_pause)
+
+            if(item.isPlaying.value == true){
+                playPauseButton.setImageResource(R.drawable.ic_pause)
+            }
+
+            item.isPlaying.observeForever {
+                if(it == null || it){
+                    playPauseButton.setImageResource(R.drawable.ic_pause)
+                }else{
+                    playPauseButton.setImageResource(R.drawable.ic_play_arrow)
+                }
+            }
         }
     }
 }
