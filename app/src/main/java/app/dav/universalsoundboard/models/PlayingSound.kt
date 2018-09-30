@@ -1,16 +1,19 @@
 package app.dav.universalsoundboard.models
 
+import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.content.ComponentName
 import android.content.Context
+import android.media.session.PlaybackState
 import android.os.Bundle
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.util.Log
 import android.view.View
-import app.dav.universalsoundboard.services.BUNDLE_SOUNDS_KEY
-import app.dav.universalsoundboard.services.CUSTOM_ACTION_PLAY
-import app.dav.universalsoundboard.services.MediaPlaybackService
+import app.dav.universalsoundboard.services.*
+import app.dav.universalsoundboard.utilities.Utils
 import java.util.*
 
 class PlayingSound(val uuid: UUID,
@@ -22,7 +25,13 @@ class PlayingSound(val uuid: UUID,
 
     var mediaBrowser: MediaBrowserCompat? = null
     var mediaController: MediaControllerCompat? = null
-    var isPlaying = false
+    private val isPlayingData = MutableLiveData<Boolean>()
+    val isPlaying: LiveData<Boolean>
+        get() = isPlayingData
+
+    init {
+        isPlayingData.value = false
+    }
 
     constructor(context: Context,
                 uuid: UUID,
@@ -53,6 +62,20 @@ class PlayingSound(val uuid: UUID,
 
                                 override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
                                     super.onPlaybackStateChanged(state)
+
+                                    val uuid = Utils.getUuidFromString(state?.extras?.getString(BUNDLE_UUID_KEY)) ?: return
+                                    if(uuid != this@PlayingSound.uuid) return
+
+                                    val playbackState = state?.playbackState as PlaybackState
+
+                                    if(playbackState.state == PlaybackStateCompat.STATE_PLAYING){
+                                        isPlayingData.value = true
+                                    }else if(playbackState.state == PlaybackStateCompat.STATE_PAUSED ||
+                                            playbackState.state == PlaybackStateCompat.STATE_STOPPED){
+                                        isPlayingData.value = false
+                                    }else{
+                                        Log.d("onPlaybackChange", "Else: " + playbackState.state)
+                                    }
                                 }
                             })
 
@@ -88,41 +111,63 @@ class PlayingSound(val uuid: UUID,
         return sounds[currentSound]
     }
 
-    fun getSkipButtonsVisibility() : Int{
-        if(sounds.count() > 1)
-            return View.VISIBLE
-        else
-            return View.GONE
+    fun getSkipPreviousButtonVisibility() : Int{
+        return if(currentSound == 0){
+            View.GONE
+        }else{
+            View.VISIBLE
+        }
+    }
+
+    fun getSkipNextButtonVisibility() : Int{
+        return if(sounds.count() > 1 && currentSound == sounds.count() - 1){
+            View.GONE
+        }else if(sounds.count() > 1){
+            View.VISIBLE
+        }else{
+            View.GONE
+        }
     }
 
     fun playOrPause(context: Context){
         if(mediaController == null){
             initMediaConnection(context, MediaAction.StartPlaying)
         }else{
+            val bundle = Bundle()
+            bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
+
             // Connection was already established; continue playing the sound
-            if(isPlaying){
-                mediaController?.transportControls?.pause()
-                isPlaying = false
+            if(isPlayingData.value == true){
+                mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_PAUSE, bundle)
+                isPlayingData.value = false
             }else{
-                mediaController?.transportControls?.play()
-                isPlaying = true
+                mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_PLAY, bundle)
+                isPlayingData.value = true
             }
         }
     }
 
     private fun startPlaying(){
-        val sound = sounds[currentSound]
+        val soundsUuidList = ArrayList<String>()
+        for(sound in sounds){
+            soundsUuidList.add(sound.uuid.toString())
+        }
+
         val bundle = Bundle()
-        bundle.putStringArrayList(BUNDLE_SOUNDS_KEY, arrayListOf<String>(sound.uuid.toString()))
-        mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_PLAY, bundle)
+        bundle.putStringArrayList(BUNDLE_SOUNDS_KEY, soundsUuidList)
+        bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
+        bundle.putBoolean(BUNDLE_PLAY, true)
+        mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_INIT, bundle)
     }
 
     fun stop(context: Context){
         if(mediaController == null){
             initMediaConnection(context, MediaAction.Stop)
         }else{
-            mediaController?.transportControls?.stop()
-            isPlaying = false
+            val bundle = Bundle()
+            bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
+            mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_STOP, bundle)
+            isPlayingData.value = false
         }
     }
 
@@ -130,7 +175,9 @@ class PlayingSound(val uuid: UUID,
         if(mediaController == null){
             initMediaConnection(context, MediaAction.SkipPrevious)
         }else{
-            mediaController?.transportControls?.skipToPrevious()
+            val bundle = Bundle()
+            bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
+            mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_PREVIOUS, bundle)
         }
     }
 
@@ -138,6 +185,9 @@ class PlayingSound(val uuid: UUID,
         if(mediaController == null){
             initMediaConnection(context, MediaAction.SkipNext)
         }else{
+            val bundle = Bundle()
+            bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
+            mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_NEXT, bundle)
             mediaController?.transportControls?.skipToNext()
         }
     }
