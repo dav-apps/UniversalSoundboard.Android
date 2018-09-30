@@ -52,11 +52,20 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@android:color/transparent"
-            android:padding="4dp"
             android:onClickListener="@{skipPreviousClickListener}"
+            android:padding="4dp"
+            android:visibility="@{playingSound.getSkipButtonsVisibility()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             app:srcCompat="@drawable/ic_skip_previous" />
+
+        <android.support.constraint.Barrier
+            android:id="@+id/barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="left"
+            app:constraint_referenced_ids="playing_sound_list_item_skip_previous,playing_sound_list_item_play_pause"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <ImageButton
             android:id="@+id/playing_sound_list_item_play_pause"
@@ -64,8 +73,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@android:color/transparent"
-            android:padding="4dp"
             android:onClickListener="@{playPauseClickListener}"
+            android:padding="4dp"
             app:layout_constraintStart_toEndOf="@+id/playing_sound_list_item_skip_previous"
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             app:srcCompat="@drawable/ic_play_arrow" />
@@ -76,8 +85,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@android:color/transparent"
-            android:padding="4dp"
             android:onClickListener="@{skipNextClickListener}"
+            android:padding="4dp"
+            android:visibility="@{playingSound.getSkipButtonsVisibility()}"
             app:layout_constraintStart_toEndOf="@+id/playing_sound_list_item_play_pause"
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             app:srcCompat="@drawable/ic_skip_next" />
@@ -86,11 +96,10 @@
             android:id="@+id/playing_sound_list_item_seekbar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/playing_sound_list_item_skip_next"
+            app:layout_constraintBottom_toBottomOf="@+id/playing_sound_list_item_clear"
             app:layout_constraintEnd_toStartOf="@+id/playing_sound_list_item_clear"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/playing_sound_list_item_skip_next"
-            app:layout_constraintTop_toTopOf="@+id/playing_sound_list_item_skip_next" />
+            app:layout_constraintTop_toTopOf="@+id/playing_sound_list_item_clear" />
 
         <ImageButton
             android:id="@+id/playing_sound_list_item_clear"
@@ -98,8 +107,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@android:color/transparent"
-            android:padding="4dp"
             android:onClickListener="@{removeClickListener}"
+            android:padding="4dp"
             app:layout_constraintEnd_toStartOf="@+id/playing_sound_list_item_more"
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             app:srcCompat="@drawable/ic_clear" />
@@ -110,10 +119,11 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@android:color/transparent"
-            android:padding="4dp"
             android:onClickListener="@{menuClickListener}"
+            android:padding="4dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             app:srcCompat="@drawable/ic_more_vert" />
+
     </android.support.constraint.ConstraintLayout>
 </layout>

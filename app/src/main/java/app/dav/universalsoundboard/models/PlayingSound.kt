@@ -7,6 +7,7 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import android.view.View
 import app.dav.universalsoundboard.services.BUNDLE_SOUNDS_KEY
 import app.dav.universalsoundboard.services.CUSTOM_ACTION_PLAY
 import app.dav.universalsoundboard.services.MediaPlaybackService
@@ -85,6 +86,13 @@ class PlayingSound(val uuid: UUID,
 
     fun getCurrentSoundObject() : Sound{
         return sounds[currentSound]
+    }
+
+    fun getSkipButtonsVisibility() : Int{
+        if(sounds.count() > 1)
+            return View.VISIBLE
+        else
+            return View.GONE
     }
 
     fun playOrPause(context: Context){
