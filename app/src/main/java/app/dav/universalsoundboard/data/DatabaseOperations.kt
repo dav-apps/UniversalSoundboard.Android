@@ -142,11 +142,7 @@ object DatabaseOperations {
     suspend fun createPlayingSound(uuid: UUID, soundIds: ArrayList<String>, current: Int, repetitions: Int, randomly: Boolean, volume: Double){
         val properties = ArrayList<Property>()
 
-        // SoundIds Property
-        var soundIdsString = ""
-        for(id in soundIds){
-            soundIdsString += id
-        }
+        val soundIdsString = soundIds.joinToString(",")
         properties.add(Property(0, FileManager.playingSoundTableSoundIdsPropertyName, soundIdsString))
         properties.add(Property(0, FileManager.playingSoundTableCurrentPropertyName, current.toString()))
         properties.add(Property(0, FileManager.playingSoundTableRepetitionsPropertyName, repetitions.toString()))
