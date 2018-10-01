@@ -156,6 +156,20 @@ object DatabaseOperations {
         return Dav.Database.getAllTableObjects(FileManager.playingSoundTableId, false).await()
     }
 
+    suspend fun updatePlayingSound(uuid: UUID, soundIds: ArrayList<String>?, current: Int?, repetitions: Int?, randomly: Boolean?, volume: Double?){
+        val playingSoundTableObject = DatabaseOperations.getObject(uuid) ?: return
+        if(playingSoundTableObject.tableId != FileManager.playingSoundTableId) return
+
+        if(soundIds != null){
+            val soundIdsString = soundIds.joinToString(",")
+            playingSoundTableObject.setPropertyValue(FileManager.playingSoundTableSoundIdsPropertyName, soundIdsString)
+        }
+        if(current != null) playingSoundTableObject.setPropertyValue(FileManager.playingSoundTableCurrentPropertyName, current.toString())
+        if(repetitions != null) playingSoundTableObject.setPropertyValue(FileManager.playingSoundTableRepetitionsPropertyName, repetitions.toString())
+        if(randomly != null) playingSoundTableObject.setPropertyValue(FileManager.playingSoundTableRandomlyPropertyName, randomly.toString())
+        if(volume != null) playingSoundTableObject.setPropertyValue(FileManager.playingSoundTableVolumePropertyName, volume.toString())
+    }
+
     suspend fun deletePlayingSound(uuid: UUID){
         val playingSoundTableObject = getObject(uuid) ?: return
         if(playingSoundTableObject.tableId != FileManager.playingSoundTableId) return

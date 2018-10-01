@@ -185,6 +185,11 @@ object FileManager{
         return PlayingSound(newUuid, current, sounds, repetitions, randomly, volume)
     }
 
+    suspend fun getPlayingSound(uuid: UUID) : PlayingSound?{
+        val playingSound = DatabaseOperations.getObject(uuid)
+        return if(playingSound != null) convertTableObjectToPlayingSound(playingSound) else null
+    }
+
     suspend fun getAllPlayingSounds() : ArrayList<PlayingSound>{
         val playingSounds = ArrayList<PlayingSound>()
 
@@ -194,6 +199,26 @@ object FileManager{
         }
 
         return playingSounds
+    }
+
+    suspend fun setSoundsListOfPlayingSound(uuid: UUID, sounds: ArrayList<Sound>){
+        val soundIds = ArrayList<String>()
+        for(sound in sounds)
+            soundIds.add(sound.uuid.toString())
+
+        DatabaseOperations.updatePlayingSound(uuid, soundIds, null, null, null, null)
+    }
+
+    suspend fun setCurrentOfPlayingSound(uuid: UUID, current: Int){
+        DatabaseOperations.updatePlayingSound(uuid, null, current, null, null, null)
+    }
+
+    suspend fun setRepetitionsOfPlayingSound(uuid: UUID, repetitions: Int){
+        DatabaseOperations.updatePlayingSound(uuid, null, null, repetitions, null, null)
+    }
+
+    suspend fun setVolumeOfPlayingSound(uuid: UUID, volume: Double){
+        DatabaseOperations.updatePlayingSound(uuid, null, null, null, null, volume)
     }
 
     suspend fun deletePlayingSound(uuid: UUID){
