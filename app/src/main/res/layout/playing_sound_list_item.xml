@@ -41,7 +41,6 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:contentDescription="@string/playing_sound_list_item_name_description"
-            android:text="@{playingSound.currentSoundObject.name}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Sound Name" />
@@ -54,7 +53,6 @@
             android:background="@android:color/transparent"
             android:onClickListener="@{skipPreviousClickListener}"
             android:padding="4dp"
-            android:visibility="@{playingSound.getSkipPreviousButtonVisibility()}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             app:srcCompat="@drawable/ic_skip_previous" />
@@ -87,7 +85,6 @@
             android:background="@android:color/transparent"
             android:onClickListener="@{skipNextClickListener}"
             android:padding="4dp"
-            android:visibility="@{playingSound.getSkipNextButtonVisibility()}"
             app:layout_constraintStart_toEndOf="@+id/playing_sound_list_item_play_pause"
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             app:srcCompat="@drawable/ic_skip_next" />
