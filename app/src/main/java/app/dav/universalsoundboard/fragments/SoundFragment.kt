@@ -79,8 +79,8 @@ class SoundFragment :
 
     override fun onItemClicked(sound: Sound) {
         GlobalScope.launch(Dispatchers.Main) {
-            val playingSound = FileManager.addPlayingSound(null, arrayListOf(sound), 0, 1, false, 1.0)
-            playingSound?.playOrPause(context!!)
+            FileManager.addPlayingSound(null, arrayListOf(sound), 0, 1, false, 1.0)
+            FileManager.itemViewHolder.playingSounds.value?.last()?.playOrPause(context!!)
         }
     }
 

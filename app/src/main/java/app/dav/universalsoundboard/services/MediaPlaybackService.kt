@@ -80,13 +80,13 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
             override fun onSkipToNext() {
                 super.onSkipToNext()
                 val uuid = notificationPlayingSoundUuid ?: return
-                skipToNext(uuid)
+                skipToNext(uuid, false)
             }
 
             override fun onSkipToPrevious() {
                 super.onSkipToPrevious()
                 val uuid = notificationPlayingSoundUuid ?: return
-                skipToPrevious(uuid)
+                skipToPrevious(uuid, false)
             }
 
             override fun onStop() {
@@ -119,14 +119,14 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                         GlobalScope.launch(Dispatchers.Main) {
                             val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY)) ?: return@launch
                             init(uuid)
-                            skipToNext(uuid)
+                            skipToNext(uuid, false)
                         }
                     }
                     CUSTOM_ACTION_PREVIOUS -> {
                         GlobalScope.launch(Dispatchers.Main) {
                             val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY)) ?: return@launch
                             init(uuid)
-                            skipToPrevious(uuid)
+                            skipToPrevious(uuid, false)
                         }
                     }
                     CUSTOM_ACTION_STOP -> {
@@ -151,7 +151,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                 // Create the MediaPlayer
                 val mediaPlayer = MediaPlayer()
                 mediaPlayer.setOnCompletionListener {
-                    skipToNext(uuid)
+                    skipToNext(uuid, true)
                 }
                 players[uuid] = mediaPlayer
                 playingSounds.add(playingSound)
@@ -199,6 +199,8 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         players.remove(uuid)
         val removedPlayingSound = playingSounds.find { p -> p.uuid == uuid }
         if(removedPlayingSound != null) playingSounds.remove(removedPlayingSound)
+
+        GlobalScope.launch(Dispatchers.Main) { FileManager.deletePlayingSound(uuid) }
     }
 
     private fun sendNotification(uuid: UUID){
@@ -332,7 +334,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         }
     }
 
-    fun skipToNext(uuid: UUID){
+    fun skipToNext(uuid: UUID, play: Boolean){
         val playingSound = playingSounds.find { p -> p.uuid == uuid } ?: return
         val mediaPlayer = players[uuid] ?: return
         val wasPlaying = mediaPlayer.isPlaying
@@ -351,11 +353,11 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
 
             // Play the sound
             prepare(uuid)
-            if(wasPlaying) play(uuid)
+            if(wasPlaying || play) play(uuid)
         }
     }
 
-    fun skipToPrevious(uuid: UUID){
+    fun skipToPrevious(uuid: UUID, play: Boolean){
         val playingSound = playingSounds.find { p -> p.uuid == uuid } ?: return
         val mediaPlayer = players[uuid] ?: return
         val wasPlaying = mediaPlayer.isPlaying
@@ -371,7 +373,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
 
             // Play the sound
             prepare(uuid)
-            if(wasPlaying) play(uuid)
+            if(wasPlaying || play) play(uuid)
         }
     }
 
@@ -379,14 +381,12 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         val player = players[uuid] ?: return
 
         if(player.isPlaying) players[uuid]?.stop()
-        players.remove(uuid)
 
         // Remote the notification
         removeNotification()
         setPlaybackState(uuid, PlaybackStateCompat.STATE_STOPPED)
 
-        val playingSound = playingSounds.find { p -> p.uuid == uuid} ?: return
-        playingSounds.remove(playingSound)
+        removePlayingSound(uuid)
     }
 
     private fun setPlaybackState(uuid: UUID, state: Int){

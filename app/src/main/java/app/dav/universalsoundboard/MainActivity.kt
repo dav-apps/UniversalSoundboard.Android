@@ -184,8 +184,8 @@ class MainActivity :
                 if(sounds != null){
                     GlobalScope.launch(Dispatchers.Main) {
                         // Create a PlayingSound
-                        val playingSound = FileManager.addPlayingSound(null, sounds, 0, 0, false, 1.0)
-                        playingSound?.playOrPause(applicationContext)
+                        FileManager.addPlayingSound(null, sounds, 0, 0, false, 1.0)
+                        FileManager.itemViewHolder.playingSounds.value?.last()?.playOrPause(applicationContext)
                     }
                 }
                 true
