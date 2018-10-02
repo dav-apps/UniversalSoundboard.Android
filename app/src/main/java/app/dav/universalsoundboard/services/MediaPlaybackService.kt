@@ -13,19 +13,21 @@ import android.os.Bundle
 import android.support.v4.app.NotificationCompat
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserServiceCompat
+import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import app.dav.universalsoundboard.MainActivity
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
-import app.dav.universalsoundboard.models.Sound
+import app.dav.universalsoundboard.models.PlayingSound
 import app.dav.universalsoundboard.utilities.Utils
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
@@ -36,25 +38,19 @@ private const val ACTION_PREVIOUS = "app.dav.universalsoundboard.ACTION_PREVIOUS
 private const val ACTION_STOP = "app.dav.universalsoundboard.ACTION_STOP"
 private const val NOTIFICATION_ID = 4123
 private const val NOTIFICATION_CHANNEL_ID = "app.dav.universalsoundboard.PlaybackNotificationChannel"
-const val CUSTOM_ACTION_INIT = "init"
 const val CUSTOM_ACTION_PLAY = "play"
 const val CUSTOM_ACTION_PAUSE = "pause"
 const val CUSTOM_ACTION_NEXT = "next"
 const val CUSTOM_ACTION_PREVIOUS = "previous"
 const val CUSTOM_ACTION_STOP = "stop"
 const val BUNDLE_UUID_KEY = "uuid"
-const val BUNDLE_SOUNDS_KEY = "sounds"
-const val BUNDLE_CURRENT_SOUND_KEY = "current_sound"
-const val BUNDLE_PLAY = "play"
 private const val MEDIA_SESSION_TAG = "app.dav.universalsoundboard.MediaPlaybackService"
-const val METADATA_TITLE = "title"
-const val METADATA_CATEGORY = "category"
 
 class MediaPlaybackService : MediaBrowserServiceCompat(){
     lateinit var mediaSession: MediaSessionCompat
-    var sounds = HashMap<UUID, ArrayList<Sound>>()
-    var currentSounds = HashMap<UUID, Int>()
     var players = HashMap<UUID, MediaPlayer>()
+    var playingSounds = ArrayList<PlayingSound>()
+    var notificationPlayingSoundUuid: UUID? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -71,31 +67,31 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                 super.onPlay()
 
                 // Find the first mediaPlayer that is playing
-                val uuid = getFirstPlayingSound() ?: return
+                val uuid = notificationPlayingSoundUuid ?: return
                 play(uuid)
             }
 
             override fun onPause() {
                 super.onPause()
-                val uuid = getFirstPlayingSound() ?: return
+                val uuid = notificationPlayingSoundUuid ?: return
                 pause(uuid)
             }
 
             override fun onSkipToNext() {
                 super.onSkipToNext()
-                val uuid = getFirstPlayingSound() ?: return
+                val uuid = notificationPlayingSoundUuid ?: return
                 skipToNext(uuid)
             }
 
             override fun onSkipToPrevious() {
                 super.onSkipToPrevious()
-                val uuid = getFirstPlayingSound() ?: return
+                val uuid = notificationPlayingSoundUuid ?: return
                 skipToPrevious(uuid)
             }
 
             override fun onStop() {
                 super.onStop()
-                val uuid = getFirstPlayingSound() ?: return
+                val uuid = notificationPlayingSoundUuid ?: return
                 stop(uuid)
             }
 
@@ -103,48 +99,65 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                 super.onCustomAction(action, extras)
 
                 when(action){
-                    CUSTOM_ACTION_INIT -> {
-                        // Get the sounds from the bundle
-                        val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY))
-                        val soundsList = extras?.getStringArrayList(BUNDLE_SOUNDS_KEY)
-                        val currentSound = extras?.getInt(BUNDLE_CURRENT_SOUND_KEY) ?: 0
-                        val play = extras?.getBoolean(BUNDLE_PLAY) ?: false
-
-                        if(uuid != null && soundsList != null){
-                            GlobalScope.launch(Dispatchers.Main) {
-                                addPlayingSound(uuid, soundsList, currentSound)
-
-                                if(play) play(uuid)
-                            }
+                    CUSTOM_ACTION_PLAY -> {
+                        GlobalScope.launch(Dispatchers.Main) {
+                            // Get the uuid and play the sound
+                            val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY)) ?: return@launch
+                            init(uuid)
+                            play(uuid)
                         }
                     }
-                    CUSTOM_ACTION_PLAY -> {
-                        // Get the uuid and play the sound
-                        val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY))
-                        if(uuid != null) play(uuid)
-                    }
                     CUSTOM_ACTION_PAUSE -> {
-                        // Get the uuid and pause the sound
-                        val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY))
-                        if(uuid != null) pause(uuid)
+                        GlobalScope.launch(Dispatchers.Main) {
+                            // Get the uuid and pause the sound
+                            val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY)) ?: return@launch
+                            init(uuid)
+                            pause(uuid)
+                        }
                     }
                     CUSTOM_ACTION_NEXT -> {
-                        val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY))
-                        if(uuid != null) skipToNext(uuid)
+                        GlobalScope.launch(Dispatchers.Main) {
+                            val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY)) ?: return@launch
+                            init(uuid)
+                            skipToNext(uuid)
+                        }
                     }
                     CUSTOM_ACTION_PREVIOUS -> {
-                        val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY))
-                        if(uuid != null) skipToPrevious(uuid)
+                        GlobalScope.launch(Dispatchers.Main) {
+                            val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY)) ?: return@launch
+                            init(uuid)
+                            skipToPrevious(uuid)
+                        }
                     }
                     CUSTOM_ACTION_STOP -> {
-                        val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY))
-                        if(uuid != null) stop(uuid)
+                        GlobalScope.launch(Dispatchers.Main) {
+                            val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY)) ?: return@launch
+                            init(uuid)
+                            stop(uuid)
+                        }
                     }
                 }
             }
         })
 
         mediaSession.isActive = true
+    }
+
+    private suspend fun init(uuid: UUID){
+        if(!players.containsKey(uuid)){
+            // Get the PlayingSound and add it to the list
+            val playingSound = FileManager.getPlayingSound(uuid)
+            if(playingSound != null){
+                // Create the MediaPlayer
+                val mediaPlayer = MediaPlayer()
+                mediaPlayer.setOnCompletionListener {
+                    skipToNext(uuid)
+                }
+                players[uuid] = mediaPlayer
+                playingSounds.add(playingSound)
+                prepare(uuid)
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -181,46 +194,18 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         removeNotification()
     }
 
-    private suspend fun addPlayingSound(uuid: UUID, soundsList: ArrayList<String>, currentSound: Int){
-        // Create a new MediaPlayer
-        val mediaPlayer = MediaPlayer()
-        mediaPlayer.setOnCompletionListener {
-            skipToNext(uuid)
-        }
-        players[uuid] = mediaPlayer
-
-        // Create new List with the sounds
-        updateSoundsList(uuid, soundsList)
-
-        // Create new currentSound
-        currentSounds[uuid] = currentSound
-
-        prepare(uuid)
-    }
-
     private fun removePlayingSound(uuid: UUID){
         players[uuid]?.release()
         players.remove(uuid)
-        sounds.remove(uuid)
-        currentSounds.remove(uuid)
-    }
-
-    private suspend fun updateSoundsList(uuid: UUID, soundsList: ArrayList<String>){
-        sounds[uuid] = ArrayList()
-        sounds[uuid]?.clear()
-
-        for(soundUuidString in soundsList){
-            val soundUuid = Utils.getUuidFromString(soundUuidString) ?: continue
-            val sound = FileManager.getSound(soundUuid) ?: continue
-            sounds[uuid]?.add(sound)
-        }
+        val removedPlayingSound = playingSounds.find { p -> p.uuid == uuid }
+        if(removedPlayingSound != null) playingSounds.remove(removedPlayingSound)
     }
 
     private fun sendNotification(uuid: UUID){
-        val soundsList = sounds[uuid] ?: return
-        val currentSound = currentSounds[uuid] ?: return
-        val sound = soundsList[currentSound]
+        val playingSound = playingSounds.find { p -> p.uuid == uuid } ?: return
+        val sound = playingSound.sounds[playingSound.currentSound]
         val player = players[uuid] ?: return
+        notificationPlayingSoundUuid = uuid
 
         val pendingMainActivityIntent = PendingIntent.getActivity(this, 0, Intent(this, MainActivity::class.java), 0)
         val notificationManager = getSystemService(NotificationManager::class.java)
@@ -257,7 +242,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         else
             builder.setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.music_note))
 
-        if(soundsList.count() > 1 && currentSound != 0){
+        if(playingSound.sounds.count() > 1 && playingSound.currentSound != 0){
             builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_previous, getString(R.string.notification_action_previous), getPendingPreviousIntent()).build())
         }
 
@@ -267,7 +252,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
             builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_play_arrow, getString(R.string.notification_action_play), getPendingPlayIntent()).build())
         }
 
-        if(soundsList.count() > 1 && currentSound != soundsList.count() - 1){
+        if(playingSound.sounds.count() > 1 && playingSound.currentSound != playingSound.sounds.count() - 1){
             builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_next, getString(R.string.notification_action_next), getPendingNextIntent()).build())
         }
 
@@ -278,6 +263,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
 
     private fun removeNotification(){
         getSystemService(NotificationManager::class.java).cancel(NOTIFICATION_ID)
+        notificationPlayingSoundUuid = null
     }
 
     private fun getPendingPlayIntent() : PendingIntent{
@@ -311,19 +297,18 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
     }
 
     private fun prepare(uuid: UUID){
-        val soundsList = sounds[uuid] ?: return
-        val currentSoundInt = currentSounds[uuid] ?: return
+        val playingSound = playingSounds.find { p -> p.uuid == uuid } ?: return
         val player = players[uuid] ?: return
 
-        if(soundsList.count() > currentSoundInt){
-            val currentSound = soundsList[currentSoundInt]
-            val currentSoundPath = currentSound.audioFile?.path
+        if(playingSound.sounds.count() > playingSound.currentSound){
+            val currentSound = playingSound.sounds[playingSound.currentSound]
+            val currentSoundPath = currentSound.audioFile?.path ?: return
 
-            if(currentSoundPath != null){
-                player.reset()
-                player.setDataSource(currentSoundPath)
-                player.prepare()
-            }
+            player.reset()
+            player.setDataSource(currentSoundPath)
+            player.prepare()
+            setMetadata(uuid)
+            sendNotification(uuid)
         }
     }
 
@@ -348,43 +333,60 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
     }
 
     fun skipToNext(uuid: UUID){
-        val soundsList = sounds[uuid] ?: return
-        val currentSound = currentSounds[uuid] ?: return
+        val playingSound = playingSounds.find { p -> p.uuid == uuid } ?: return
+        val mediaPlayer = players[uuid] ?: return
+        val wasPlaying = mediaPlayer.isPlaying
 
         // Play the next sound if there is one
-        currentSounds[uuid] = currentSound + 1
-        if(soundsList.count() > currentSound){
+        if((playingSound.currentSound + 1) >= playingSound.sounds.count()){
+            stop(uuid)
+            return
+        }
+
+        playingSound.currentSound++
+
+        // Update the PlayingSound in the database
+        GlobalScope.launch(Dispatchers.Main) {
+            FileManager.setCurrentOfPlayingSound(uuid, playingSound.currentSound)
+
             // Play the sound
             prepare(uuid)
-            play(uuid)
-        }else{
-            stop(uuid)
+            if(wasPlaying) play(uuid)
         }
     }
 
     fun skipToPrevious(uuid: UUID){
-        val currentSound = currentSounds[uuid] ?: return
+        val playingSound = playingSounds.find { p -> p.uuid == uuid } ?: return
+        val mediaPlayer = players[uuid] ?: return
+        val wasPlaying = mediaPlayer.isPlaying
 
         // Play the previous sound if there is one
-        if(currentSound == 0) return
+        if(playingSound.currentSound == 0) return    // TODO: Check for repetitions & randomly
 
-        currentSounds[uuid] = currentSound - 1
+        playingSound.currentSound--
 
-        // Play the sound
-        prepare(uuid)
-        play(uuid)
+        // Update the PlayingSound in the database
+        GlobalScope.launch(Dispatchers.Main) {
+            FileManager.setCurrentOfPlayingSound(uuid, playingSound.currentSound)
+
+            // Play the sound
+            prepare(uuid)
+            if(wasPlaying) play(uuid)
+        }
     }
 
     fun stop(uuid: UUID){
         val player = players[uuid] ?: return
 
         if(player.isPlaying) players[uuid]?.stop()
+        players.remove(uuid)
 
         // Remote the notification
         removeNotification()
-        mediaSession.setPlaybackState(PlaybackStateCompat.Builder().setState(PlaybackStateCompat.STATE_STOPPED, player.currentPosition.toLong(), 1f).build())
-        currentSounds[uuid] = 0
-        sounds[uuid]?.clear()
+        setPlaybackState(uuid, PlaybackStateCompat.STATE_STOPPED)
+
+        val playingSound = playingSounds.find { p -> p.uuid == uuid} ?: return
+        playingSounds.remove(playingSound)
     }
 
     private fun setPlaybackState(uuid: UUID, state: Int){
@@ -397,10 +399,9 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                 .build())
     }
 
-    private fun getFirstPlayingSound() : UUID?{
-        for(player in players){
-            if(player.value.isPlaying) return player.key
-        }
-        return null
+    private fun setMetadata(uuid: UUID){
+        mediaSession.setMetadata(MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, uuid.toString())
+                .build())
     }
 }

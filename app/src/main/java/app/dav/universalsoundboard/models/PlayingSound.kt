@@ -10,28 +10,32 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
-import android.util.Log
-import android.view.View
+import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.services.*
 import app.dav.universalsoundboard.utilities.Utils
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.launch
 import java.util.*
 
 class PlayingSound(val uuid: UUID,
-                   val currentSound: Int,
-                   val sounds: ArrayList<Sound>,
-                   val repetitions: Int,
-                   val randomly: Boolean,
-                   val volume: Double) {
+                   var currentSound: Int,
+                   var sounds: ArrayList<Sound>,
+                   var repetitions: Int,
+                   var randomly: Boolean,
+                   var volume: Double) {
 
     var mediaBrowser: MediaBrowserCompat? = null
     var mediaController: MediaControllerCompat? = null
+
+    // LiveData for data binding
     private val isPlayingData = MutableLiveData<Boolean>()
     val isPlaying: LiveData<Boolean>
         get() = isPlayingData
-
-    init {
-        isPlayingData.value = false
-    }
+    private val currentSoundData = MutableLiveData<Int>()
+    val currentSoundLiveData: LiveData<Int>
+        get() = currentSoundData
 
     constructor(context: Context,
                 uuid: UUID,
@@ -42,6 +46,10 @@ class PlayingSound(val uuid: UUID,
                 volume: Double) : this(uuid, currentSound, sounds, repetitions, randomly, volume){
 
         initMediaConnection(context, null)
+    }
+
+    init {
+        currentSoundData.value = currentSound
     }
 
     private fun initMediaConnection(context: Context, action: MediaAction?){
@@ -58,6 +66,21 @@ class PlayingSound(val uuid: UUID,
                             mediaController?.registerCallback(object : MediaControllerCompat.Callback() {
                                 override fun onMetadataChanged(metadata: MediaMetadataCompat?) {
                                     super.onMetadataChanged(metadata)
+
+                                    val uuid = Utils.getUuidFromString(metadata?.getString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI)) ?: return
+                                    if(uuid != this@PlayingSound.uuid) return
+
+                                    // Get the new values of the PlayingSound
+                                    GlobalScope.launch(Dispatchers.Main) {
+                                        val newPlayingSound = FileManager.getPlayingSound(uuid) ?: return@launch
+                                        currentSound = newPlayingSound.currentSound
+                                        sounds = newPlayingSound.sounds
+                                        repetitions = newPlayingSound.repetitions
+                                        randomly = newPlayingSound.randomly
+                                        volume = newPlayingSound.volume
+
+                                        currentSoundData.value = newPlayingSound.currentSound
+                                    }
                                 }
 
                                 override fun onPlaybackStateChanged(state: PlaybackStateCompat?) {
@@ -73,8 +96,6 @@ class PlayingSound(val uuid: UUID,
                                     }else if(playbackState.state == PlaybackStateCompat.STATE_PAUSED ||
                                             playbackState.state == PlaybackStateCompat.STATE_STOPPED){
                                         isPlayingData.value = false
-                                    }else{
-                                        Log.d("onPlaybackChange", "Else: " + playbackState.state)
                                     }
                                 }
                             })
@@ -86,8 +107,7 @@ class PlayingSound(val uuid: UUID,
                             })
 
                             when(action){
-                                MediaAction.StartPlaying -> startPlaying()
-                                //MediaAction.Pause -> pause(context)
+                                MediaAction.PlayPause -> playOrPause(context)
                                 MediaAction.Stop -> stop(context)
                                 MediaAction.SkipPrevious -> skipPrevious(context)
                                 MediaAction.SkipNext -> skipNext(context)
@@ -107,31 +127,9 @@ class PlayingSound(val uuid: UUID,
         }
     }
 
-    fun getCurrentSoundObject() : Sound{
-        return sounds[currentSound]
-    }
-
-    fun getSkipPreviousButtonVisibility() : Int{
-        return if(currentSound == 0){
-            View.GONE
-        }else{
-            View.VISIBLE
-        }
-    }
-
-    fun getSkipNextButtonVisibility() : Int{
-        return if(sounds.count() > 1 && currentSound == sounds.count() - 1){
-            View.GONE
-        }else if(sounds.count() > 1){
-            View.VISIBLE
-        }else{
-            View.GONE
-        }
-    }
-
     fun playOrPause(context: Context){
         if(mediaController == null){
-            initMediaConnection(context, MediaAction.StartPlaying)
+            initMediaConnection(context, MediaAction.PlayPause)
         }else{
             val bundle = Bundle()
             bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
@@ -147,19 +145,6 @@ class PlayingSound(val uuid: UUID,
         }
     }
 
-    private fun startPlaying(){
-        val soundsUuidList = ArrayList<String>()
-        for(sound in sounds){
-            soundsUuidList.add(sound.uuid.toString())
-        }
-
-        val bundle = Bundle()
-        bundle.putStringArrayList(BUNDLE_SOUNDS_KEY, soundsUuidList)
-        bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
-        bundle.putBoolean(BUNDLE_PLAY, true)
-        mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_INIT, bundle)
-    }
-
     fun stop(context: Context){
         if(mediaController == null){
             initMediaConnection(context, MediaAction.Stop)
@@ -167,7 +152,6 @@ class PlayingSound(val uuid: UUID,
             val bundle = Bundle()
             bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
             mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_STOP, bundle)
-            isPlayingData.value = false
         }
     }
 
@@ -188,13 +172,12 @@ class PlayingSound(val uuid: UUID,
             val bundle = Bundle()
             bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
             mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_NEXT, bundle)
-            mediaController?.transportControls?.skipToNext()
         }
     }
 }
 
 enum class MediaAction{
-    StartPlaying(),
+    PlayPause(),
     Stop(),
     SkipPrevious(),
     SkipNext()
