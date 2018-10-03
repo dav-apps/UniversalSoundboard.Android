@@ -6,6 +6,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.media.session.PlaybackState
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaMetadataCompat
 import android.support.v4.media.session.MediaControllerCompat
@@ -28,8 +29,17 @@ class PlayingSound(val uuid: UUID,
 
     var mediaBrowser: MediaBrowserCompat? = null
     var mediaController: MediaControllerCompat? = null
+    var timerIsOn = false
+    val timer: Runnable
+    val timerHandler = Handler()
 
     // LiveData for data binding
+    private val progressData = MutableLiveData<Int>()
+    val progress: LiveData<Int>
+        get() = progressData
+    private val durationData = MutableLiveData<Int>()
+    val duration: LiveData<Int>
+        get() = durationData
     private val isPlayingData = MutableLiveData<Boolean>()
     val isPlaying: LiveData<Boolean>
         get() = isPlayingData
@@ -50,6 +60,21 @@ class PlayingSound(val uuid: UUID,
 
     init {
         currentSoundData.value = currentSound
+
+        timer = object : Runnable{
+            override fun run() {
+                if(timerIsOn){
+                    val p = progressData.value
+                    if(p != null){
+                        progressData.value = p + 1000
+                    }
+
+                    timerHandler.postDelayed(this, 1000)
+                }
+            }
+        }
+
+        timerHandler.post(timer)
     }
 
     private fun initMediaConnection(context: Context, action: MediaAction?){
@@ -91,11 +116,17 @@ class PlayingSound(val uuid: UUID,
 
                                     val playbackState = state?.playbackState as PlaybackState
 
+                                    progressData.value = playbackState.extras?.getInt(BUNDLE_POSITION_KEY) ?: 0
+                                    durationData.value = playbackState.extras?.getInt(BUNDLE_DURATION_KEY) ?: 0
+
                                     if(playbackState.state == PlaybackStateCompat.STATE_PLAYING){
                                         isPlayingData.value = true
+                                        timerIsOn = true
+                                        timerHandler.post(timer)
                                     }else if(playbackState.state == PlaybackStateCompat.STATE_PAUSED ||
                                             playbackState.state == PlaybackStateCompat.STATE_STOPPED){
                                         isPlayingData.value = false
+                                        timerIsOn = false
                                     }
                                 }
                             })

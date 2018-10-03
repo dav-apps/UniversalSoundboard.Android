@@ -44,6 +44,8 @@ const val CUSTOM_ACTION_NEXT = "next"
 const val CUSTOM_ACTION_PREVIOUS = "previous"
 const val CUSTOM_ACTION_STOP = "stop"
 const val BUNDLE_UUID_KEY = "uuid"
+const val BUNDLE_DURATION_KEY = "duration"
+const val BUNDLE_POSITION_KEY = "position"
 private const val MEDIA_SESSION_TAG = "app.dav.universalsoundboard.MediaPlaybackService"
 
 class MediaPlaybackService : MediaBrowserServiceCompat(){
@@ -390,8 +392,12 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
     }
 
     private fun setPlaybackState(uuid: UUID, state: Int){
+        val player = players.get(uuid)
+
         val bundle = Bundle()
         bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
+        bundle.putInt(BUNDLE_POSITION_KEY, player?.currentPosition ?: 0)
+        bundle.putInt(BUNDLE_DURATION_KEY, player?.duration ?: 0)
 
         mediaSession.setPlaybackState(PlaybackStateCompat.Builder()
                 .setState(state, players[uuid]?.currentPosition?.toLong() ?: 0, 1f)

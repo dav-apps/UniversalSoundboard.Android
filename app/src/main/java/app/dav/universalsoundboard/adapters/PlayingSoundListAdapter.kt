@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.SeekBar
 import android.widget.TextView
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.databinding.PlayingSoundListItemBinding
@@ -51,6 +52,10 @@ class PlayingSoundListAdapter(val clickListeners: PlayingSoundButtonClickListene
             binding.menuClickListener = menuClickListener
 
             val playPauseButton = binding.root.findViewById<ImageView>(R.id.playing_sound_list_item_play_pause)
+            val skipPreviousButton = binding.root.findViewById<ImageButton>(R.id.playing_sound_list_item_skip_previous)
+            val skipNextButton = binding.root.findViewById<ImageButton>(R.id.playing_sound_list_item_skip_next)
+            val nameTextView = binding.root.findViewById<TextView>(R.id.playing_sound_list_item_name)
+            val seekbar = binding.root.findViewById<SeekBar>(R.id.playing_sound_list_item_seekbar)
 
             item.isPlaying.observeForever {
                 if(it == null || it){
@@ -60,15 +65,11 @@ class PlayingSoundListAdapter(val clickListeners: PlayingSoundButtonClickListene
                 }
             }
 
-            val skipPreviousButton = binding.root.findViewById<ImageButton>(R.id.playing_sound_list_item_skip_previous)
-            val skipNextButton = binding.root.findViewById<ImageButton>(R.id.playing_sound_list_item_skip_next)
-            val nameTextView = binding.root.findViewById<TextView>(R.id.playing_sound_list_item_name)
-
             item.currentSoundLiveData.observeForever {
                 if(it == null) return@observeForever
                 try {
                     val currentSound = item.sounds[it]
-                    nameTextView.setText(currentSound.name)
+                    nameTextView.text = currentSound.name
 
                     if(it == 0){
                         skipPreviousButton.visibility = View.GONE
@@ -85,6 +86,30 @@ class PlayingSoundListAdapter(val clickListeners: PlayingSoundButtonClickListene
                     }
                 }catch (e: Exception){}
             }
+
+            item.progress.observeForever {
+                it ?: return@observeForever
+                seekbar.progress = it
+            }
+
+            item.duration.observeForever {
+                it ?: return@observeForever
+                seekbar.max = it
+            }
+
+            seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+                }
+            })
         }
     }
 }
