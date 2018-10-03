@@ -20,6 +20,8 @@ import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
 import java.util.*
 
+private const val updateSeekbarInterval = 250L
+
 class PlayingSound(val uuid: UUID,
                    var currentSound: Int,
                    var sounds: ArrayList<Sound>,
@@ -55,7 +57,7 @@ class PlayingSound(val uuid: UUID,
                 randomly: Boolean,
                 volume: Double) : this(uuid, currentSound, sounds, repetitions, randomly, volume){
 
-        initMediaConnection(context, null)
+        initMediaConnection(context, null, 0)
     }
 
     init {
@@ -66,10 +68,14 @@ class PlayingSound(val uuid: UUID,
                 if(timerIsOn){
                     val p = progressData.value
                     if(p != null){
-                        progressData.value = p + 1000
+                        progressData.value = p + updateSeekbarInterval.toInt()
                     }
 
-                    timerHandler.postDelayed(this, 1000)
+                    if(progressData.value ?: 0 > durationData.value ?: 0){
+                        timerHandler.removeCallbacks(this)
+                    }else{
+                        timerHandler.postDelayed(this, updateSeekbarInterval)
+                    }
                 }
             }
         }
@@ -77,7 +83,7 @@ class PlayingSound(val uuid: UUID,
         timerHandler.post(timer)
     }
 
-    private fun initMediaConnection(context: Context, action: MediaAction?){
+    private fun initMediaConnection(context: Context, action: MediaAction?, position: Int){
         if(mediaBrowser == null){
             mediaBrowser = MediaBrowserCompat(context,
                     ComponentName(context, MediaPlaybackService::class.java),
@@ -142,6 +148,7 @@ class PlayingSound(val uuid: UUID,
                                 MediaAction.Stop -> stop(context)
                                 MediaAction.SkipPrevious -> skipPrevious(context)
                                 MediaAction.SkipNext -> skipNext(context)
+                                MediaAction.Seek -> seekTo(context, position)
                             }
                         }
 
@@ -160,7 +167,7 @@ class PlayingSound(val uuid: UUID,
 
     fun playOrPause(context: Context){
         if(mediaController == null){
-            initMediaConnection(context, MediaAction.PlayPause)
+            initMediaConnection(context, MediaAction.PlayPause, 0)
         }else{
             val bundle = Bundle()
             bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
@@ -178,7 +185,7 @@ class PlayingSound(val uuid: UUID,
 
     fun stop(context: Context){
         if(mediaController == null){
-            initMediaConnection(context, MediaAction.Stop)
+            initMediaConnection(context, MediaAction.Stop, 0)
         }else{
             val bundle = Bundle()
             bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
@@ -188,7 +195,7 @@ class PlayingSound(val uuid: UUID,
 
     fun skipPrevious(context: Context){
         if(mediaController == null){
-            initMediaConnection(context, MediaAction.SkipPrevious)
+            initMediaConnection(context, MediaAction.SkipPrevious, 0)
         }else{
             val bundle = Bundle()
             bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
@@ -198,11 +205,23 @@ class PlayingSound(val uuid: UUID,
 
     fun skipNext(context: Context){
         if(mediaController == null){
-            initMediaConnection(context, MediaAction.SkipNext)
+            initMediaConnection(context, MediaAction.SkipNext, 0)
         }else{
             val bundle = Bundle()
             bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
             mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_NEXT, bundle)
+        }
+    }
+
+    fun seekTo(context: Context, position: Int){
+        if(mediaController == null){
+            initMediaConnection(context, MediaAction.Seek, position)
+        }else{
+            val bundle = Bundle()
+            bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
+            bundle.putInt(BUNDLE_POSITION_KEY, position)
+            mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_SEEK, bundle)
+            progressData.value = position
         }
     }
 }
@@ -211,5 +230,6 @@ enum class MediaAction{
     PlayPause(),
     Stop(),
     SkipPrevious(),
-    SkipNext()
+    SkipNext(),
+    Seek()
 }

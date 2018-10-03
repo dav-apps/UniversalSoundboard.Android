@@ -43,6 +43,7 @@ const val CUSTOM_ACTION_PAUSE = "pause"
 const val CUSTOM_ACTION_NEXT = "next"
 const val CUSTOM_ACTION_PREVIOUS = "previous"
 const val CUSTOM_ACTION_STOP = "stop"
+const val CUSTOM_ACTION_SEEK = "seek"
 const val BUNDLE_UUID_KEY = "uuid"
 const val BUNDLE_DURATION_KEY = "duration"
 const val BUNDLE_POSITION_KEY = "position"
@@ -136,6 +137,14 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                             val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY)) ?: return@launch
                             init(uuid)
                             stop(uuid)
+                        }
+                    }
+                    CUSTOM_ACTION_SEEK -> {
+                        GlobalScope.launch(Dispatchers.Main) {
+                            val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY)) ?: return@launch
+                            val position = extras?.getInt(BUNDLE_POSITION_KEY) ?: return@launch
+                            init(uuid)
+                            seek(uuid, position)
                         }
                     }
                 }
@@ -389,6 +398,11 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         setPlaybackState(uuid, PlaybackStateCompat.STATE_STOPPED)
 
         removePlayingSound(uuid)
+    }
+
+    fun seek(uuid: UUID, position: Int){
+        val player = players[uuid] ?: return
+        player.seekTo(position)
     }
 
     private fun setPlaybackState(uuid: UUID, state: Int){

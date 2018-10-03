@@ -1,5 +1,6 @@
 package app.dav.universalsoundboard.adapters
 
+import android.content.Context
 import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -13,7 +14,8 @@ import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.databinding.PlayingSoundListItemBinding
 import app.dav.universalsoundboard.models.PlayingSound
 
-class PlayingSoundListAdapter(val clickListeners: PlayingSoundButtonClickListeners) : ListAdapter<PlayingSound, PlayingSoundListAdapter.ViewHolder>(PlayingSoundDiffCallback()) {
+class PlayingSoundListAdapter(val context: Context, private val clickListeners: PlayingSoundButtonClickListeners) :
+        ListAdapter<PlayingSound, PlayingSoundListAdapter.ViewHolder>(PlayingSoundDiffCallback()) {
 
     interface PlayingSoundButtonClickListeners{
         fun skipPreviousButtonClicked(playingSound: PlayingSound)
@@ -99,7 +101,9 @@ class PlayingSoundListAdapter(val clickListeners: PlayingSoundButtonClickListene
 
             seekbar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
                 override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-
+                    if(fromUser){
+                        item.seekTo(context, progress);
+                    }
                 }
 
                 override fun onStartTrackingTouch(seekBar: SeekBar?) {

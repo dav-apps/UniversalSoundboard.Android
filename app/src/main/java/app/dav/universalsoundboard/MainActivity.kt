@@ -63,7 +63,7 @@ class MainActivity :
         Dav.init(this, FileManager.getDavDataPath(filesDir.path).path + "/")
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         viewModel.categoryListAdapter = CategoryListAdapter(this)
-        viewModel.playingSoundListAdapter = PlayingSoundListAdapter(this)
+        viewModel.playingSoundListAdapter = PlayingSoundListAdapter(applicationContext, this)
 
         startService(Intent(applicationContext, MediaPlaybackService::class.java))
 
