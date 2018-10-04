@@ -403,6 +403,21 @@ class ItemViewHolder(){
     }
 
     suspend fun loadPlayingSounds(){
-        playingSoundsData.value = FileManager.getAllPlayingSounds()
+        val currentPlayingSounds = playingSoundsData.value ?: return
+        val playingSounds = FileManager.getAllPlayingSounds()
+        val playingSoundUuids = ArrayList<UUID>()
+
+        // Add new PlayingSounds
+        for(playingSound in playingSounds){
+            playingSoundUuids.add(playingSound.uuid)
+            if(currentPlayingSounds.find { p -> p.uuid == playingSound.uuid } == null){
+                currentPlayingSounds.add(playingSound)
+            }
+        }
+
+        // Remove old PlayingSounds
+        currentPlayingSounds.retainAll { p -> playingSoundUuids.contains(p.uuid) }
+
+        playingSoundsData.value = currentPlayingSounds
     }
 }

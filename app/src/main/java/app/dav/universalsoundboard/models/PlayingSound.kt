@@ -190,6 +190,9 @@ class PlayingSound(val uuid: UUID,
             val bundle = Bundle()
             bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
             mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_STOP, bundle)
+
+            // Stop the timer
+            timerHandler.removeCallbacks(timer)
         }
     }
 
@@ -200,6 +203,9 @@ class PlayingSound(val uuid: UUID,
             val bundle = Bundle()
             bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
             mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_PREVIOUS, bundle)
+
+            // Stop the timer
+            timerHandler.removeCallbacks(timer)
         }
     }
 
@@ -210,6 +216,9 @@ class PlayingSound(val uuid: UUID,
             val bundle = Bundle()
             bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
             mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_NEXT, bundle)
+
+            // Stop the timer
+            timerHandler.removeCallbacks(timer)
         }
     }
 
