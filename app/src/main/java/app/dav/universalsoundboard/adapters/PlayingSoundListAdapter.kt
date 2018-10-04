@@ -61,9 +61,9 @@ class PlayingSoundListAdapter(val context: Context, private val clickListeners: 
 
             item.isPlaying.observeForever {
                 if(it == null || it){
-                    playPauseButton.setImageResource(R.drawable.ic_pause)
+                    playPauseButton.setImageResource(R.drawable.ic_pause_white)
                 }else{
-                    playPauseButton.setImageResource(R.drawable.ic_play_arrow)
+                    playPauseButton.setImageResource(R.drawable.ic_play_arrow_white)
                 }
             }
 

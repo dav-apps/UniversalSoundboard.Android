@@ -6,6 +6,7 @@
     <color name="colorSecondary">#dd2c00</color>
     <color name="colorSecondaryLight">#ff6434</color>
     <color name="colorSecondaryDark">#a30000</color>
+    <color name="bottomSheetBackgroundColor">#344956</color>
     <color name="colorFabNormal">@color/colorSecondary</color>
     <color name="colorFabPressed">@color/colorSecondaryLight</color>
     <color name="ic_launcher_background">@color/colorPrimary</color>
