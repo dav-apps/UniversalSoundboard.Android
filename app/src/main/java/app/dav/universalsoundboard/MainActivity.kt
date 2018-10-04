@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.view.GravityCompat
@@ -49,6 +50,7 @@ class MainActivity :
     private var soundFragment: SoundFragment = SoundFragment.newInstance(1)
     private var settingsFragment: SettingsFragment = SettingsFragment.newInstance()
     private var currentFragment: CurrentFragment = CurrentFragment.SoundFragment
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<CoordinatorLayout>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +69,7 @@ class MainActivity :
 
         startService(Intent(applicationContext, MediaPlaybackService::class.java))
 
-        val sheetBehavior = BottomSheetBehavior.from(playing_sound_bottom_sheet)
+        bottomSheetBehavior = BottomSheetBehavior.from(playing_sound_bottom_sheet)
         val materialSheetFab = MaterialSheetFab(fab, fab_sheet, overlay, R.color.colorSecondary, R.color.colorPrimary)
 
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -114,9 +116,24 @@ class MainActivity :
         GlobalScope.launch(Dispatchers.Main) { FileManager.itemViewHolder.loadPlayingSounds() }
         FileManager.itemViewHolder.playingSounds.observe(this, Observer {
             if(it == null) return@Observer
-            viewModel.playingSoundListAdapter?.submitList(it)
-            viewModel.playingSoundListAdapter?.notifyDataSetChanged()
-            sheetBehavior.isHideable = it.count() == 0
+
+            if(it.count() == 0){
+                hideBottomSheet()
+
+                val handler = Handler()
+                handler.postDelayed({
+                    viewModel.playingSoundListAdapter?.submitList(it)
+                    viewModel.playingSoundListAdapter?.notifyDataSetChanged()
+                }, 100)
+            }else{
+                viewModel.playingSoundListAdapter?.submitList(it)
+                viewModel.playingSoundListAdapter?.notifyDataSetChanged()
+
+                val handler = Handler()
+                handler.postDelayed({
+                    showBottomSheet()
+                }, 100)
+            }
         })
 
         val transaction = supportFragmentManager.beginTransaction()
@@ -261,6 +278,7 @@ class MainActivity :
             FileManager.itemViewHolder.setShowCategoryIcons(true)
         }
         FileManager.itemViewHolder.setShowPlayAllIcon(true)
+        showFab()
         showBottomSheet()
     }
 
@@ -278,11 +296,25 @@ class MainActivity :
         // Hide the icons
         FileManager.itemViewHolder.setShowCategoryIcons(false)
         FileManager.itemViewHolder.setShowPlayAllIcon(false)
+        hideFab()
         hideBottomSheet()
     }
 
     private fun showBottomSheet(){
-        playing_sound_bottom_sheet.visibility = View.VISIBLE
+        if(FileManager.itemViewHolder.playingSounds.value?.count() ?: 0 == 0) return
+
+        if(bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN){
+            // The bottom sheet was hidden
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        val handler = Handler()
+        handler.postDelayed({
+            bottomSheetBehavior.isHideable = false
+        }, 1)
+    }
+
+    private fun showFab(){
         val layoutParams = fab.layoutParams as CoordinatorLayout.LayoutParams
         layoutParams.anchorId = R.id.playing_sound_bottom_sheet
         fab.layoutParams = layoutParams
@@ -290,7 +322,13 @@ class MainActivity :
     }
 
     private fun hideBottomSheet(){
-        playing_sound_bottom_sheet.visibility = View.GONE
+        if(FileManager.itemViewHolder.playingSounds.value?.count() ?: 0 < 0) return
+
+        bottomSheetBehavior.isHideable = true
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+    }
+
+    private fun hideFab(){
         val layoutParams = fab.layoutParams as CoordinatorLayout.LayoutParams
         layoutParams.anchorId = View.NO_ID
         fab.layoutParams = layoutParams
