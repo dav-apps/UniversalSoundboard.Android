@@ -24,6 +24,7 @@ class RenameSoundDialogFragment : DialogFragment() {
     }
 
     private fun createDialog() : AlertDialog?{
+        if(sound == null) return null
         val layout = activity?.layoutInflater?.inflate(R.layout.dialog_rename_sound, null) ?: return null
         val nameEditText = layout.findViewById<EditText>(R.id.rename_sound_dialog_name_edittext)
 
@@ -33,10 +34,8 @@ class RenameSoundDialogFragment : DialogFragment() {
         val alertDialog = AlertDialog.Builder(activity)
                 .setView(layout)
                 .setPositiveButton(R.string.rename_sound_dialog_positive_button_text, DialogInterface.OnClickListener { dialog, which ->
-                    val s = sound
-                    if(s != null){
-                        GlobalScope.launch(Dispatchers.Main) { FileManager.renameSound(s.uuid, nameEditText.text.toString()) }
-                    }
+                    val s = sound ?: return@OnClickListener
+                    GlobalScope.launch(Dispatchers.Main) { FileManager.renameSound(s.uuid, nameEditText.text.toString()) }
                 })
                 .setNegativeButton(R.string.dialog_negative_button, null)
                 .create()

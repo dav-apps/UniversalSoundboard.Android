@@ -89,6 +89,21 @@ object FileManager{
         return convertTableObjectToSound(soundTableObject)
     }
 
+    suspend fun renameSound(uuid: UUID, newName: String){
+        DatabaseOperations.updateSound(uuid, newName, null, null, null, null)
+        itemViewHolder.loadSounds()
+    }
+
+    suspend fun setCategoryOfSound(soundUuid: UUID, categoryUuid: UUID){
+        DatabaseOperations.updateSound(soundUuid, null, null, null, null, categoryUuid.toString())
+        itemViewHolder.loadSounds()
+    }
+
+    suspend fun setSoundAsFavourite(uuid: UUID, favourite: Boolean){
+        DatabaseOperations.updateSound(uuid, null, favourite.toString(), null, null, null)
+        itemViewHolder.loadSounds()
+    }
+
     suspend fun updateImageOfSound(soundUuid: UUID, imageFile: File){
         val soundTableObject = DatabaseOperations.getObject(soundUuid)
         if(soundTableObject == null || soundTableObject.tableId != soundTableId) return
@@ -107,11 +122,6 @@ object FileManager{
             DatabaseOperations.updateSound(soundUuid, null, null, null, imageUuid.toString(), null)
         }
 
-        itemViewHolder.loadSounds()
-    }
-
-    suspend fun renameSound(uuid: UUID, newName: String){
-        DatabaseOperations.updateSound(uuid, newName, null, null, null, null)
         itemViewHolder.loadSounds()
     }
 

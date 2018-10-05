@@ -40,8 +40,11 @@
     <string name="delete_category_dialog_title">Delete category %1$s</string>
     <string name="delete_category_dialog_message">Are you sure?  Your Sounds are not impacted.</string>
     <string name="delete_category_dialog_positive_button_text">Delete</string>
+    <string name="set_category_dialog_title">Set Category</string>
+    <string name="set_category_dialog_positive_button_text">Save</string>
     <string name="fab_sheet_item_new_sound">New Sound</string>
     <string name="fab_sheet_item_new_category">New Category</string>
+    <string name="sound_item_context_menu_set_category">Set category</string>
     <string name="sound_item_context_menu_change_image">Change image</string>
     <string name="sound_item_context_menu_rename">Rename</string>
     <string name="sound_item_context_menu_delete">Delete</string>

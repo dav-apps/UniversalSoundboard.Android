@@ -89,16 +89,29 @@ class SoundFragment :
 
         val menu = PopupMenu(context!!, item)
         menu.inflate(R.menu.sound_item_context_menu)
+
+        if(FileManager.itemViewHolder.categories.value?.count() ?: 0 <= 1){
+            menu.menu.findItem(R.id.sound_item_context_menu_set_category).isVisible = false
+        }
+
         menu.show()
 
         menu.setOnMenuItemClickListener {
             when(it.itemId){
+                R.id.sound_item_context_menu_set_category -> showSetCategoryDialog(sound)
                 R.id.sound_item_context_menu_change_image -> changeSoundImage()
                 R.id.sound_item_context_menu_rename -> renameSound(sound)
                 R.id.sound_item_context_menu_delete -> deleteSound(sound)
             }
             true
         }
+    }
+
+    private fun showSetCategoryDialog(sound: Sound){
+        val fragmentManager = activity?.supportFragmentManager ?: return
+        val fragment = SetCategoryDialogFragment()
+        fragment.sound = sound
+        fragment.show(fragmentManager, "set_category")
     }
 
     private fun changeSoundImage(){
@@ -108,21 +121,17 @@ class SoundFragment :
     }
 
     private fun renameSound(sound: Sound){
-        val fragmentManager = activity?.supportFragmentManager
-        if(fragmentManager != null){
-            val fragment = RenameSoundDialogFragment()
-            fragment.sound = sound
-            fragment.show(fragmentManager, "rename_sound")
-        }
+        val fragmentManager = activity?.supportFragmentManager ?: return
+        val fragment = RenameSoundDialogFragment()
+        fragment.sound = sound
+        fragment.show(fragmentManager, "rename_sound")
     }
 
     private fun deleteSound(sound: Sound){
-        val fragmentManager = activity?.supportFragmentManager
-        if(fragmentManager != null){
-            val fragment = DeleteSoundDialogFragment()
-            fragment.sound = sound
-            fragment.show(fragmentManager, "delete_sound")
-        }
+        val fragmentManager = activity?.supportFragmentManager ?: return
+        val fragment = DeleteSoundDialogFragment()
+        fragment.sound = sound
+        fragment.show(fragmentManager, "delete_sound")
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
