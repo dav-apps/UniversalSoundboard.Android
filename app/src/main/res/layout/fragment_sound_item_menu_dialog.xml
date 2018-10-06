@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/sound_item_menu_dialog_set_category_item"
+        android:layout_width="match_parent"
+        android:drawableStart="@drawable/ic_local_offer"
+        android:text="@string/sound_item_context_menu_set_category"
+        style="@style/SheetListItem" />
+
+    <TextView
+        android:id="@+id/sound_item_menu_dialog_change_image_item"
+        android:layout_width="match_parent"
+        android:drawableStart="@drawable/ic_photo"
+        android:text="@string/sound_item_context_menu_change_image"
+        style="@style/SheetListItem" />
+
+    <TextView
+        android:id="@+id/sound_item_menu_dialog_rename_item"
+        android:layout_width="match_parent"
+        android:drawableStart="@drawable/ic_edit"
+        android:text="@string/sound_item_context_menu_rename"
+        style="@style/SheetListItem" />
+
+    <TextView
+        android:id="@+id/sound_item_menu_dialog_delete_item"
+        android:layout_width="match_parent"
+        android:drawableStart="@drawable/ic_delete"
+        android:text="@string/sound_item_context_menu_delete"
+        style="@style/SheetListItem" />
+</LinearLayout>

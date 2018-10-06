@@ -66,15 +66,13 @@
                     android:id="@+id/fab_sheet_item_new_sound"
                     android:drawableStart="@drawable/ic_music_note"
                     android:text="@string/fab_sheet_item_new_sound"
-                    style="@style/TextAppearance.MaterialSheetFab.Sheet.Item" />
+                    style="@style/SheetListItem" />
 
                 <TextView
                     android:id="@+id/fab_sheet_item_new_category"
-                    android:layout_height="wrap_content"
-                    android:layout_width="210dp"
                     android:drawableStart="@drawable/ic_local_offer"
                     android:text="@string/fab_sheet_item_new_category"
-                    style="@style/TextAppearance.MaterialSheetFab.Sheet.Item" />
+                    style="@style/SheetListItem" />
 
             </LinearLayout>
         </android.support.v7.widget.CardView>

@@ -5,14 +5,15 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.BottomSheetDialog
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.PopupMenu
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.adapters.SoundListAdapter
 import app.dav.universalsoundboard.data.FileManager
@@ -87,24 +88,32 @@ class SoundFragment :
     override fun onItemLongClicked(sound: Sound, item: View) {
         selectedSound = sound
 
-        val menu = PopupMenu(context!!, item)
-        menu.inflate(R.menu.sound_item_context_menu)
+        val dialog = BottomSheetDialog(context!!)
+        val layout = layoutInflater.inflate(R.layout.fragment_sound_item_menu_dialog, null)
 
-        if(FileManager.itemViewHolder.categories.value?.count() ?: 0 <= 1){
-            menu.menu.findItem(R.id.sound_item_context_menu_set_category).isVisible = false
+        // Set the click listeners for the menu items
+        layout.findViewById<TextView>(R.id.sound_item_menu_dialog_set_category_item).setOnClickListener {
+            dialog.dismiss()
+            showSetCategoryDialog(sound)
         }
 
-        menu.show()
-
-        menu.setOnMenuItemClickListener {
-            when(it.itemId){
-                R.id.sound_item_context_menu_set_category -> showSetCategoryDialog(sound)
-                R.id.sound_item_context_menu_change_image -> changeSoundImage()
-                R.id.sound_item_context_menu_rename -> renameSound(sound)
-                R.id.sound_item_context_menu_delete -> deleteSound(sound)
-            }
-            true
+        layout.findViewById<TextView>(R.id.sound_item_menu_dialog_change_image_item).setOnClickListener {
+            dialog.dismiss()
+            changeSoundImage()
         }
+
+        layout.findViewById<TextView>(R.id.sound_item_menu_dialog_rename_item).setOnClickListener {
+            dialog.dismiss()
+            renameSound(sound)
+        }
+
+        layout.findViewById<TextView>(R.id.sound_item_menu_dialog_delete_item).setOnClickListener {
+            dialog.dismiss()
+            deleteSound(sound)
+        }
+
+        dialog.setContentView(layout)
+        dialog.show()
     }
 
     private fun showSetCategoryDialog(sound: Sound){
