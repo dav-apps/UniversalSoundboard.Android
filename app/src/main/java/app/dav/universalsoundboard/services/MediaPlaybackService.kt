@@ -21,6 +21,7 @@ import app.dav.universalsoundboard.MainActivity
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.PlayingSound
+import app.dav.universalsoundboard.models.Sound
 import app.dav.universalsoundboard.utilities.Utils
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.GlobalScope
@@ -310,12 +311,6 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         return PendingIntent.getService(this, 0, previousIntent, 0)
     }
 
-    private fun getPendingStopIntent() : PendingIntent{
-        val stopIntent = Intent(this, MediaPlaybackService::class.java)
-        stopIntent.action = ACTION_STOP
-        return PendingIntent.getService(this, 0, stopIntent, 0)
-    }
-
     private fun prepare(uuid: UUID){
         val playingSound = playingSounds.find { p -> p.uuid == uuid } ?: return
         val player = players[uuid] ?: return
@@ -327,7 +322,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
             player.reset()
             player.setDataSource(currentSoundPath)
             player.prepare()
-            setMetadata(uuid)
+            setMetadata(uuid, currentSound)
             sendNotification(uuid, true)
         }
     }
@@ -431,18 +426,13 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                 .build())
     }
 
-    private fun setMetadata(uuid: UUID){
-        GlobalScope.launch(Dispatchers.Main) {
-            val sound = FileManager.getSound(uuid) ?: return@launch
-
-            mediaSession.setMetadata(MediaMetadataCompat.Builder()
-                    .putString(MediaMetadataCompat.METADATA_KEY_TITLE, sound.name)
-                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, sound.name)
-                    .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, sound.category?.name ?: "")
-                    .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, sound.category?.name ?: "")
-
-                    .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, uuid.toString())
-                    .build())
-        }
+    private fun setMetadata(playingSoundUuid: UUID, sound: Sound){
+        mediaSession.setMetadata(MediaMetadataCompat.Builder()
+                .putString(MediaMetadataCompat.METADATA_KEY_TITLE, sound.name)
+                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, sound.name)
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, sound.category?.name)
+                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, sound.category?.name)
+                .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, playingSoundUuid.toString())
+                .build())
     }
 }
