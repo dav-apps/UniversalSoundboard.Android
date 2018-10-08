@@ -74,10 +74,6 @@ class SoundFragment :
         return view
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     override fun onItemClicked(sound: Sound) {
         GlobalScope.launch(Dispatchers.Main) {
             FileManager.addPlayingSound(null, arrayListOf(sound), 0, 1, false, 1.0)

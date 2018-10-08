@@ -1,6 +1,7 @@
 package app.dav.universalsoundboard
 
 import android.app.Activity
+import android.app.NotificationManager
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
@@ -28,6 +29,7 @@ import app.dav.universalsoundboard.fragments.SoundFragment
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.PlayingSound
 import app.dav.universalsoundboard.services.MediaPlaybackService
+import app.dav.universalsoundboard.services.NOTIFICATION_ID
 import app.dav.universalsoundboard.viewmodels.MainViewModel
 import com.gordonwong.materialsheetfab.MaterialSheetFab
 import kotlinx.android.synthetic.main.activity_main.*
@@ -229,6 +231,22 @@ class MainActivity :
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        stopService(Intent(applicationContext, MediaPlaybackService::class.java))
+
+        // Disconnect all MediaBrowser of the Playing Sounds
+        val playingSounds = FileManager.itemViewHolder.playingSounds.value ?: return
+
+        for(playingSound in playingSounds){
+            playingSound.disconnect()
+        }
+
+        // Remove the notification
+        getSystemService(NotificationManager::class.java).cancel(NOTIFICATION_ID)
     }
 
     override fun onItemClicked(category: Category) {

@@ -29,11 +29,11 @@ class PlayingSound(val uuid: UUID,
                    var randomly: Boolean,
                    var volume: Double) {
 
-    var mediaBrowser: MediaBrowserCompat? = null
-    var mediaController: MediaControllerCompat? = null
-    var timerIsOn = false
-    val timer: Runnable
-    val timerHandler = Handler()
+    private var mediaBrowser: MediaBrowserCompat? = null
+    private var mediaController: MediaControllerCompat? = null
+    private var timerIsOn = false
+    private val timer: Runnable
+    private val timerHandler = Handler()
 
     // LiveData for data binding
     private val progressData = MutableLiveData<Int>()
@@ -191,8 +191,7 @@ class PlayingSound(val uuid: UUID,
             bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
             mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_STOP, bundle)
 
-            // Stop the timer
-            timerHandler.removeCallbacks(timer)
+            disconnect()
         }
     }
 
@@ -232,6 +231,11 @@ class PlayingSound(val uuid: UUID,
             mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_SEEK, bundle)
             progressData.value = position
         }
+    }
+
+    fun disconnect(){
+        timerHandler.removeCallbacks(timer)
+        mediaBrowser?.disconnect()
     }
 }
 
