@@ -233,6 +233,14 @@ class PlayingSound(val uuid: UUID,
         }
     }
 
+    fun notifyUpdate(){
+        mediaController ?: return
+
+        val bundle = Bundle()
+        bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
+        mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_NOTIFY_UPDATE, bundle)
+    }
+
     fun disconnect(){
         timerHandler.removeCallbacks(timer)
         mediaBrowser?.disconnect()

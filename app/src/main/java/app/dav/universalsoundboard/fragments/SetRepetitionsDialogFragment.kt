@@ -38,6 +38,7 @@ class SetRepetitionsDialogFragment : DialogFragment() {
 
                     GlobalScope.launch(Dispatchers.Main) {
                         FileManager.setRepetitionsOfPlayingSound(p.uuid, repetitions)
+                        playingSound?.notifyUpdate()
                     }
                 }
                 .show()

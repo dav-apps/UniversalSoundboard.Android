@@ -45,6 +45,7 @@ const val CUSTOM_ACTION_NEXT = "next"
 const val CUSTOM_ACTION_PREVIOUS = "previous"
 const val CUSTOM_ACTION_STOP = "stop"
 const val CUSTOM_ACTION_SEEK = "seek"
+const val CUSTOM_ACTION_NOTIFY_UPDATE = "notify_update"
 const val BUNDLE_UUID_KEY = "uuid"
 const val BUNDLE_DURATION_KEY = "duration"
 const val BUNDLE_POSITION_KEY = "position"
@@ -146,6 +147,16 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                             val position = extras?.getInt(BUNDLE_POSITION_KEY) ?: return@launch
                             init(uuid)
                             seek(uuid, position)
+                        }
+                    }
+                    CUSTOM_ACTION_NOTIFY_UPDATE -> {
+                        val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY)) ?: return
+                        val oldPlayingSound = playingSounds.find { p -> p.uuid == uuid } ?: return
+
+                        GlobalScope.launch(Dispatchers.Main) {
+                            val newPlayingSound = FileManager.getPlayingSound(uuid) ?: return@launch
+                            playingSounds.remove(oldPlayingSound)
+                            playingSounds.add(newPlayingSound)
                         }
                     }
                 }
@@ -351,18 +362,28 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         val playingSound = playingSounds.find { p -> p.uuid == uuid } ?: return
         val mediaPlayer = players[uuid] ?: return
         val wasPlaying = mediaPlayer.isPlaying
+        var updateRepetitions = false
 
         // Play the next sound if there is one
         if((playingSound.currentSound + 1) >= playingSound.sounds.count()){
-            if(stopIfLast) stop(uuid)
-            return
-        }
+            if(playingSound.repetitions == 0){
+                if(stopIfLast) stop(uuid)
+                return
+            }else{
+                // Subtract one from repetitions and set currentSound to 0
+                playingSound.currentSound = 0
+                playingSound.repetitions--
 
-        playingSound.currentSound++
+                updateRepetitions = true
+            }
+        }else{
+            playingSound.currentSound++
+        }
 
         // Update the PlayingSound in the database
         GlobalScope.launch(Dispatchers.Main) {
             FileManager.setCurrentOfPlayingSound(uuid, playingSound.currentSound)
+            if(updateRepetitions) FileManager.setRepetitionsOfPlayingSound(uuid, playingSound.repetitions)
 
             // Play the sound
             prepare(uuid)
@@ -376,7 +397,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         val wasPlaying = mediaPlayer.isPlaying
 
         // Play the previous sound if there is one
-        if(playingSound.currentSound == 0) return    // TODO: Check for repetitions & randomly
+        if(playingSound.currentSound == 0) return
 
         playingSound.currentSound--
 
