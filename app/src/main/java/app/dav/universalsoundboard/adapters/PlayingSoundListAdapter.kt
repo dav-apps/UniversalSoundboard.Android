@@ -22,7 +22,7 @@ class PlayingSoundListAdapter(val context: Context, private val clickListeners: 
         fun playPauseButtonClicked(playingSound: PlayingSound)
         fun skipNextButtonClicked(playingSound: PlayingSound)
         fun removeButtonClicked(playingSound: PlayingSound)
-        fun menuButtonClicked(playingSound: PlayingSound)
+        fun menuButtonClicked(playingSound: PlayingSound, view: View)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -36,7 +36,7 @@ class PlayingSoundListAdapter(val context: Context, private val clickListeners: 
                 View.OnClickListener { clickListeners.playPauseButtonClicked(item) },
                 View.OnClickListener { clickListeners.skipNextButtonClicked(item) },
                 View.OnClickListener { clickListeners.removeButtonClicked(item) },
-                View.OnClickListener { clickListeners.menuButtonClicked(item) })
+                View.OnClickListener { clickListeners.menuButtonClicked(item, it) })
     }
 
     inner class ViewHolder(private val binding: PlayingSoundListItemBinding) : RecyclerView.ViewHolder(binding.root){

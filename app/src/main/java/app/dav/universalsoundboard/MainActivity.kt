@@ -14,7 +14,7 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
+import android.support.v7.widget.PopupMenu
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -22,10 +22,7 @@ import app.dav.davandroidlibrary.Dav
 import app.dav.universalsoundboard.adapters.CategoryListAdapter
 import app.dav.universalsoundboard.adapters.PlayingSoundListAdapter
 import app.dav.universalsoundboard.data.FileManager
-import app.dav.universalsoundboard.fragments.CategoryDialogFragment
-import app.dav.universalsoundboard.fragments.DeleteCategoryDialogFragment
-import app.dav.universalsoundboard.fragments.SettingsFragment
-import app.dav.universalsoundboard.fragments.SoundFragment
+import app.dav.universalsoundboard.fragments.*
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.PlayingSound
 import app.dav.universalsoundboard.services.MediaPlaybackService
@@ -275,8 +272,24 @@ class MainActivity :
         GlobalScope.launch(Dispatchers.Main) { FileManager.deletePlayingSound(playingSound.uuid) }
     }
 
-    override fun menuButtonClicked(playingSound: PlayingSound) {
-        Log.d("menu", "Clicked! " + playingSound.uuid)
+    override fun menuButtonClicked(playingSound: PlayingSound, view: View) {
+        val menu = PopupMenu(this, view)
+        menu.inflate(R.menu.playing_sound_item_context_menu)
+        menu.show()
+
+        menu.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.playing_sound_item_context_menu_repeat -> showSetRepetitionsDialog(playingSound)
+            }
+            true
+        }
+    }
+
+    private fun showSetRepetitionsDialog(playingSound: PlayingSound){
+        val fragmentManager = supportFragmentManager ?: return
+        val fragment = SetRepetitionsDialogFragment()
+        fragment.playingSound = playingSound
+        fragment.show(fragmentManager, "playing_sound_item_dialog")
     }
 
     private fun showSoundFragment(){
