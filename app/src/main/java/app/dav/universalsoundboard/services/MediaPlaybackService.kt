@@ -4,9 +4,11 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.ComponentName
-import android.content.Intent
+import android.content.*
 import android.graphics.BitmapFactory
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
@@ -51,11 +53,22 @@ const val BUNDLE_DURATION_KEY = "duration"
 const val BUNDLE_POSITION_KEY = "position"
 private const val MEDIA_SESSION_TAG = "app.dav.universalsoundboard.MediaPlaybackService"
 
-class MediaPlaybackService : MediaBrowserServiceCompat(){
+class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFocusChangeListener{
     lateinit var mediaSession: MediaSessionCompat
     var players = HashMap<UUID, MediaPlayer>()
     var playingSounds = ArrayList<PlayingSound>()
     var notificationPlayingSoundUuid: UUID? = null
+    lateinit var audioManager: AudioManager
+    lateinit var audioFocusRequest: AudioFocusRequest
+    var audioFocusRequested = false
+    val pausedMediaPlayers = ArrayList<UUID>()
+
+    val noisyBroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            // Pause all mediaPlayers
+            pausePlayingMediaPlayers()
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -80,6 +93,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                 super.onPause()
                 val uuid = notificationPlayingSoundUuid ?: return
                 pause(uuid)
+                abandonAudioFocus()
             }
 
             override fun onSkipToNext() {
@@ -118,6 +132,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                             val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY)) ?: return@launch
                             init(uuid)
                             pause(uuid)
+                            abandonAudioFocus()
                         }
                     }
                     CUSTOM_ACTION_NEXT -> {
@@ -164,6 +179,20 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         })
 
         mediaSession.isActive = true
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                    .setAudioAttributes(AudioAttributes.Builder()
+                            .setUsage(AudioAttributes.USAGE_MEDIA)
+                            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                            .build())
+                    .setWillPauseWhenDucked(false)
+                    .setOnAudioFocusChangeListener(this)
+                    .build()
+        }
+
+        registerReceiver(noisyBroadcastReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
     }
 
     private suspend fun init(uuid: UUID){
@@ -224,6 +253,10 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
 
         mediaSession.isActive = false
         removeNotification()
+
+        // Unregister the noisy broadcast receiver
+        unregisterReceiver(noisyBroadcastReceiver)
+        abandonAudioFocus()
     }
 
     private fun removePlayingSound(uuid: UUID){
@@ -342,6 +375,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         val player = players[uuid] ?: return
 
         if(!player.isPlaying){
+            requestAudioFocus()
             players[uuid]?.start()
             sendNotification(uuid, true)
             setPlaybackState(uuid, PlaybackStateCompat.STATE_PLAYING)
@@ -421,6 +455,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
         setPlaybackState(uuid, PlaybackStateCompat.STATE_STOPPED)
 
         removePlayingSound(uuid)
+        abandonAudioFocus()
     }
 
     fun seek(uuid: UUID, position: Int){
@@ -455,5 +490,67 @@ class MediaPlaybackService : MediaBrowserServiceCompat(){
                 .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, sound.category?.name)
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, playingSoundUuid.toString())
                 .build())
+    }
+
+    private fun requestAudioFocus(){
+        if(!audioFocusRequested){
+            val result = if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                audioManager.requestAudioFocus(audioFocusRequest)
+            }else{
+                audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN)
+            }
+
+            audioFocusRequested = result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED
+        }
+    }
+
+    private fun abandonAudioFocus(){
+        if(getCurrentlyPlayingMediaPlayersCount() == 0){
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                audioManager.abandonAudioFocusRequest(audioFocusRequest)
+            }else{
+                audioManager.abandonAudioFocus(this)
+            }
+            audioFocusRequested = false
+        }
+    }
+
+    private fun getCurrentlyPlayingMediaPlayersCount() : Int{
+        var i = 0
+        for (player in players){
+            if(player.value.isPlaying) i++
+        }
+        return i
+    }
+
+    private fun pausePlayingMediaPlayers(){
+        pausedMediaPlayers.clear()
+        for(mediaPlayer in players){
+            if(mediaPlayer.value.isPlaying){
+                pause(mediaPlayer.key)
+                pausedMediaPlayers.add(mediaPlayer.key)
+            }
+        }
+    }
+
+    private fun playPausedMediaPlayers(){
+        for(playerUuid in pausedMediaPlayers){
+            play(playerUuid)
+        }
+        pausedMediaPlayers.clear()
+    }
+
+    override fun onAudioFocusChange(focusChange: Int) {
+        when(focusChange){
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                playPausedMediaPlayers()
+            }
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                pausePlayingMediaPlayers()
+            }
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                pausePlayingMediaPlayers()
+            }
+        }
     }
 }
