@@ -2,8 +2,10 @@ package app.dav.universalsoundboard.data
 
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
+import android.content.Context
 import android.graphics.BitmapFactory
 import app.dav.davandroidlibrary.models.TableObject
+import app.dav.universalsoundboard.MainActivity
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.PlayingSound
 import app.dav.universalsoundboard.models.Sound
@@ -184,29 +186,34 @@ object FileManager{
 
     // PlayingSound functions
     suspend fun addPlayingSound(uuid: UUID?, sounds: ArrayList<Sound>, current: Int, repetitions: Int, randomly: Boolean, volume: Double) : PlayingSound?{
-        val newUuid: UUID = if(uuid == null) UUID.randomUUID() else uuid
+        val newUuid: UUID = uuid ?: UUID.randomUUID()
 
         // Check if an object with the uuid already exists
         if(DatabaseOperations.getObject(newUuid) != null) return null
-
-        // TODO: Check if playing sounds should be saved
 
         var newVolume = volume
         if(newVolume >= 1) newVolume = 1.0
         if(newVolume <= 0) newVolume = 0.0
 
-        val soundIds = ArrayList<String>()
-        for(sound in sounds)
-            soundIds.add(sound.uuid.toString())
+        val playingSound = PlayingSound(newUuid, current, sounds, repetitions, randomly, volume)
 
-        DatabaseOperations.createPlayingSound(newUuid, soundIds, current, repetitions, randomly, volume)
+        // Check if playing sounds should be saved
+        if(getSetting(SAVE_PLAYING_SOUNDS_KEY) ?: savePlayingSounds){
+            DatabaseOperations.createPlayingSound(newUuid, sounds, current, repetitions, randomly, volume)
+        }else{
+            itemViewHolder.notSavedPlayingSounds.add(playingSound)
+        }
         itemViewHolder.loadPlayingSounds()
-        return PlayingSound(newUuid, current, sounds, repetitions, randomly, volume)
+        return playingSound
     }
 
     suspend fun getPlayingSound(uuid: UUID) : PlayingSound?{
         val playingSound = DatabaseOperations.getObject(uuid)
-        return if(playingSound != null) convertTableObjectToPlayingSound(playingSound) else null
+        return if(playingSound != null){
+            convertTableObjectToPlayingSound(playingSound)
+        } else {
+            return itemViewHolder.notSavedPlayingSounds.find { p -> p.uuid == uuid }
+        }
     }
 
     suspend fun getAllPlayingSounds() : ArrayList<PlayingSound>{
@@ -220,28 +227,24 @@ object FileManager{
         return playingSounds
     }
 
-    suspend fun setSoundsListOfPlayingSound(uuid: UUID, sounds: ArrayList<Sound>){
-        val soundIds = ArrayList<String>()
-        for(sound in sounds)
-            soundIds.add(sound.uuid.toString())
-
-        DatabaseOperations.updatePlayingSound(uuid, soundIds, null, null, null, null)
-    }
-
     suspend fun setCurrentOfPlayingSound(uuid: UUID, current: Int){
         DatabaseOperations.updatePlayingSound(uuid, null, current, null, null, null)
+        itemViewHolder.updateNotSavedPlayingSound(uuid, null, current, null, null, null)
     }
 
     suspend fun setRepetitionsOfPlayingSound(uuid: UUID, repetitions: Int){
         DatabaseOperations.updatePlayingSound(uuid, null, null, repetitions, null, null)
+        itemViewHolder.updateNotSavedPlayingSound(uuid, null, null, repetitions, null, null)
     }
 
     suspend fun setVolumeOfPlayingSound(uuid: UUID, volume: Double){
         DatabaseOperations.updatePlayingSound(uuid, null, null, null, null, volume)
+        itemViewHolder.updateNotSavedPlayingSound(uuid, null, null, null, null, volume)
     }
 
     suspend fun deletePlayingSound(uuid: UUID){
         DatabaseOperations.deletePlayingSound(uuid)
+        itemViewHolder.removeNotSavedPlayingSound(uuid)
         itemViewHolder.loadPlayingSounds()
     }
     // End PlayingSound functions
@@ -311,8 +314,8 @@ object FileManager{
 
         if(sounds.count() == 0){
             // Delete the PlayingSound
-            // TODO DeletePlayingSound()
-            // return null
+            deletePlayingSound(tableObject.uuid)
+            return null
         }
 
         // Get current
@@ -361,6 +364,25 @@ object FileManager{
         val imageFileUuid = UUID.fromString(imageFileUuidString)
         return DatabaseOperations.getObject(imageFileUuid)
     }
+
+    fun setSetting(key: String, value: Boolean){
+        val prefs = itemViewHolder.mainActivity?.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE) ?: return
+        prefs.edit().putBoolean(key, value).apply()
+    }
+
+    fun getSetting(key: String) : Boolean?{
+        val prefs = itemViewHolder.mainActivity?.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE) ?: return null
+
+        return when(key){
+            PLAY_ONE_SOUND_AT_ONCE_KEY -> {
+                prefs.getBoolean(key, playOneSoundAtOnce)
+            }
+            SAVE_PLAYING_SOUNDS_KEY -> {
+                prefs.getBoolean(key, savePlayingSounds)
+            }
+            else -> null
+        }
+    }
 }
 
 class ItemViewHolder(){
@@ -373,6 +395,7 @@ class ItemViewHolder(){
     }
 
     var currentCategory: Category = Category.allSoundsCategory
+    var mainActivity: MainActivity? = null
     private val titleData = MutableLiveData<String>()
     val title: LiveData<String>
         get() =  titleData
@@ -391,6 +414,7 @@ class ItemViewHolder(){
     private val playingSoundsData = MutableLiveData<ArrayList<PlayingSound>>()
     val playingSounds: LiveData<ArrayList<PlayingSound>>
         get() = playingSoundsData
+    val notSavedPlayingSounds = ArrayList<PlayingSound>()
 
     fun setTitle(value: String){
         titleData.value = value
@@ -402,6 +426,21 @@ class ItemViewHolder(){
 
     fun setShowPlayAllIcon(showPlayAllIcon: Boolean){
         showPlayAllIconData.value = showPlayAllIcon
+    }
+
+    fun updateNotSavedPlayingSound(uuid: UUID, sounds: ArrayList<Sound>?, current: Int?, repetitions: Int?, randomly: Boolean?, volume: Double?){
+        val playingSound = notSavedPlayingSounds.find { p -> p.uuid == uuid } ?: return
+
+        if(sounds != null) playingSound.sounds = sounds
+        if(current != null) playingSound.currentSound = current
+        if(repetitions != null) playingSound.repetitions = repetitions
+        if(randomly != null) playingSound.randomly = randomly
+        if(volume != null) playingSound.volume = volume
+    }
+
+    fun removeNotSavedPlayingSound(uuid: UUID){
+        val playingSound = notSavedPlayingSounds.find { p -> p.uuid == uuid } ?: return
+        notSavedPlayingSounds.remove(playingSound)
     }
 
     suspend fun loadSounds(){
@@ -436,6 +475,11 @@ class ItemViewHolder(){
 
         // Remove old PlayingSounds
         currentPlayingSounds.retainAll { p -> playingSoundUuids.contains(p.uuid) }
+
+        // Add playing sounds that are not saved in the database
+        for (playingSound in notSavedPlayingSounds){
+            currentPlayingSounds.add(playingSound)
+        }
 
         playingSoundsData.value = currentPlayingSounds
     }

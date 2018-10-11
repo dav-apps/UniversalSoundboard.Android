@@ -3,6 +3,7 @@ package app.dav.universalsoundboard.data
 import app.dav.davandroidlibrary.Dav
 import app.dav.davandroidlibrary.models.Property
 import app.dav.davandroidlibrary.models.TableObject
+import app.dav.universalsoundboard.models.Sound
 import java.io.File
 import java.util.*
 
@@ -139,8 +140,12 @@ object DatabaseOperations {
     // End Category methods
 
     // PlayingSound methods
-    suspend fun createPlayingSound(uuid: UUID, soundIds: ArrayList<String>, current: Int, repetitions: Int, randomly: Boolean, volume: Double){
+    suspend fun createPlayingSound(uuid: UUID, sounds: ArrayList<Sound>, current: Int, repetitions: Int, randomly: Boolean, volume: Double){
         val properties = ArrayList<Property>()
+
+        val soundIds = ArrayList<String>()
+        for(sound in sounds)
+            soundIds.add(sound.uuid.toString())
 
         val soundIdsString = soundIds.joinToString(",")
         properties.add(Property(0, FileManager.playingSoundTableSoundIdsPropertyName, soundIdsString))
@@ -156,11 +161,15 @@ object DatabaseOperations {
         return Dav.Database.getAllTableObjects(FileManager.playingSoundTableId, false).await()
     }
 
-    suspend fun updatePlayingSound(uuid: UUID, soundIds: ArrayList<String>?, current: Int?, repetitions: Int?, randomly: Boolean?, volume: Double?){
+    suspend fun updatePlayingSound(uuid: UUID, sounds: ArrayList<Sound>?, current: Int?, repetitions: Int?, randomly: Boolean?, volume: Double?){
         val playingSoundTableObject = DatabaseOperations.getObject(uuid) ?: return
         if(playingSoundTableObject.tableId != FileManager.playingSoundTableId) return
 
-        if(soundIds != null){
+        if(sounds != null){
+            val soundIds = ArrayList<String>()
+            for(sound in sounds)
+                soundIds.add(sound.uuid.toString())
+
             val soundIdsString = soundIds.joinToString(",")
             playingSoundTableObject.setPropertyValue(FileManager.playingSoundTableSoundIdsPropertyName, soundIdsString)
         }
