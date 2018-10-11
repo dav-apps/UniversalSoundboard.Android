@@ -43,7 +43,11 @@ class SoundListAdapter(
             binding.onLongClickListener = onLongClickListener
             binding.sound = item
 
-            if(item.image != null) binding.root.findViewById<ImageView>(R.id.sound_list_item_image).setImageBitmap(item.image)
+            if(item.image != null){
+                binding.root.findViewById<ImageView>(R.id.sound_list_item_image).setImageBitmap(item.image)
+            }else{
+                binding.root.findViewById<ImageView>(R.id.sound_list_item_image).setImageResource(R.drawable.ic_music_note)
+            }
         }
     }
 }
