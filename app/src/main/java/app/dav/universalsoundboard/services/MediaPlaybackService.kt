@@ -246,6 +246,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
 
     override fun onDestroy() {
         super.onDestroy()
+        abandonAudioFocus()
 
         // Release all MediaPlayers
         for(player in players){
@@ -257,7 +258,6 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
 
         // Unregister the noisy broadcast receiver
         unregisterReceiver(noisyBroadcastReceiver)
-        abandonAudioFocus()
     }
 
     private fun removePlayingSound(uuid: UUID){
