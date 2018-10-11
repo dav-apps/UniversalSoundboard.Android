@@ -12,6 +12,15 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 object FileManager{
+    // Keys for shared preferences
+    const val PACKAGE_NAME = "app.dav.universalsoundboard"
+    const val PLAY_ONE_SOUND_AT_ONCE_KEY = "$PACKAGE_NAME.playOneSoundAtOnce"
+    const val SAVE_PLAYING_SOUNDS_KEY = "$PACKAGE_NAME.savePlayingSounds"
+
+    // Default values
+    const val playOneSoundAtOnce = false
+    const val savePlayingSounds = true
+
     const val appId = 1                 // Dev: 8, Prod: 1
     const val soundFileTableId = 6      // Dev: 11, Prod: 6
     const val imageFileTableId = 7      // Dev: 15, Prod: 7

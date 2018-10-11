@@ -49,6 +49,8 @@
     <string name="sound_item_context_menu_rename">Rename</string>
     <string name="sound_item_context_menu_delete">Delete</string>
     <string name="playing_sound_item_context_menu_set_repetitions">Set repetitions</string>
+    <string name="settings_play_one_sound_at_once_switch_text">Play only one sound at once</string>
+    <string name="settings_save_playing_sounds_switch_text">Save playing sounds</string>
 
     <array name="playing_sound_item_set_repetitions_options">
         <item>1x</item>

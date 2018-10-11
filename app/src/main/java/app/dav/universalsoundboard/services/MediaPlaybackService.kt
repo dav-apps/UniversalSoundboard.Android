@@ -22,6 +22,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import app.dav.universalsoundboard.MainActivity
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
+import app.dav.universalsoundboard.data.FileManager.PACKAGE_NAME
 import app.dav.universalsoundboard.models.PlayingSound
 import app.dav.universalsoundboard.models.Sound
 import app.dav.universalsoundboard.utilities.Utils
@@ -34,13 +35,13 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
-private const val ACTION_PLAY = "app.dav.universalsoundboard.ACTION_PLAY"
-private const val ACTION_PAUSE = "app.dav.universalsoundboard.ACTION_PAUSE"
-private const val ACTION_NEXT = "app.dav.universalsoundboard.ACTION_NEXT"
-private const val ACTION_PREVIOUS = "app.dav.universalsoundboard.ACTION_PREVIOUS"
-private const val ACTION_STOP = "app.dav.universalsoundboard.ACTION_STOP"
+private const val ACTION_PLAY = "$PACKAGE_NAME.ACTION_PLAY"
+private const val ACTION_PAUSE = "$PACKAGE_NAME.ACTION_PAUSE"
+private const val ACTION_NEXT = "$PACKAGE_NAME.ACTION_NEXT"
+private const val ACTION_PREVIOUS = "$PACKAGE_NAME.ACTION_PREVIOUS"
+private const val ACTION_STOP = "$PACKAGE_NAME.ACTION_STOP"
 const val NOTIFICATION_ID = 4123
-private const val NOTIFICATION_CHANNEL_ID = "app.dav.universalsoundboard.PlaybackNotificationChannel"
+private const val NOTIFICATION_CHANNEL_ID = "$PACKAGE_NAME.PlaybackNotificationChannel"
 const val CUSTOM_ACTION_PLAY = "play"
 const val CUSTOM_ACTION_PAUSE = "pause"
 const val CUSTOM_ACTION_NEXT = "next"
@@ -51,7 +52,7 @@ const val CUSTOM_ACTION_NOTIFY_UPDATE = "notify_update"
 const val BUNDLE_UUID_KEY = "uuid"
 const val BUNDLE_DURATION_KEY = "duration"
 const val BUNDLE_POSITION_KEY = "position"
-private const val MEDIA_SESSION_TAG = "app.dav.universalsoundboard.MediaPlaybackService"
+private const val MEDIA_SESSION_TAG = "$PACKAGE_NAME.MediaPlaybackService"
 
 class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFocusChangeListener{
     lateinit var mediaSession: MediaSessionCompat

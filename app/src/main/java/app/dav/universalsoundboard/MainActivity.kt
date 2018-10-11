@@ -314,6 +314,7 @@ class MainActivity :
     }
 
     private fun showSettingsFragment(){
+        settingsFragment.updateValues()
         supportFragmentManager
                 .beginTransaction()
                 .hide(soundFragment)
