@@ -247,6 +247,18 @@ object FileManager{
         itemViewHolder.removeNotSavedPlayingSound(uuid)
         itemViewHolder.loadPlayingSounds()
     }
+
+    suspend fun deleteAllPlayingSounds(){
+        val playingSounds = FileManager.itemViewHolder.playingSounds.value
+        if(playingSounds != null){
+            val playingSoundUuidsList = java.util.ArrayList<UUID>()
+            for(p in playingSounds) playingSoundUuidsList.add(p.uuid)
+
+            for (uuid in playingSoundUuidsList){
+                FileManager.deletePlayingSound(uuid)
+            }
+        }
+    }
     // End PlayingSound functions
 
     private suspend fun convertTableObjectToSound(tableObject: TableObject) : Sound?{

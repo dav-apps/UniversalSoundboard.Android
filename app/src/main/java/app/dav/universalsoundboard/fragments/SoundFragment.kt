@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.BottomSheetDialog
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -17,6 +18,7 @@ import android.widget.TextView
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.adapters.SoundListAdapter
 import app.dav.universalsoundboard.data.FileManager
+import app.dav.universalsoundboard.data.FileManager.PLAY_ONE_SOUND_AT_ONCE_KEY
 import app.dav.universalsoundboard.models.Sound
 import app.dav.universalsoundboard.viewmodels.SoundViewModel
 import kotlinx.coroutines.experimental.Dispatchers
@@ -76,8 +78,29 @@ class SoundFragment :
 
     override fun onItemClicked(sound: Sound) {
         GlobalScope.launch(Dispatchers.Main) {
-            FileManager.addPlayingSound(null, arrayListOf(sound), 0, 0, false, 1.0)
-            FileManager.itemViewHolder.playingSounds.value?.last()?.playOrPause(context!!)
+            // If playOneSoundAtOnce, remove all playing sounds first
+            if(FileManager.getSetting(PLAY_ONE_SOUND_AT_ONCE_KEY) ?: FileManager.playOneSoundAtOnce){
+                val playingSounds = FileManager.itemViewHolder.playingSounds.value
+                if(playingSounds != null){
+                    for (p in playingSounds){
+                        p.stop(context!!)
+                    }
+                }
+
+                FileManager.deleteAllPlayingSounds()
+
+                // Wait for a short amount of time
+                val handler = Handler()
+                handler.postDelayed({
+                    GlobalScope.launch(Dispatchers.Main) {
+                        FileManager.addPlayingSound(null, arrayListOf(sound), 0, 0, false, 1.0)
+                        FileManager.itemViewHolder.playingSounds.value?.last()?.playOrPause(context!!)
+                    }
+                }, 100)
+            }else{
+                FileManager.addPlayingSound(null, arrayListOf(sound), 0, 0, false, 1.0)
+                FileManager.itemViewHolder.playingSounds.value?.last()?.playOrPause(context!!)
+            }
         }
     }
 
