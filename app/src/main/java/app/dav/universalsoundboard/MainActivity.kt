@@ -62,6 +62,7 @@ class MainActivity :
 
     private fun init(){
         Dav.init(this, FileManager.getDavDataPath(filesDir.path).path + "/")
+        FileManager.itemViewHolder.mainActivity = this
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         viewModel.categoryListAdapter = CategoryListAdapter(this)
         viewModel.playingSoundListAdapter = PlayingSoundListAdapter(applicationContext, this)
@@ -153,8 +154,8 @@ class MainActivity :
                 // App shows a category or the settings; navigate to All Sounds
                 GlobalScope.launch(Dispatchers.Main) { FileManager.showCategory(Category.allSoundsCategory) }
             }else{
-                // App shows All Sounds, close the app
-                super.onBackPressed()
+                // App shows All Sounds, show the home screen
+                moveTaskToBack(true)
             }
         }
     }
