@@ -144,7 +144,7 @@ class SoundFragment :
 
     private fun changeSoundImage(){
         val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
-        intent.type = "image/png"
+        intent.type = "image/*"
         startActivityForResult(intent, REQUEST_IMAGE_FILE_GET)
     }
 

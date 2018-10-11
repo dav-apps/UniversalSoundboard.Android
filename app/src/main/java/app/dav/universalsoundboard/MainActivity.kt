@@ -85,7 +85,7 @@ class MainActivity :
             materialSheetFab.hideSheet()
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT)
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            intent.type = "audio/mpeg"
+            intent.type = "audio/*"
             if (intent.resolveActivity(packageManager) != null) {
                 startActivityForResult(intent, REQUEST_AUDIO_FILE_GET)
             }
@@ -290,7 +290,7 @@ class MainActivity :
         val fragmentManager = supportFragmentManager ?: return
         val fragment = SetRepetitionsDialogFragment()
         fragment.playingSound = playingSound
-        fragment.show(fragmentManager, "playing_sound_item_dialog")
+        fragment.show(fragmentManager, "playing_sound_item_set_repetitions_dialog")
     }
 
     private fun showSoundFragment(){
