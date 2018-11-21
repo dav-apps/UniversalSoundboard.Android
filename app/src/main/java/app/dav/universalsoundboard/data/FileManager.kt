@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.graphics.BitmapFactory
+import app.dav.davandroidlibrary.DavEnvironment
 import app.dav.davandroidlibrary.models.TableObject
 import app.dav.universalsoundboard.MainActivity
 import app.dav.universalsoundboard.models.Category
@@ -23,12 +24,31 @@ object FileManager{
     const val playOneSoundAtOnce = false
     const val savePlayingSounds = true
 
-    const val appId = 1                 // Dev: 8, Prod: 1
-    const val soundFileTableId = 6      // Dev: 11, Prod: 6
-    const val imageFileTableId = 7      // Dev: 15, Prod: 7
-    const val categoryTableId = 8       // Dev: 16, Prod: 8
-    const val soundTableId = 5          // Dev: 17, Prod: 5
-    const val playingSoundTableId = 9   // Dev: 18, Prod: 9
+    val environment = DavEnvironment.Development
+
+    private const val appIdProduction = 1                   // Dev: 8, Prod: 1
+    private const val appIdDevelopment = 8
+    val appId = if(environment == DavEnvironment.Production) appIdProduction else appIdDevelopment
+
+    private const val soundFileTableIdProduction = 6        // Dev: 11, Prod: 6
+    private const val soundFileTableIdDevelopment = 11
+    val soundFileTableId = if(environment == DavEnvironment.Production) soundFileTableIdProduction else soundFileTableIdDevelopment
+
+    private const val imageFileTableIdProduction = 7        // Dev: 15, Prod: 7
+    private const val imageFileTableIdDevelopment = 15
+    val imageFileTableId = if(environment == DavEnvironment.Production) imageFileTableIdProduction else imageFileTableIdDevelopment
+
+    private const val categoryTableIdProduction = 8         // Dev: 16, Prod: 8
+    private const val categoryTableIdDevelopment = 16
+    val categoryTableId = if(environment == DavEnvironment.Production) categoryTableIdProduction else categoryTableIdDevelopment
+
+    private const val soundTableIdProduction = 5            // Dev: 17, Prod: 5
+    private const val soundTableIdDevelopment = 17
+    val soundTableId = if(environment == DavEnvironment.Production) soundTableIdProduction else soundTableIdDevelopment
+
+    private const val playingSoundTableIdProduction = 9     // Dev: 18, Prod: 9
+    private const val playingSoundTableIdDevelopment = 18
+    val playingSoundTableId = if(environment == DavEnvironment.Production) playingSoundTableIdProduction else playingSoundTableIdDevelopment
 
     const val soundTableNamePropertyName = "name"
     const val soundTableFavouritePropertyName = "favourite"
