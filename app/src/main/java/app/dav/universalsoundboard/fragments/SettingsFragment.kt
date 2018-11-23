@@ -11,7 +11,6 @@ import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.data.FileManager.PLAY_ONE_SOUND_AT_ONCE_KEY
 import app.dav.universalsoundboard.data.FileManager.SAVE_PLAYING_SOUNDS_KEY
 import app.dav.universalsoundboard.data.FileManager.playOneSoundAtOnce
-import app.dav.universalsoundboard.data.FileManager.savePlayingSounds
 import kotlinx.android.synthetic.main.settings_fragment.*
 
 
@@ -26,12 +25,12 @@ class SettingsFragment : Fragment() {
 
         settings_play_one_sound_at_once_switch.setOnCheckedChangeListener { buttonView, isChecked ->
             if(!isInitialized) return@setOnCheckedChangeListener
-            FileManager.setSetting(PLAY_ONE_SOUND_AT_ONCE_KEY, isChecked)
+            FileManager.setBooleanValue(PLAY_ONE_SOUND_AT_ONCE_KEY, isChecked)
         }
 
         settings_save_playing_sounds_switch.setOnCheckedChangeListener { buttonView, isChecked ->
             if(!isInitialized) return@setOnCheckedChangeListener
-            FileManager.setSetting(SAVE_PLAYING_SOUNDS_KEY, isChecked)
+            FileManager.setBooleanValue(SAVE_PLAYING_SOUNDS_KEY, isChecked)
         }
     }
 
@@ -43,8 +42,8 @@ class SettingsFragment : Fragment() {
     fun updateValues(){
         isInitialized = false
 
-        val playOneSoundAtOnce = FileManager.getSetting(PLAY_ONE_SOUND_AT_ONCE_KEY) ?: playOneSoundAtOnce
-        val savePlayingSounds = FileManager.getSetting(SAVE_PLAYING_SOUNDS_KEY) ?: savePlayingSounds
+        val playOneSoundAtOnce = FileManager.getBooleanValue(PLAY_ONE_SOUND_AT_ONCE_KEY, playOneSoundAtOnce)
+        val savePlayingSounds = FileManager.getBooleanValue(SAVE_PLAYING_SOUNDS_KEY, FileManager.savePlayingSounds)
 
         // Set the values of the switches
         settings_play_one_sound_at_once_switch.isChecked = playOneSoundAtOnce

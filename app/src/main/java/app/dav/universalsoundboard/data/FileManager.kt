@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.net.ConnectivityManager
 import app.dav.davandroidlibrary.DavEnvironment
 import app.dav.davandroidlibrary.models.TableObject
 import app.dav.universalsoundboard.MainActivity
@@ -218,7 +219,7 @@ object FileManager{
         val playingSound = PlayingSound(newUuid, current, sounds, repetitions, randomly, volume)
 
         // Check if playing sounds should be saved
-        if(getSetting(SAVE_PLAYING_SOUNDS_KEY) ?: savePlayingSounds){
+        if(getBooleanValue(SAVE_PLAYING_SOUNDS_KEY, savePlayingSounds)){
             DatabaseOperations.createPlayingSound(newUuid, sounds, current, repetitions, randomly, volume)
         }else{
             itemViewHolder.notSavedPlayingSounds.add(playingSound)
@@ -397,23 +398,50 @@ object FileManager{
         return DatabaseOperations.getObject(imageFileUuid)
     }
 
-    fun setSetting(key: String, value: Boolean){
+    fun setBooleanValue(key: String, value: Boolean){
         val prefs = itemViewHolder.mainActivity?.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE) ?: return
         prefs.edit().putBoolean(key, value).apply()
     }
 
-    fun getSetting(key: String) : Boolean?{
-        val prefs = itemViewHolder.mainActivity?.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE) ?: return null
+    fun getBooleanValue(key: String, defaultValue: Boolean) : Boolean{
+        val prefs = itemViewHolder.mainActivity?.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE) ?: return defaultValue
+        return prefs.getBoolean(key, defaultValue)
+    }
 
-        return when(key){
-            PLAY_ONE_SOUND_AT_ONCE_KEY -> {
-                prefs.getBoolean(key, playOneSoundAtOnce)
-            }
-            SAVE_PLAYING_SOUNDS_KEY -> {
-                prefs.getBoolean(key, savePlayingSounds)
-            }
-            else -> null
-        }
+    fun setStringValue(key: String, value: String){
+        val prefs = itemViewHolder.mainActivity?.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE) ?: return
+        prefs.edit().putString(key, value).apply()
+    }
+
+    fun getStringValue(key: String, defaultValue: String) : String{
+        val prefs = itemViewHolder.mainActivity?.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE) ?: return defaultValue
+        return prefs.getString(key, defaultValue) ?: defaultValue
+    }
+
+    fun setLongValue(key: String, value: Long){
+        val prefs = itemViewHolder.mainActivity?.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE) ?: return
+        prefs.edit().putLong(key, value).apply()
+    }
+
+    fun getLongValue(key: String, defaultValue: Long) : Long{
+        val prefs = itemViewHolder.mainActivity?.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE) ?: return defaultValue
+        return prefs.getLong(key, defaultValue)
+    }
+
+    fun setIntValue(key: String, value: Int){
+        val prefs = itemViewHolder.mainActivity?.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE) ?: return
+        prefs.edit().putInt(key, value).apply()
+    }
+
+    fun getIntValue(key: String, defaultValue: Int) : Int{
+        val prefs = itemViewHolder.mainActivity?.getSharedPreferences(PACKAGE_NAME, Context.MODE_PRIVATE) ?: return defaultValue
+        return prefs.getInt(key, defaultValue)
+    }
+
+    fun isNetworkAvailable(): Boolean {
+        val connectivityManager = itemViewHolder.mainActivity?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 }
 

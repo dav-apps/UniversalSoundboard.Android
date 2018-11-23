@@ -79,7 +79,7 @@ class SoundFragment :
     override fun onItemClicked(sound: Sound) {
         GlobalScope.launch(Dispatchers.Main) {
             // If playOneSoundAtOnce, remove all playing sounds first
-            if(FileManager.getSetting(PLAY_ONE_SOUND_AT_ONCE_KEY) ?: FileManager.playOneSoundAtOnce){
+            if(FileManager.getBooleanValue(PLAY_ONE_SOUND_AT_ONCE_KEY, FileManager.playOneSoundAtOnce)){
                 val playingSounds = FileManager.itemViewHolder.playingSounds.value
                 if(playingSounds != null){
                     for (p in playingSounds){
