@@ -6,6 +6,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import app.dav.davandroidlibrary.DavEnvironment
+import app.dav.davandroidlibrary.models.DavUser
 import app.dav.davandroidlibrary.models.TableObject
 import app.dav.universalsoundboard.MainActivity
 import app.dav.universalsoundboard.models.Category
@@ -452,6 +453,7 @@ class ItemViewHolder(){
         soundsData.value = ArrayList<Sound>()
         categoriesData.value = ArrayList<Category>()
         playingSoundsData.value = ArrayList<PlayingSound>()
+        userData.value = null
     }
 
     var currentCategory: Category = Category.allSoundsCategory
@@ -475,6 +477,9 @@ class ItemViewHolder(){
     val playingSounds: LiveData<ArrayList<PlayingSound>>
         get() = playingSoundsData
     val notSavedPlayingSounds = ArrayList<PlayingSound>()
+    private val userData = MutableLiveData<DavUser>()
+    val user: LiveData<DavUser>
+        get() = userData
 
     fun setTitle(value: String){
         titleData.value = value
@@ -486,6 +491,10 @@ class ItemViewHolder(){
 
     fun setShowPlayAllIcon(showPlayAllIcon: Boolean){
         showPlayAllIconData.value = showPlayAllIcon
+    }
+
+    fun setUser(user: DavUser){
+        userData.value = user
     }
 
     fun updateNotSavedPlayingSound(uuid: UUID, sounds: ArrayList<Sound>?, current: Int?, repetitions: Int?, randomly: Boolean?, volume: Double?){
