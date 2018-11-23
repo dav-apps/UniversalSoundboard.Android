@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.CoordinatorLayout
+import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -52,6 +53,7 @@ class MainActivity :
     private lateinit var viewModel: MainViewModel
     private var soundFragment: SoundFragment = SoundFragment.newInstance(1)
     private var settingsFragment: SettingsFragment = SettingsFragment.newInstance()
+    private var accountFragment: AccountFragment = AccountFragment.newInstance()
     private var currentFragment: CurrentFragment = CurrentFragment.SoundFragment
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<CoordinatorLayout>
 
@@ -87,6 +89,11 @@ class MainActivity :
         bottom_category_list_settings_item.setOnClickListener {
             drawer_layout.closeDrawers()
             showSettingsFragment()
+        }
+
+        bottom_category_list_account_item.setOnClickListener {
+            drawer_layout.closeDrawers()
+            showAccountFragment()
         }
 
         fab_sheet_item_new_sound.setOnClickListener{
@@ -144,6 +151,14 @@ class MainActivity :
             }
         })
 
+        FileManager.itemViewHolder.user.observe(this, Observer {
+            if(it == null){
+                bottom_category_list_account_item_name.text = getString(R.string.login)
+            }else{
+                bottom_category_list_account_item_name.text = it.username
+            }
+        })
+
         val transaction = supportFragmentManager.beginTransaction()
         transaction.add(R.id.fragment_container, soundFragment)
         transaction.add(R.id.fragment_container, settingsFragment)
@@ -155,7 +170,7 @@ class MainActivity :
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
-            if(currentFragment == CurrentFragment.SettingsFragment){
+            if(currentFragment != CurrentFragment.SoundFragment){
                 // Show the SoundFragment
                 showSoundFragment()
             }else if(FileManager.itemViewHolder.currentCategory.uuid != Category.allSoundsCategory.uuid){
@@ -301,10 +316,18 @@ class MainActivity :
         fragment.show(fragmentManager, "playing_sound_item_set_repetitions_dialog")
     }
 
+    private fun getCurrentFragment() : Fragment{
+        return when(currentFragment){
+            CurrentFragment.SoundFragment -> soundFragment
+            CurrentFragment.SettingsFragment -> settingsFragment
+            CurrentFragment.AccountFragment -> accountFragment
+        }
+    }
+
     private fun showSoundFragment(){
         supportFragmentManager
                 .beginTransaction()
-                .hide(settingsFragment)
+                .hide(getCurrentFragment())
                 .show(soundFragment)
                 .commit()
         currentFragment = CurrentFragment.SoundFragment
@@ -326,13 +349,31 @@ class MainActivity :
         settingsFragment.updateValues()
         supportFragmentManager
                 .beginTransaction()
-                .hide(soundFragment)
+                .hide(getCurrentFragment())
                 .show(settingsFragment)
                 .commit()
         currentFragment = CurrentFragment.SettingsFragment
 
         // Set the title
         FileManager.itemViewHolder.setTitle(getString(R.string.settings))
+
+        // Hide the icons
+        FileManager.itemViewHolder.setShowCategoryIcons(false)
+        FileManager.itemViewHolder.setShowPlayAllIcon(false)
+        hideFab()
+        hideBottomSheet()
+    }
+
+    private fun showAccountFragment(){
+        supportFragmentManager
+                .beginTransaction()
+                .hide(getCurrentFragment())
+                .show(accountFragment)
+                .commit()
+        currentFragment = CurrentFragment.AccountFragment
+
+        // Set the title
+        FileManager.itemViewHolder.setTitle(getString(R.string.account_fragment_title))
 
         // Hide the icons
         FileManager.itemViewHolder.setShowCategoryIcons(false)
@@ -379,5 +420,6 @@ class MainActivity :
 
 enum class CurrentFragment(){
     SoundFragment(),
-    SettingsFragment()
+    SettingsFragment(),
+    AccountFragment()
 }

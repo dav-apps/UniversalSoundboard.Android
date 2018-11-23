@@ -6,6 +6,7 @@
     <string name="usb_on_github_link"><a href="https://github.com/Dav2070/UniversalSoundboard.Android">UniversalSoundboard on GitHub</a></string>
     <string name="version">Version 0.2</string>
     <string name="copyright">Copyright © 2018 by dav</string>
+    <string name="login">Log in</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_edit_category">Edit category</string>
@@ -51,6 +52,7 @@
     <string name="playing_sound_item_context_menu_set_repetitions">Set repetitions</string>
     <string name="settings_play_one_sound_at_once_switch_text">Play only one sound at once</string>
     <string name="settings_save_playing_sounds_switch_text">Save playing sounds</string>
+    <string name="account_fragment_title">Your Account</string>
 
     <array name="playing_sound_item_set_repetitions_options">
         <item>1x</item>
@@ -59,4 +61,7 @@
         <item>10x</item>
         <item>∞</item>
     </array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
