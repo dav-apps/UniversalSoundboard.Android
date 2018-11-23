@@ -19,8 +19,12 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import app.dav.davandroidlibrary.Dav
+import app.dav.davandroidlibrary.common.ProjectInterface
+import app.dav.davandroidlibrary.models.DavUser
 import app.dav.universalsoundboard.adapters.CategoryListAdapter
 import app.dav.universalsoundboard.adapters.PlayingSoundListAdapter
+import app.dav.universalsoundboard.common.GeneralMethods
+import app.dav.universalsoundboard.common.LocalDataSettings
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.fragments.*
 import app.dav.universalsoundboard.models.Category
@@ -62,6 +66,10 @@ class MainActivity :
 
     private fun init(){
         Dav.init(this, FileManager.getDavDataPath(filesDir.path).path + "/")
+        ProjectInterface.localDataSettings = LocalDataSettings()
+        ProjectInterface.generalMethods = GeneralMethods()
+        DavUser()
+
         FileManager.itemViewHolder.mainActivity = this
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         viewModel.categoryListAdapter = CategoryListAdapter(this)
