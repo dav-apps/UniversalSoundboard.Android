@@ -11,6 +11,7 @@ import android.os.Handler
 import android.support.design.widget.BottomSheetBehavior
 import android.support.design.widget.CoordinatorLayout
 import android.support.v4.app.Fragment
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -44,6 +45,8 @@ import kotlinx.coroutines.experimental.android.Main
 import kotlinx.coroutines.experimental.launch
 
 
+
+
 const val REQUEST_AUDIO_FILE_GET = 1
 
 class MainActivity :
@@ -67,12 +70,12 @@ class MainActivity :
     }
 
     private fun init(){
+        FileManager.itemViewHolder.mainActivity = this
         Dav.init(this, FileManager.getDavDataPath(filesDir.path).path + "/")
         ProjectInterface.localDataSettings = LocalDataSettings()
         ProjectInterface.generalMethods = GeneralMethods()
-        DavUser()
+        FileManager.itemViewHolder.setUser(DavUser())
 
-        FileManager.itemViewHolder.mainActivity = this
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
         viewModel.categoryListAdapter = CategoryListAdapter(this)
         viewModel.playingSoundListAdapter = PlayingSoundListAdapter(applicationContext, this)
@@ -152,17 +155,27 @@ class MainActivity :
         })
 
         FileManager.itemViewHolder.user.observe(this, Observer {
-            if(it == null){
+            if(it == null || !it.isLoggedIn){
                 bottom_category_list_account_item_name.text = getString(R.string.login)
+                bottom_category_list_account_item_icon.setImageResource(R.drawable.ic_person)
             }else{
                 bottom_category_list_account_item_name.text = it.username
+
+                val avatar = it.avatar
+                if(avatar.exists()){
+                    val avatarDrawable = RoundedBitmapDrawableFactory.create(resources, avatar.path)
+                    avatarDrawable.cornerRadius = 600f
+                    bottom_category_list_account_item_icon.setImageDrawable(avatarDrawable)
+                }
             }
         })
 
         val transaction = supportFragmentManager.beginTransaction()
         transaction.add(R.id.fragment_container, soundFragment)
         transaction.add(R.id.fragment_container, settingsFragment)
+        transaction.add(R.id.fragment_container, accountFragment)
         transaction.hide(settingsFragment)
+        transaction.hide(accountFragment)
         transaction.commit()
     }
 
@@ -268,6 +281,19 @@ class MainActivity :
 
         // Remove the notification
         getSystemService(NotificationManager::class.java).cancel(NOTIFICATION_ID)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val jwt = intent?.data?.getQueryParameter("jwt") ?: return
+
+        // Log the user in
+        val user = DavUser()
+        FileManager.itemViewHolder.setUser(user)
+
+        GlobalScope.launch {
+            user.login(jwt)
+        }
     }
 
     override fun onItemClicked(category: Category) {
