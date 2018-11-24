@@ -28,6 +28,15 @@ object FileManager{
 
     val environment = DavEnvironment.Development
 
+    // dav Keys
+    private const val apiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v"
+    private const val apiKeyDevelopment = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm"
+    val apiKey = if(environment == DavEnvironment.Production) apiKeyProduction else apiKeyDevelopment
+
+    private const val loginImplicitUrlProduction = "https://dav-apps.tech/login_implicit"
+    private const val loginImplicitUrlDevelopment = "https://1e6192a9.ngrok.io/login_implicit"
+    val loginImplicitUrl = if(environment == DavEnvironment.Production) loginImplicitUrlProduction else loginImplicitUrlDevelopment
+
     private const val appIdProduction = 1                   // Dev: 8, Prod: 1
     private const val appIdDevelopment = 8
     val appId = if(environment == DavEnvironment.Production) appIdProduction else appIdDevelopment
