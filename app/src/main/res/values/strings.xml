@@ -4,9 +4,11 @@
     <string name="settings">Settings</string>
     <string name="privacy_policy_link"><a href="https://dav-apps.tech/privacy">Privacy Policy</a></string>
     <string name="usb_on_github_link"><a href="https://github.com/Dav2070/UniversalSoundboard.Android">UniversalSoundboard on GitHub</a></string>
+    <string name="dav_apps_link"><a href="https://dav-apps.tech/">Visit dav-apps.tech</a></string>
     <string name="version">Version 0.2</string>
     <string name="copyright">Copyright © 2018 by dav</string>
     <string name="login">Log in</string>
+    <string name="signup">Sign up</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_edit_category">Edit category</string>
@@ -53,6 +55,11 @@
     <string name="settings_play_one_sound_at_once_switch_text">Play only one sound at once</string>
     <string name="settings_save_playing_sounds_switch_text">Save playing sounds</string>
     <string name="account_fragment_title">Your Account</string>
+    <string name="account_fragment_caption_1">Save your Soundboard and access it from anywhere</string>
+    <string name="account_fragment_text_1">Access the same Soundboard on all your devices</string>
+    <string name="account_fragment_text_2">Make sure your sounds don\'t get lost when you lose or reset your device</string>
+    <string name="account_fragment_text_3">See your playing sounds on your other devices</string>
+    <string name="account_fragment_caption_2">Try it out for free</string>
 
     <array name="playing_sound_item_set_repetitions_options">
         <item>1x</item>
