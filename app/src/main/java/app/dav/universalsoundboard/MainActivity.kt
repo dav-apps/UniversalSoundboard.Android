@@ -27,6 +27,7 @@ import app.dav.universalsoundboard.adapters.CategoryListAdapter
 import app.dav.universalsoundboard.adapters.PlayingSoundListAdapter
 import app.dav.universalsoundboard.common.GeneralMethods
 import app.dav.universalsoundboard.common.LocalDataSettings
+import app.dav.universalsoundboard.common.RetrieveConstants
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.fragments.*
 import app.dav.universalsoundboard.models.Category
@@ -69,9 +70,10 @@ class MainActivity :
 
     private fun init(){
         FileManager.itemViewHolder.mainActivity = this
-        Dav.init(this, FileManager.getDavDataPath(filesDir.path).path + "/")
+        Dav.init(this)
         ProjectInterface.localDataSettings = LocalDataSettings()
         ProjectInterface.generalMethods = GeneralMethods()
+        ProjectInterface.retrieveConstants = RetrieveConstants()
         FileManager.itemViewHolder.setUser(DavUser())
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
