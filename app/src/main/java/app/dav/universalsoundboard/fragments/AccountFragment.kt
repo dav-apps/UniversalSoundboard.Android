@@ -67,9 +67,14 @@ class AccountFragment : Fragment() {
                 }
 
                 // Set the used storage text
-                val usedStorageGB = DecimalFormat("#.#").format(it.usedStorage / 1000000000.0)
-                val totalStorageGB = DecimalFormat("#.#").format(it.totalStorage / 1000000000.0)
-                account_fragment_storage_text_view.text = getString(R.string.account_fragment_used_storage, usedStorageGB, totalStorageGB)
+                val usedStorageGB = it.usedStorage / 1000000000.0
+                val totalStorageGB = it.totalStorage / 1000000000.0
+                val usedStorageGBString = DecimalFormat("#.#").format(usedStorageGB)
+                val totalStorageGBString = DecimalFormat("#.#").format(totalStorageGB)
+                account_fragment_storage_text_view.text = getString(R.string.account_fragment_used_storage, usedStorageGBString, totalStorageGBString)
+
+                // Set the value of the progress bar
+                account_fragment_storage_progress_bar.progress = ((usedStorageGB / totalStorageGB) * 100).toInt()
 
                 // Set the visibility of the upgrade link
                 account_fragment_upgrade_link.visibility = if(it.plan == DavPlan.Free) View.VISIBLE else View.GONE

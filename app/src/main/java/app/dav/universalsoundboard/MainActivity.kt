@@ -42,10 +42,8 @@ import kotlinx.android.synthetic.main.playing_sound_bottom_sheet.*
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
-
-
-
 
 const val REQUEST_AUDIO_FILE_GET = 1
 
@@ -289,10 +287,10 @@ class MainActivity :
 
         // Log the user in
         val user = DavUser()
-        FileManager.itemViewHolder.setUser(user)
 
-        GlobalScope.launch {
-            user.login(jwt)
+        GlobalScope.launch(Dispatchers.Main) {
+            async { user.login(jwt) }.await()
+            FileManager.itemViewHolder.setUser(user)
         }
     }
 
