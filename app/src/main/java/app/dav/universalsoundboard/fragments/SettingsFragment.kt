@@ -11,7 +11,7 @@ import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.data.FileManager.PLAY_ONE_SOUND_AT_ONCE_KEY
 import app.dav.universalsoundboard.data.FileManager.SAVE_PLAYING_SOUNDS_KEY
 import app.dav.universalsoundboard.data.FileManager.playOneSoundAtOnce
-import kotlinx.android.synthetic.main.settings_fragment.*
+import kotlinx.android.synthetic.main.fragment_settings.*
 
 
 class SettingsFragment : Fragment() {
@@ -36,7 +36,7 @@ class SettingsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.settings_fragment, container, false)
+        return inflater.inflate(R.layout.fragment_settings, container, false)
     }
 
     fun updateValues(){

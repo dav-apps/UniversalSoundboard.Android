@@ -1,9 +1,11 @@
 package app.dav.universalsoundboard.fragments
 
+import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,7 @@ import android.view.ViewGroup
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import kotlinx.android.synthetic.main.fragment_account.*
+import java.text.DecimalFormat
 
 class AccountFragment : Fragment() {
 
@@ -18,6 +21,7 @@ class AccountFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
         account_fragment_link.movementMethod = LinkMovementMethod.getInstance()
+        account_fragment_upgrade_link.movementMethod = LinkMovementMethod.getInstance()
 
         login_button.setOnClickListener {
             val redirectUrl = "universalsoundboard:///"
@@ -28,6 +32,40 @@ class AccountFragment : Fragment() {
                 startActivity(intent)
             }
         }
+
+        signup_button.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://dav-apps.tech/signup"))
+            val packageManager = activity?.packageManager ?: return@setOnClickListener
+            if (intent.resolveActivity(packageManager) != null) {
+                startActivity(intent)
+            }
+        }
+
+        FileManager.itemViewHolder.user.observe(this, Observer {
+            it ?: return@Observer
+
+            // If the user is logged in, hide the login page and show the user details
+            account_fragment_constraint_layout_1.visibility = if(it.isLoggedIn) View.GONE else View.VISIBLE
+            account_fragment_constraint_layout_2.visibility = if(it.isLoggedIn) View.VISIBLE else View.GONE
+
+            if(it.isLoggedIn){
+                // Set the username TextView
+                account_fragment_username_text_view.text = it.username
+
+                // Set the avatar ImageView
+                val avatar = it.avatar
+                if(avatar.exists()){
+                    val avatarDrawable = RoundedBitmapDrawableFactory.create(resources, avatar.path)
+                    avatarDrawable.cornerRadius = 600f
+                    account_fragment_avatar_image_view.setImageDrawable(avatarDrawable)
+                }
+
+                // Set the used storage text
+                val usedStorageGB = DecimalFormat("#.#").format(it.usedStorage / 1000000000.0)
+                val totalStorageGB = DecimalFormat("#.#").format(it.totalStorage / 1000000000.0)
+                account_fragment_storage_text_view.text = String.format(getString(R.string.account_fragment_used_storage), usedStorageGB, totalStorageGB)
+            }
+        })
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,

@@ -8,6 +8,7 @@
     <string name="version">Version 0.2</string>
     <string name="copyright">Copyright © 2018 by dav</string>
     <string name="login">Log in</string>
+    <string name="logout">Log out</string>
     <string name="signup">Sign up</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -60,6 +61,8 @@
     <string name="account_fragment_text_2">Make sure your sounds don\'t get lost when you lose or reset your device</string>
     <string name="account_fragment_text_3">See your playing sounds on your other devices</string>
     <string name="account_fragment_caption_2">Try it out for free</string>
+    <string name="account_fragment_upgrade_link"><a href="https://dav-apps.tech/pricing">Need more?</a></string>
+    <string name="account_fragment_used_storage">%s GB of %s GB used</string>
 
     <array name="playing_sound_item_set_repetitions_options">
         <item>1x</item>
