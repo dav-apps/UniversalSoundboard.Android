@@ -10,6 +10,7 @@ import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import app.dav.davandroidlibrary.models.DavPlan
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import kotlinx.android.synthetic.main.fragment_account.*
@@ -23,7 +24,7 @@ class AccountFragment : Fragment() {
         account_fragment_link.movementMethod = LinkMovementMethod.getInstance()
         account_fragment_upgrade_link.movementMethod = LinkMovementMethod.getInstance()
 
-        login_button.setOnClickListener {
+        account_fragment_login_button.setOnClickListener {
             val redirectUrl = "universalsoundboard:///"
             val url: Uri = Uri.parse(FileManager.loginImplicitUrl + "?api_key=" + FileManager.apiKey + "&redirect_url=" + redirectUrl)
             val intent = Intent(Intent.ACTION_VIEW, url)
@@ -33,12 +34,17 @@ class AccountFragment : Fragment() {
             }
         }
 
-        signup_button.setOnClickListener {
+        account_fragment_signup_button.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://dav-apps.tech/signup"))
             val packageManager = activity?.packageManager ?: return@setOnClickListener
             if (intent.resolveActivity(packageManager) != null) {
                 startActivity(intent)
             }
+        }
+
+        account_fragment_logout_button.setOnClickListener {
+            val fragment = LogoutDialogFragment()
+            fragment.show(fragmentManager, "logout")
         }
 
         FileManager.itemViewHolder.user.observe(this, Observer {
@@ -63,7 +69,10 @@ class AccountFragment : Fragment() {
                 // Set the used storage text
                 val usedStorageGB = DecimalFormat("#.#").format(it.usedStorage / 1000000000.0)
                 val totalStorageGB = DecimalFormat("#.#").format(it.totalStorage / 1000000000.0)
-                account_fragment_storage_text_view.text = String.format(getString(R.string.account_fragment_used_storage), usedStorageGB, totalStorageGB)
+                account_fragment_storage_text_view.text = getString(R.string.account_fragment_used_storage, usedStorageGB, totalStorageGB)
+
+                // Set the visibility of the upgrade link
+                account_fragment_upgrade_link.visibility = if(it.plan == DavPlan.Free) View.VISIBLE else View.GONE
             }
         })
     }
