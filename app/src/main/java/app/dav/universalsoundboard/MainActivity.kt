@@ -28,6 +28,7 @@ import app.dav.universalsoundboard.adapters.PlayingSoundListAdapter
 import app.dav.universalsoundboard.common.GeneralMethods
 import app.dav.universalsoundboard.common.LocalDataSettings
 import app.dav.universalsoundboard.common.RetrieveConstants
+import app.dav.universalsoundboard.common.TriggerAction
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.fragments.*
 import app.dav.universalsoundboard.models.Category
@@ -74,6 +75,7 @@ class MainActivity :
         ProjectInterface.localDataSettings = LocalDataSettings()
         ProjectInterface.generalMethods = GeneralMethods()
         ProjectInterface.retrieveConstants = RetrieveConstants()
+        ProjectInterface.triggerAction = TriggerAction()
         FileManager.itemViewHolder.setUser(DavUser())
 
         viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)

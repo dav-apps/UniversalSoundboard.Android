@@ -34,31 +34,31 @@ object FileManager{
     val apiKey = if(environment == DavEnvironment.Production) apiKeyProduction else apiKeyDevelopment
 
     private const val loginImplicitUrlProduction = "https://dav-apps.tech/login_implicit"
-    private const val loginImplicitUrlDevelopment = "https://1e6192a9.ngrok.io/login_implicit"
+    private const val loginImplicitUrlDevelopment = "https://119cf6fa.ngrok.io/login_implicit"
     val loginImplicitUrl = if(environment == DavEnvironment.Production) loginImplicitUrlProduction else loginImplicitUrlDevelopment
 
-    private const val appIdProduction = 1                   // Dev: 8, Prod: 1
-    private const val appIdDevelopment = 8
+    private const val appIdProduction = 1                   // Dev: 4, Prod: 1
+    private const val appIdDevelopment = 4
     val appId = if(environment == DavEnvironment.Production) appIdProduction else appIdDevelopment
 
-    private const val soundFileTableIdProduction = 6        // Dev: 11, Prod: 6
-    private const val soundFileTableIdDevelopment = 11
+    private const val soundFileTableIdProduction = 6        // Dev: 7, Prod: 6
+    private const val soundFileTableIdDevelopment = 7
     val soundFileTableId = if(environment == DavEnvironment.Production) soundFileTableIdProduction else soundFileTableIdDevelopment
 
-    private const val imageFileTableIdProduction = 7        // Dev: 15, Prod: 7
-    private const val imageFileTableIdDevelopment = 15
+    private const val imageFileTableIdProduction = 7        // Dev: 9, Prod: 7
+    private const val imageFileTableIdDevelopment = 9
     val imageFileTableId = if(environment == DavEnvironment.Production) imageFileTableIdProduction else imageFileTableIdDevelopment
 
-    private const val categoryTableIdProduction = 8         // Dev: 16, Prod: 8
-    private const val categoryTableIdDevelopment = 16
+    private const val categoryTableIdProduction = 8         // Dev: 5, Prod: 8
+    private const val categoryTableIdDevelopment = 5
     val categoryTableId = if(environment == DavEnvironment.Production) categoryTableIdProduction else categoryTableIdDevelopment
 
-    private const val soundTableIdProduction = 5            // Dev: 17, Prod: 5
-    private const val soundTableIdDevelopment = 17
+    private const val soundTableIdProduction = 5            // Dev: 6, Prod: 5
+    private const val soundTableIdDevelopment = 6
     val soundTableId = if(environment == DavEnvironment.Production) soundTableIdProduction else soundTableIdDevelopment
 
-    private const val playingSoundTableIdProduction = 9     // Dev: 18, Prod: 9
-    private const val playingSoundTableIdDevelopment = 18
+    private const val playingSoundTableIdProduction = 9     // Dev: 8, Prod: 9
+    private const val playingSoundTableIdDevelopment = 8
     val playingSoundTableId = if(environment == DavEnvironment.Production) playingSoundTableIdProduction else playingSoundTableIdDevelopment
 
     const val soundTableNamePropertyName = "name"
@@ -347,7 +347,7 @@ object FileManager{
         val soundIds = tableObject.getPropertyValue(FileManager.playingSoundTableSoundIdsPropertyName)
         val sounds = ArrayList<Sound>()
 
-        if(soundIds != null){
+        if(soundIds != null && !soundIds.isNullOrEmpty()){
             for (uuidString in soundIds.split(',')){
                 val uuid = UUID.fromString(uuidString)
                 val sound = getSound(uuid)
@@ -381,7 +381,7 @@ object FileManager{
     }
 
     fun getDavDataPath(filesDir: String) : File{
-        val path = filesDir + "/dav"
+        val path = "$filesDir/dav"
         val dir = File(path)
         if(!dir.exists()){
             dir.mkdir()
