@@ -31,7 +31,6 @@ class PlayingSound(val uuid: UUID,
 
     private var mediaBrowser: MediaBrowserCompat? = null
     private var mediaController: MediaControllerCompat? = null
-    private var timerIsOn = false
     private val timer: Runnable
     private val timerHandler = Handler()
 
@@ -42,9 +41,9 @@ class PlayingSound(val uuid: UUID,
     private val durationData = MutableLiveData<Int>()
     val duration: LiveData<Int>
         get() = durationData
-    private val isPlayingData = MutableLiveData<Boolean>()
-    val isPlaying: LiveData<Boolean>
-        get() = isPlayingData
+    private val stateData = MutableLiveData<PlayingSoundState>()
+    val state: LiveData<PlayingSoundState>
+        get() = stateData
     private val currentSoundData = MutableLiveData<Int>()
     val currentSoundLiveData: LiveData<Int>
         get() = currentSoundData
@@ -65,7 +64,7 @@ class PlayingSound(val uuid: UUID,
 
         timer = object : Runnable{
             override fun run() {
-                if(timerIsOn){
+                if(stateData.value == PlayingSoundState.Playing){
                     val p = progressData.value
                     if(p != null){
                         progressData.value = p + updateSeekbarInterval.toInt()
@@ -126,13 +125,13 @@ class PlayingSound(val uuid: UUID,
                                     durationData.value = playbackState.extras?.getInt(BUNDLE_DURATION_KEY) ?: 0
 
                                     if(playbackState.state == PlaybackStateCompat.STATE_PLAYING){
-                                        isPlayingData.value = true
-                                        timerIsOn = true
+                                        stateData.value = PlayingSoundState.Playing
                                         timerHandler.post(timer)
                                     }else if(playbackState.state == PlaybackStateCompat.STATE_PAUSED ||
                                             playbackState.state == PlaybackStateCompat.STATE_STOPPED){
-                                        isPlayingData.value = false
-                                        timerIsOn = false
+                                        stateData.value = PlayingSoundState.Paused
+                                    }else if(playbackState.state == PlaybackStateCompat.STATE_BUFFERING){
+                                        stateData.value = PlayingSoundState.Buffering
                                     }
                                 }
                             })
@@ -173,12 +172,12 @@ class PlayingSound(val uuid: UUID,
             bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
 
             // Connection was already established; continue playing the sound
-            if(isPlayingData.value == true){
+            if(stateData.value == PlayingSoundState.Playing){
                 mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_PAUSE, bundle)
-                isPlayingData.value = false
+                stateData.value = PlayingSoundState.Paused
             }else{
                 mediaController?.transportControls?.sendCustomAction(CUSTOM_ACTION_PLAY, bundle)
-                isPlayingData.value = true
+                stateData.value = PlayingSoundState.Playing
             }
         }
     }
@@ -253,4 +252,10 @@ enum class MediaAction{
     SkipPrevious(),
     SkipNext(),
     Seek()
+}
+
+enum class PlayingSoundState{
+    Playing(),
+    Paused(),
+    Buffering()
 }

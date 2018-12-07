@@ -5,7 +5,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.support.design.widget.BottomSheetDialog
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -24,6 +23,7 @@ import app.dav.universalsoundboard.viewmodels.SoundViewModel
 import kotlinx.coroutines.experimental.Dispatchers
 import kotlinx.coroutines.experimental.GlobalScope
 import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 
 /**
@@ -90,17 +90,11 @@ class SoundFragment :
                 FileManager.deleteAllPlayingSounds()
 
                 // Wait for a short amount of time
-                val handler = Handler()
-                handler.postDelayed({
-                    GlobalScope.launch(Dispatchers.Main) {
-                        FileManager.addPlayingSound(null, arrayListOf(sound), 0, 0, false, 1.0)
-                        FileManager.itemViewHolder.playingSounds.value?.last()?.playOrPause(context!!)
-                    }
-                }, 100)
-            }else{
-                FileManager.addPlayingSound(null, arrayListOf(sound), 0, 0, false, 1.0)
-                FileManager.itemViewHolder.playingSounds.value?.last()?.playOrPause(context!!)
+                delay(100)
             }
+
+            FileManager.addPlayingSound(null, arrayListOf(sound), 0, 0, false, 1.0)
+            FileManager.itemViewHolder.playingSounds.value?.last()?.playOrPause(context!!)
         }
     }
 

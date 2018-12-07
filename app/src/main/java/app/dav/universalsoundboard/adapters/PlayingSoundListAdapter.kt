@@ -13,6 +13,7 @@ import android.widget.TextView
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.databinding.PlayingSoundListItemBinding
 import app.dav.universalsoundboard.models.PlayingSound
+import app.dav.universalsoundboard.models.PlayingSoundState
 
 class PlayingSoundListAdapter(val context: Context, private val clickListeners: PlayingSoundButtonClickListeners) :
         ListAdapter<PlayingSound, PlayingSoundListAdapter.ViewHolder>(PlayingSoundDiffCallback()) {
@@ -59,11 +60,18 @@ class PlayingSoundListAdapter(val context: Context, private val clickListeners: 
             val nameTextView = binding.root.findViewById<TextView>(R.id.playing_sound_list_item_name)
             val seekbar = binding.root.findViewById<SeekBar>(R.id.playing_sound_list_item_seekbar)
 
-            item.isPlaying.observeForever {
-                if(it == null || it){
-                    playPauseButton.setImageResource(R.drawable.ic_pause_white)
-                }else{
+            item.state.observeForever {
+                if(it == PlayingSoundState.Paused){
                     playPauseButton.setImageResource(R.drawable.ic_play_arrow_white)
+                    seekbar.isIndeterminate = false
+                }else if(it == PlayingSoundState.Buffering){
+                    playPauseButton.setImageResource(R.drawable.ic_pause_white)
+
+                    // Set the state of the seekBar to indeterminate
+                    seekbar.isIndeterminate = true
+                }else{      // Playing or null
+                    playPauseButton.setImageResource(R.drawable.ic_pause_white)
+                    seekbar.isIndeterminate = false
                 }
             }
 
