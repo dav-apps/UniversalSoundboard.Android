@@ -34,7 +34,7 @@ object FileManager{
     val apiKey = if(environment == DavEnvironment.Production) apiKeyProduction else apiKeyDevelopment
 
     private const val loginImplicitUrlProduction = "https://dav-apps.tech/login_implicit"
-    private const val loginImplicitUrlDevelopment = "https://1019bc68.ngrok.io/login_implicit"
+    private const val loginImplicitUrlDevelopment = "https://04525f97.ngrok.io/login_implicit"
     val loginImplicitUrl = if(environment == DavEnvironment.Production) loginImplicitUrlProduction else loginImplicitUrlDevelopment
 
     private const val appIdProduction = 1                   // Dev: 4, Prod: 1
@@ -229,11 +229,11 @@ object FileManager{
         if(newVolume >= 1) newVolume = 1.0
         if(newVolume <= 0) newVolume = 0.0
 
-        val playingSound = PlayingSound(newUuid, current, sounds, repetitions, randomly, volume)
+        val playingSound = PlayingSound(newUuid, current, sounds, repetitions, randomly, newVolume)
 
         // Check if playing sounds should be saved
         if(getBooleanValue(SAVE_PLAYING_SOUNDS_KEY, savePlayingSounds)){
-            DatabaseOperations.createPlayingSound(newUuid, sounds, current, repetitions, randomly, volume)
+            DatabaseOperations.createPlayingSound(newUuid, sounds, current, repetitions, randomly, newVolume)
         }else{
             itemViewHolder.notSavedPlayingSounds.add(playingSound)
         }

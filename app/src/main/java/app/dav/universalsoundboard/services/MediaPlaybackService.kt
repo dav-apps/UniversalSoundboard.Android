@@ -21,15 +21,14 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import app.dav.universalsoundboard.MainActivity
 import app.dav.universalsoundboard.R
+import app.dav.universalsoundboard.data.DatabaseOperations
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.data.FileManager.PACKAGE_NAME
 import app.dav.universalsoundboard.models.PlayingSound
 import app.dav.universalsoundboard.models.Sound
 import app.dav.universalsoundboard.utilities.Utils
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.*
 import kotlinx.coroutines.experimental.android.Main
-import kotlinx.coroutines.experimental.launch
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -208,7 +207,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
                 }
                 players[uuid] = mediaPlayer
                 playingSounds.add(playingSound)
-                prepare(uuid)
+                prepare(uuid).await()
             }
         }
     }
@@ -356,14 +355,31 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
         return PendingIntent.getService(this, 0, previousIntent, 0)
     }
 
-    private fun prepare(uuid: UUID){
-        val playingSound = playingSounds.find { p -> p.uuid == uuid } ?: return
-        val player = players[uuid] ?: return
-
-        if(playingSound.sounds.count() > playingSound.currentSound){
+    private fun prepare(uuid: UUID) : Deferred<Unit>{
+        return GlobalScope.async(Dispatchers.Main) {
+            val playingSound = playingSounds.find { p -> p.uuid == uuid } ?: return@async
+            val player = players[uuid] ?: return@async
+            if(playingSound.sounds.count() <= playingSound.currentSound) return@async
             val currentSound = playingSound.sounds[playingSound.currentSound]
-            val currentSoundPath = currentSound.audioFile?.path ?: return
 
+            // Get the current sound of the playing sound and check if the sound file exists
+            if(playingSound.sounds[playingSound.currentSound].audioFile?.exists() != true){
+                // Download the file
+                val soundUuid = playingSound.sounds[playingSound.currentSound].uuid
+                val soundTableObject = DatabaseOperations.getObject(soundUuid) ?: return@async
+                val soundFileUuidString = soundTableObject.getPropertyValue(FileManager.soundTableSoundUuidPropertyName) ?: return@async
+                val soundFileUuid = UUID.fromString(soundFileUuidString)
+                val soundFileTableObject = DatabaseOperations.getObject(soundFileUuid) ?: return@async
+                setPlaybackState(uuid, PlaybackStateCompat.STATE_BUFFERING)
+                soundFileTableObject.downloadFile().await()
+
+                // Check if the file was downloaded and set the file
+                if(soundFileTableObject.file?.exists() == true){
+                    currentSound.audioFile = soundFileTableObject.file
+                }else return@async
+            }
+
+            val currentSoundPath = currentSound.audioFile?.path ?: return@async
             player.reset()
             player.setDataSource(currentSoundPath)
             player.prepare()
@@ -421,7 +437,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
             if(updateRepetitions) FileManager.setRepetitionsOfPlayingSound(uuid, playingSound.repetitions)
 
             // Play the sound
-            prepare(uuid)
+            prepare(uuid).await()
             if(wasPlaying || play) play(uuid)
         }
     }
@@ -441,7 +457,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
             FileManager.setCurrentOfPlayingSound(uuid, playingSound.currentSound)
 
             // Play the sound
-            prepare(uuid)
+            prepare(uuid).await()
             if(wasPlaying || play) play(uuid)
         }
     }
@@ -467,10 +483,18 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
     private fun setPlaybackState(uuid: UUID, state: Int){
         val player = players.get(uuid)
 
+        var currentPosition = 0
+        var duration = 0
+
+        if(state != PlaybackStateCompat.STATE_BUFFERING){
+            currentPosition = player?.currentPosition ?: 0
+            duration = player?.duration ?: 0
+        }
+
         val bundle = Bundle()
         bundle.putString(BUNDLE_UUID_KEY, uuid.toString())
-        bundle.putInt(BUNDLE_POSITION_KEY, player?.currentPosition ?: 0)
-        bundle.putInt(BUNDLE_DURATION_KEY, player?.duration ?: 0)
+        bundle.putInt(BUNDLE_POSITION_KEY, currentPosition)
+        bundle.putInt(BUNDLE_DURATION_KEY, duration)
 
         mediaSession.setPlaybackState(PlaybackStateCompat.Builder()
                 .setActions(PlaybackStateCompat.ACTION_PLAY or
@@ -478,7 +502,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
                         PlaybackStateCompat.ACTION_PLAY_PAUSE or
                         PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
                         PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)
-                .setState(state, players[uuid]?.currentPosition?.toLong() ?: 0, 1f)
+                .setState(state, currentPosition.toLong(), 1f)
                 .setExtras(bundle)
                 .build())
     }

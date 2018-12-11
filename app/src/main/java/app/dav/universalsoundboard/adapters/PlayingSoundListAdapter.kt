@@ -6,10 +6,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.SeekBar
-import android.widget.TextView
+import android.widget.*
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.databinding.PlayingSoundListItemBinding
 import app.dav.universalsoundboard.models.PlayingSound
@@ -59,19 +56,23 @@ class PlayingSoundListAdapter(val context: Context, private val clickListeners: 
             val skipNextButton = binding.root.findViewById<ImageButton>(R.id.playing_sound_list_item_skip_next)
             val nameTextView = binding.root.findViewById<TextView>(R.id.playing_sound_list_item_name)
             val seekbar = binding.root.findViewById<SeekBar>(R.id.playing_sound_list_item_seekbar)
+            val progressbar = binding.root.findViewById<ProgressBar>(R.id.playing_sound_list_item_progressbar)
 
             item.state.observeForever {
                 if(it == PlayingSoundState.Paused){
                     playPauseButton.setImageResource(R.drawable.ic_play_arrow_white)
-                    seekbar.isIndeterminate = false
+                    seekbar.visibility = View.VISIBLE
+                    progressbar.visibility = View.GONE
                 }else if(it == PlayingSoundState.Buffering){
                     playPauseButton.setImageResource(R.drawable.ic_pause_white)
 
-                    // Set the state of the seekBar to indeterminate
-                    seekbar.isIndeterminate = true
+                    // Show the progress bar and set it to indeterminate
+                    progressbar.visibility = View.VISIBLE
+                    seekbar.visibility = View.GONE
                 }else{      // Playing or null
                     playPauseButton.setImageResource(R.drawable.ic_pause_white)
-                    seekbar.isIndeterminate = false
+                    seekbar.visibility = View.VISIBLE
+                    progressbar.visibility = View.GONE
                 }
             }
 
