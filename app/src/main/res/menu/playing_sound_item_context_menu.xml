@@ -2,5 +2,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/playing_sound_item_context_menu_repeat"
-        android:title="@string/playing_sound_item_context_menu_set_repetitions" />
+        android:title="@string/playing_sound_list_item_context_menu_set_repetitions" />
 </menu>

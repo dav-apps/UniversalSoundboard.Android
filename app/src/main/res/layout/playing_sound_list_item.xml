@@ -55,6 +55,7 @@
             android:background="@android:color/transparent"
             android:onClickListener="@{skipPreviousClickListener}"
             android:padding="4dp"
+            android:contentDescription="@string/playing_sound_list_item_skip_previous_description"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             app:srcCompat="@drawable/ic_skip_previous_white" />
@@ -75,6 +76,7 @@
             android:background="@android:color/transparent"
             android:onClickListener="@{playPauseClickListener}"
             android:padding="4dp"
+            android:contentDescription="@string/playing_sound_list_item_play_pause_description"
             app:layout_constraintStart_toEndOf="@+id/playing_sound_list_item_skip_previous"
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             android:src="@drawable/ic_play_arrow_white" />
@@ -87,6 +89,7 @@
             android:background="@android:color/transparent"
             android:onClickListener="@{skipNextClickListener}"
             android:padding="4dp"
+            android:contentDescription="@string/playing_sound_list_item_skip_next_description"
             app:layout_constraintStart_toEndOf="@+id/playing_sound_list_item_play_pause"
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             app:srcCompat="@drawable/ic_skip_next_white" />
@@ -101,6 +104,20 @@
             app:layout_constraintStart_toEndOf="@+id/playing_sound_list_item_skip_next"
             app:layout_constraintTop_toTopOf="@+id/playing_sound_list_item_clear" />
 
+        <ProgressBar
+            android:id="@+id/playing_sound_list_item_progressbar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:indeterminateOnly="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            style="?android:attr/progressBarStyleHorizontal"
+            app:layout_constraintBottom_toBottomOf="@+id/playing_sound_list_item_clear"
+            app:layout_constraintEnd_toStartOf="@+id/playing_sound_list_item_clear"
+            app:layout_constraintStart_toEndOf="@+id/playing_sound_list_item_skip_next"
+            app:layout_constraintTop_toTopOf="@+id/playing_sound_list_item_clear"
+            android:visibility="gone" />
+
         <ImageButton
             android:id="@+id/playing_sound_list_item_clear"
             android:layout_width="wrap_content"
@@ -109,18 +126,20 @@
             android:background="@android:color/transparent"
             android:onClickListener="@{removeClickListener}"
             android:padding="4dp"
-            app:layout_constraintEnd_toStartOf="@+id/playing_sound_list_item_more"
+            android:contentDescription="@string/playing_sound_list_item_clear_description"
+            app:layout_constraintEnd_toStartOf="@+id/playing_sound_list_item_options"
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             app:srcCompat="@drawable/ic_clear_white" />
 
         <ImageButton
-            android:id="@+id/playing_sound_list_item_more"
+            android:id="@+id/playing_sound_list_item_options"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@android:color/transparent"
             android:onClickListener="@{menuClickListener}"
             android:padding="4dp"
+            android:contentDescription="@string/playing_sound_list_item_options_description"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             app:srcCompat="@drawable/ic_more_vert_white" />

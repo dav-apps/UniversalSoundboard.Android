@@ -25,12 +25,6 @@
     <string name="sound_list_item_image_description">Image of the sound</string>
     <string name="category_list_item_icon_description">Icon of the category</string>
     <string name="bottom_category_list_settings_item_icon_description">Settings Icon</string>
-    <string name="playing_sound_list_item_name_description">The name of the sound</string>
-    <string name="playing_sound_list_item_skip_previous_description">Skip to previous</string>
-    <string name="playing_sound_list_item_play_pause_description">Play or pause</string>
-    <string name="playing_sound_list_item_skip_next_description">Skip to next</string>
-    <string name="playing_sound_list_item_clear_description">Remove</string>
-    <string name="playing_sound_list_item_more_description">Options</string>
     <string name="create_category_dialog_title">New Category</string>
     <string name="create_category_dialog_name_edittext_hint">Name</string>
     <string name="create_category_dialog_positive_button_text">Save</string>
@@ -53,7 +47,13 @@
     <string name="sound_item_context_menu_change_image">Change image</string>
     <string name="sound_item_context_menu_rename">Rename</string>
     <string name="sound_item_context_menu_delete">Delete</string>
-    <string name="playing_sound_item_context_menu_set_repetitions">Set repetitions</string>
+    <string name="playing_sound_list_item_name_description">The name of the sound</string>
+    <string name="playing_sound_list_item_skip_previous_description">Skip to previous</string>
+    <string name="playing_sound_list_item_play_pause_description">Play or pause</string>
+    <string name="playing_sound_list_item_skip_next_description">Skip to next</string>
+    <string name="playing_sound_list_item_clear_description">Remove</string>
+    <string name="playing_sound_list_item_options_description">Options</string>
+    <string name="playing_sound_list_item_context_menu_set_repetitions">Set repetitions</string>
     <string name="settings_play_one_sound_at_once_switch_text">Play only one sound at once</string>
     <string name="settings_save_playing_sounds_switch_text">Save playing sounds</string>
     <string name="account_fragment_title">Your Account</string>
