@@ -63,7 +63,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
     var audioFocusRequested = false
     val pausedMediaPlayers = ArrayList<UUID>()
 
-    val noisyBroadcastReceiver = object : BroadcastReceiver() {
+    private val noisyBroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             // Pause all mediaPlayers
             pausePlayingMediaPlayers()
@@ -122,7 +122,8 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
                         GlobalScope.launch(Dispatchers.Main) {
                             // Get the uuid and play the sound
                             val uuid = Utils.getUuidFromString(extras?.getString(BUNDLE_UUID_KEY)) ?: return@launch
-                            init(uuid)
+                            if(init(uuid))
+                                prepare(uuid).await()
                             play(uuid)
                         }
                     }
@@ -195,7 +196,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
         registerReceiver(noisyBroadcastReceiver, IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY))
     }
 
-    private suspend fun init(uuid: UUID){
+    private suspend fun init(uuid: UUID) : Boolean{
         if(!players.containsKey(uuid)){
             // Get the PlayingSound and add it to the list
             val playingSound = FileManager.getPlayingSound(uuid)
@@ -207,8 +208,11 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
                 }
                 players[uuid] = mediaPlayer
                 playingSounds.add(playingSound)
-                prepare(uuid).await()
             }
+            // Return true if the player was just added
+            return true
+        }else{
+            return false
         }
     }
 
@@ -361,6 +365,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
             val player = players[uuid] ?: return@async
             if(playingSound.sounds.count() <= playingSound.currentSound) return@async
             val currentSound = playingSound.sounds[playingSound.currentSound]
+            setMetadata(uuid, currentSound)
 
             // Get the current sound of the playing sound and check if the sound file exists
             if(playingSound.sounds[playingSound.currentSound].audioFile?.exists() != true){
@@ -371,19 +376,23 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
                 val soundFileUuid = UUID.fromString(soundFileUuidString)
                 val soundFileTableObject = DatabaseOperations.getObject(soundFileUuid) ?: return@async
                 setPlaybackState(uuid, PlaybackStateCompat.STATE_BUFFERING)
-                soundFileTableObject.downloadFile().await()
+                val playingSoundCurrentSound = playingSound.currentSound
+
+                soundFileTableObject.downloadFile(null).await()
 
                 // Check if the file was downloaded and set the file
                 if(soundFileTableObject.file?.exists() == true){
                     currentSound.audioFile = soundFileTableObject.file
                 }else return@async
+
+                // Check if the sound changed while the file was downloaded
+                if(playingSoundCurrentSound != playingSound.currentSound) return@async
             }
 
             val currentSoundPath = currentSound.audioFile?.path ?: return@async
             player.reset()
             player.setDataSource(currentSoundPath)
             player.prepare()
-            setMetadata(uuid, currentSound)
             sendNotification(uuid, true)
         }
     }
@@ -413,6 +422,8 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
         val playingSound = playingSounds.find { p -> p.uuid == uuid } ?: return
         val mediaPlayer = players[uuid] ?: return
         val wasPlaying = mediaPlayer.isPlaying
+        if(wasPlaying)
+            mediaPlayer.pause()
         var updateRepetitions = false
 
         // Play the next sound if there is one
@@ -446,6 +457,8 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
         val playingSound = playingSounds.find { p -> p.uuid == uuid } ?: return
         val mediaPlayer = players[uuid] ?: return
         val wasPlaying = mediaPlayer.isPlaying
+        if(wasPlaying)
+            mediaPlayer.pause()
 
         // Play the previous sound if there is one
         if(playingSound.currentSound == 0) return
@@ -481,7 +494,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
     }
 
     private fun setPlaybackState(uuid: UUID, state: Int){
-        val player = players.get(uuid)
+        val player = players[uuid]
 
         var currentPosition = 0
         var duration = 0
