@@ -9,8 +9,9 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/category_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@id/bottom_category_list"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="95dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/category_list_item" />
