@@ -14,10 +14,9 @@ import android.support.v4.media.session.PlaybackStateCompat
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.services.*
 import app.dav.universalsoundboard.utilities.Utils
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.android.Main
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.util.*
 
 private const val updateSeekbarInterval = 250L

@@ -34,7 +34,7 @@ object FileManager{
     val apiKey = if(environment == DavEnvironment.Production) apiKeyProduction else apiKeyDevelopment
 
     private const val loginImplicitUrlProduction = "https://dav-apps.tech/login_implicit"
-    private const val loginImplicitUrlDevelopment = "https://04525f97.ngrok.io/login_implicit"
+    private const val loginImplicitUrlDevelopment = "https://30d34bb4.ngrok.io/login_implicit"
     val loginImplicitUrl = if(environment == DavEnvironment.Production) loginImplicitUrlProduction else loginImplicitUrlDevelopment
 
     private const val appIdProduction = 1                   // Dev: 4, Prod: 1

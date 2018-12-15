@@ -3,10 +3,9 @@ package app.dav.universalsoundboard.common
 import app.dav.davandroidlibrary.common.ITriggerAction
 import app.dav.davandroidlibrary.models.TableObject
 import app.dav.universalsoundboard.data.FileManager
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.android.Main
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class TriggerAction : ITriggerAction {
     override fun updateAllOfTable(tableId: Int) {

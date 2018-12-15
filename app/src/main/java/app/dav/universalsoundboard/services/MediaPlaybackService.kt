@@ -27,8 +27,7 @@ import app.dav.universalsoundboard.data.FileManager.PACKAGE_NAME
 import app.dav.universalsoundboard.models.PlayingSound
 import app.dav.universalsoundboard.models.Sound
 import app.dav.universalsoundboard.utilities.Utils
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.*
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
