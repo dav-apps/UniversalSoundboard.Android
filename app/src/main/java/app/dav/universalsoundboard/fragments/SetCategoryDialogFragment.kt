@@ -59,6 +59,7 @@ class SetCategoryDialogFragment : DialogFragment() {
 
                     GlobalScope.launch(Dispatchers.Main) {
                         FileManager.setCategoryOfSound(s.uuid, selectedCategory.uuid)
+                        FileManager.itemViewHolder.loadSounds()
                     }
                 }
                 .setNegativeButton(R.string.dialog_negative_button, null)

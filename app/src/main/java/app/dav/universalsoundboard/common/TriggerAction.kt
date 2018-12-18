@@ -25,7 +25,10 @@ class TriggerAction : ITriggerAction {
                 (tableId == FileManager.soundFileTableId && !fileDownloaded) ||
                 tableId == FileManager.soundTableId){
             // Update the sounds
-            GlobalScope.launch(Dispatchers.Main) { FileManager.itemViewHolder.loadSounds() }
+            GlobalScope.launch(Dispatchers.Main) {
+                FileManager.itemViewHolder.allSoundsChanged = true
+                FileManager.itemViewHolder.loadSounds()
+            }
         }else if(tableId == FileManager.categoryTableId){
             // Update the categories
             GlobalScope.launch(Dispatchers.Main) { FileManager.itemViewHolder.loadCategories() }

@@ -1,6 +1,5 @@
 package app.dav.universalsoundboard.data
 
-import android.util.Log
 import app.dav.davandroidlibrary.Dav
 import app.dav.davandroidlibrary.models.Property
 import app.dav.davandroidlibrary.models.TableObject
@@ -50,7 +49,6 @@ object DatabaseOperations {
     suspend fun updateSound(uuid: UUID, name: String?, favourite: String?, soundUuid: String?, imageUuid: String?, categoryUuid: String?) = withContext(Dispatchers.IO) {
         // Get the sound table object
         val soundTableObject = Dav.Database.getTableObject(uuid) ?: return@withContext
-
         if(soundTableObject.tableId != FileManager.soundTableId) return@withContext
 
         if(!name.isNullOrEmpty()) soundTableObject.setPropertyValue(FileManager.soundTableNamePropertyName, name)

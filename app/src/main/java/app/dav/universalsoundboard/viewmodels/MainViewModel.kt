@@ -23,7 +23,7 @@ class MainViewModel : ViewModel(){
 
         val cursor = contentResolver.query(fileUri, null, null, null, null) ?: return
         cursor.use { cursor ->
-            if(cursor.moveToFirst()){
+            if(cursor.moveToFirst()) {
                 fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
             }
         }
@@ -39,6 +39,7 @@ class MainViewModel : ViewModel(){
         val category: UUID? = if(currentCategory.uuid == Category.allSoundsCategory.uuid) null else currentCategory.uuid
 
         FileManager.addSound(null, fileName, category, file)
+        FileManager.itemViewHolder.loadSounds()
     }
 
     private fun File.copyInputStreamToFile(inputStream: InputStream) {

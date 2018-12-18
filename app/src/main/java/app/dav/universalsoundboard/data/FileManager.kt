@@ -26,7 +26,7 @@ object FileManager{
     const val playOneSoundAtOnce = false
     const val savePlayingSounds = true
 
-    val environment = DavEnvironment.Development
+    val environment = DavEnvironment.Production
 
     // dav Keys
     private const val apiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v"
@@ -99,10 +99,10 @@ object FileManager{
         DatabaseOperations.createSoundFile(soundFileUuid, audioFile)
 
         DatabaseOperations.createSound(newUuid, name, soundFileUuid.toString(), categoryUuidString)
-        itemViewHolder.loadSounds()
+        itemViewHolder.allSoundsChanged = true
     }
 
-    suspend fun getAllSounds() : ArrayList<Sound>{
+    suspend fun getAllSoundsFromDatabase() : ArrayList<Sound>{
         val tableObjects = DatabaseOperations.getAllSounds()
         val sounds = ArrayList<Sound>()
 
@@ -120,7 +120,7 @@ object FileManager{
     suspend fun getSoundsOfCategory(categoryUuid: UUID) : ArrayList<Sound>{
         val sounds = ArrayList<Sound>()
 
-        for(sound in getAllSounds()){
+        for(sound in itemViewHolder.allSounds){
             if(sound.category?.uuid == categoryUuid){
                 sounds.add(sound)
             }
@@ -136,17 +136,17 @@ object FileManager{
 
     suspend fun renameSound(uuid: UUID, newName: String){
         DatabaseOperations.updateSound(uuid, newName, null, null, null, null)
-        itemViewHolder.loadSounds()
+        itemViewHolder.allSoundsChanged = true
     }
 
     suspend fun setCategoryOfSound(soundUuid: UUID, categoryUuid: UUID){
         DatabaseOperations.updateSound(soundUuid, null, null, null, null, categoryUuid.toString())
-        itemViewHolder.loadSounds()
+        itemViewHolder.allSoundsChanged = true
     }
 
     suspend fun setSoundAsFavourite(uuid: UUID, favourite: Boolean){
         DatabaseOperations.updateSound(uuid, null, favourite.toString(), null, null, null)
-        itemViewHolder.loadSounds()
+        itemViewHolder.allSoundsChanged = true
     }
 
     suspend fun updateImageOfSound(soundUuid: UUID, imageFile: File){
@@ -167,12 +167,12 @@ object FileManager{
             DatabaseOperations.updateSound(soundUuid, null, null, null, imageUuid.toString(), null)
         }
 
-        itemViewHolder.loadSounds()
+        itemViewHolder.allSoundsChanged = true
     }
 
     suspend fun deleteSound(uuid: UUID){
         DatabaseOperations.deleteSound(uuid)
-        itemViewHolder.loadSounds()
+        itemViewHolder.allSoundsChanged = true
     }
     // End Sound functions
 
@@ -468,27 +468,42 @@ class ItemViewHolder(){
         userData.value = null
     }
 
+    private var isLoadingSounds = false
+    private var loadSoundsAgain = false
+
     var currentCategory: Category = Category.allSoundsCategory
     var mainActivity: MainActivity? = null
+    // titleData holds the current title
     private val titleData = MutableLiveData<String>()
     val title: LiveData<String>
         get() =  titleData
+    // when showCategoryIconsData is true, the icons for categories are visible
     private val showCategoryIconsData = MutableLiveData<Boolean>()
     val showCategoryIcons: LiveData<Boolean>
         get() = showCategoryIconsData
+    // when showPlayAllIconData is true, the Play All button is visible
     private val showPlayAllIconData = MutableLiveData<Boolean>()
     val showPlayAllIcon: LiveData<Boolean>
         get() = showPlayAllIconData
+    // allSounds holds all sounds
+    val allSounds = ArrayList<Sound>()
+    // when allSoundsChanged is true, the sounds will be reloaded from the database
+    var allSoundsChanged = true
+    // soundsData holds the sounds that are currently displayed in the list
     private val soundsData = MutableLiveData<ArrayList<Sound>>()
     val sounds: LiveData<ArrayList<Sound>>
         get() = soundsData
+    // categoriesData holds all categories that are currently displayed in the list
     private val categoriesData = MutableLiveData<ArrayList<Category>>()
     val categories: LiveData<ArrayList<Category>>
         get() = categoriesData
+    // playingSoundsData holds all playingSounds that are currently displayed
     private val playingSoundsData = MutableLiveData<ArrayList<PlayingSound>>()
     val playingSounds: LiveData<ArrayList<PlayingSound>>
         get() = playingSoundsData
+    // notSavedPlayingSounds holds the playingSounds that are not saved in the database but displayed in the list
     val notSavedPlayingSounds = ArrayList<PlayingSound>()
+    // userData holds the DavUser object
     private val userData = MutableLiveData<DavUser>()
     val user: LiveData<DavUser>
         get() = userData
@@ -525,12 +540,32 @@ class ItemViewHolder(){
     }
 
     suspend fun loadSounds(){
+        if(isLoadingSounds){
+            loadSoundsAgain = true
+            return
+        }else
+            isLoadingSounds = true
+
+        if(allSoundsChanged){
+            allSoundsChanged = false
+            // Get all sounds from the database
+            allSounds.clear()
+            for (sound in FileManager.getAllSoundsFromDatabase())
+                allSounds.add(sound)
+        }
+
         soundsData.value = if(currentCategory.uuid == Category.allSoundsCategory.uuid){
             // Get all sounds
-            FileManager.getAllSounds()
+            allSounds
         }else{
             // Get the sounds of the selected category
             FileManager.getSoundsOfCategory(currentCategory.uuid)
+        }
+
+        isLoadingSounds = false
+        if(loadSoundsAgain){
+            loadSoundsAgain = false
+            loadSounds()
         }
     }
 

@@ -27,6 +27,7 @@ class DeleteSoundDialogFragment : DialogFragment() {
                     if(s != null){
                         GlobalScope.launch(Dispatchers.Main) {
                             FileManager.deleteSound(s.uuid)
+                            FileManager.itemViewHolder.loadSounds()
                         }
                     }
                 }

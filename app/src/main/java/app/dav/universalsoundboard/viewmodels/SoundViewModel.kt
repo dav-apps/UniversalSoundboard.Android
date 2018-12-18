@@ -36,7 +36,10 @@ class SoundViewModel : ViewModel(){
         file.copyInputStreamToFile(stream)
 
         // Create the imageFile table object and update the sound
-        GlobalScope.launch(Dispatchers.Main) { FileManager.updateImageOfSound(sound.uuid, file) }
+        GlobalScope.launch(Dispatchers.Main) {
+            FileManager.updateImageOfSound(sound.uuid, file)
+            FileManager.itemViewHolder.loadSounds()
+        }
     }
 
     private fun File.copyInputStreamToFile(inputStream: InputStream) {
