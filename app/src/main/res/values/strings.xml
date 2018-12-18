@@ -5,7 +5,7 @@
     <string name="privacy_policy_link"><a href="https://dav-apps.tech/privacy">Privacy Policy</a></string>
     <string name="usb_on_github_link"><a href="https://github.com/Dav2070/UniversalSoundboard.Android">UniversalSoundboard on GitHub</a></string>
     <string name="dav_apps_link"><a href="https://dav-apps.tech/">Visit dav-apps.tech</a></string>
-    <string name="version">Version 0.2</string>
+    <string name="version">Version 0.3</string>
     <string name="copyright">Copyright © 2018 by dav</string>
     <string name="login">Log in</string>
     <string name="logout">Log out</string>
