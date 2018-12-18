@@ -14,6 +14,7 @@ import app.dav.davandroidlibrary.models.DavPlan
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import kotlinx.android.synthetic.main.fragment_account.*
+import java.net.URLEncoder
 import java.text.DecimalFormat
 
 class AccountFragment : Fragment() {
@@ -25,7 +26,7 @@ class AccountFragment : Fragment() {
         account_fragment_upgrade_link.movementMethod = LinkMovementMethod.getInstance()
 
         account_fragment_login_button.setOnClickListener {
-            val redirectUrl = "universalsoundboard:///"
+            val redirectUrl = URLEncoder.encode("universalsoundboard:///", "UTF-8")
             val url: Uri = Uri.parse(FileManager.loginImplicitUrl + "?api_key=" + FileManager.apiKey + "&redirect_url=" + redirectUrl)
             val intent = Intent(Intent.ACTION_VIEW, url)
             val packageManager = activity?.packageManager ?: return@setOnClickListener
