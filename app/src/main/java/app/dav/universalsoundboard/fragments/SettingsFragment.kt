@@ -22,6 +22,7 @@ class SettingsFragment : Fragment() {
 
         privacy_policy_textview.movementMethod = LinkMovementMethod.getInstance()
         usb_on_github_textview.movementMethod = LinkMovementMethod.getInstance()
+        usb_for_windows_textview.movementMethod = LinkMovementMethod.getInstance()
 
         settings_play_one_sound_at_once_switch.setOnCheckedChangeListener { buttonView, isChecked ->
             if(!isInitialized) return@setOnCheckedChangeListener

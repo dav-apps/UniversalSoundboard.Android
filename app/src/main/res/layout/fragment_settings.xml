@@ -44,7 +44,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="14dp"
+            android:layout_marginTop="4dp"
             android:text="@string/usb_on_github_link" />
+
+        <TextView
+            android:id="@+id/usb_for_windows_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/usb_for_windows_link"/>
 
         <TextView
             android:id="@+id/version_textview"
