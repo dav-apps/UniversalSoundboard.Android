@@ -13,7 +13,7 @@ class TriggerAction : ITriggerAction {
     }
 
     override fun updateTableObject(tableObject: TableObject, fileDownloaded: Boolean) {
-        updateView(tableObject.tableId, fileDownloaded)
+
     }
 
     override fun deleteTableObject(tableObject: TableObject) {

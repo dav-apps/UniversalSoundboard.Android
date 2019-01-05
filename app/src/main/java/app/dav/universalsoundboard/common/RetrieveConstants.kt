@@ -25,4 +25,11 @@ class RetrieveConstants : IRetrieveConstants {
                 FileManager.playingSoundTableId,
                 FileManager.imageFileTableId)
     }
+
+    override fun getParallelTableIds(): ArrayList<Int> {
+        return arrayListOf(
+                FileManager.soundTableId,
+                FileManager.soundFileTableId
+        )
+    }
 }
