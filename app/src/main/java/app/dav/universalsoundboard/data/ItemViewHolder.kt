@@ -13,6 +13,7 @@ class ItemViewHolder(){
     constructor(title: String) : this() {
         titleData.value = title
         showCategoryIconsData.value = false
+        showPlayAllIconData.value = false
         soundsData.value = ArrayList<Sound>()
         categoriesData.value = ArrayList<Category>()
         playingSoundsData.value = ArrayList<PlayingSound>()
@@ -24,38 +25,28 @@ class ItemViewHolder(){
 
     var currentCategory: Category = Category.allSoundsCategory
     var mainActivity: MainActivity? = null
-    // titleData holds the current title
-    private val titleData = MutableLiveData<String>()
+    private val titleData = MutableLiveData<String>()                           // titleData holds the current title
     val title: LiveData<String>
         get() =  titleData
-    // when showCategoryIconsData is true, the icons for categories are visible
-    private val showCategoryIconsData = MutableLiveData<Boolean>()
+    private val showCategoryIconsData = MutableLiveData<Boolean>()              // when showCategoryIconsData is true, the icons for categories are visible
     val showCategoryIcons: LiveData<Boolean>
         get() = showCategoryIconsData
-    // when showPlayAllIconData is true, the Play All button is visible
-    private val showPlayAllIconData = MutableLiveData<Boolean>()
+    private val showPlayAllIconData = MutableLiveData<Boolean>()                // when showPlayAllIconData is true, the Play All button is visible
     val showPlayAllIcon: LiveData<Boolean>
         get() = showPlayAllIconData
-    // allSounds holds all sounds
-    val allSounds = ArrayList<Sound>()
-    // when allSoundsChanged is true, the sounds will be reloaded from the database
-    var allSoundsChanged = true
-    // soundsData holds the sounds that are currently displayed in the list
-    private val soundsData = MutableLiveData<ArrayList<Sound>>()
+    val allSounds = ArrayList<Sound>()                                          // allSounds holds all sounds
+    var allSoundsChanged = true                                                 // when allSoundsChanged is true, the sounds will be reloaded from the database
+    private val soundsData = MutableLiveData<ArrayList<Sound>>()                // soundsData holds the sounds that are currently displayed in the list
     val sounds: LiveData<ArrayList<Sound>>
         get() = soundsData
-    // categoriesData holds all categories that are currently displayed in the list
-    private val categoriesData = MutableLiveData<ArrayList<Category>>()
+    private val categoriesData = MutableLiveData<ArrayList<Category>>()         // categoriesData holds all categories that are currently displayed in the list
     val categories: LiveData<ArrayList<Category>>
         get() = categoriesData
-    // playingSoundsData holds all playingSounds that are currently displayed
-    private val playingSoundsData = MutableLiveData<ArrayList<PlayingSound>>()
+    private val playingSoundsData = MutableLiveData<ArrayList<PlayingSound>>()  // playingSoundsData holds all playingSounds that are currently displayed
     val playingSounds: LiveData<ArrayList<PlayingSound>>
         get() = playingSoundsData
-    // notSavedPlayingSounds holds the playingSounds that are not saved in the database but displayed in the list
-    val notSavedPlayingSounds = ArrayList<PlayingSound>()
-    // userData holds the DavUser object
-    private val userData = MutableLiveData<DavUser>()
+    val notSavedPlayingSounds = ArrayList<PlayingSound>()                       // notSavedPlayingSounds holds the playingSounds that are not saved in the database but displayed in the list
+    private val userData = MutableLiveData<DavUser>()                           // userData holds the DavUser object
     val user: LiveData<DavUser>
         get() = userData
 
@@ -118,6 +109,8 @@ class ItemViewHolder(){
             loadSoundsAgain = false
             loadSounds()
         }
+
+        setShowPlayAllIcon(sounds.value?.size ?: 0 > 0)
     }
 
     suspend fun loadCategories(){

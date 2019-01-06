@@ -83,7 +83,6 @@ object FileManager{
         itemViewHolder.setShowCategoryIcons(category.uuid != Category.allSoundsCategory.uuid)
         itemViewHolder.setTitle(category.name)
         itemViewHolder.loadSounds()
-        FileManager.itemViewHolder.setShowPlayAllIcon(FileManager.itemViewHolder.sounds.value?.size ?: 0 > 0)
     }
 
     // Sound functions

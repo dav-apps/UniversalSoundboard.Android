@@ -28,7 +28,6 @@ class TriggerAction : ITriggerAction {
             GlobalScope.launch(Dispatchers.Main) {
                 FileManager.itemViewHolder.allSoundsChanged = true
                 FileManager.itemViewHolder.loadSounds()
-                FileManager.itemViewHolder.setShowPlayAllIcon(FileManager.itemViewHolder.sounds.value?.size ?: 0 > 0)
             }
         }else if(tableId == FileManager.categoryTableId){
             // Update the categories
