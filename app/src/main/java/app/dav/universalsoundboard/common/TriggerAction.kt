@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 
 class TriggerAction : ITriggerAction {
     override fun updateAllOfTable(tableId: Int) {
-        updateView(tableId, false)
+        updateView(tableId)
     }
 
     override fun updateTableObject(tableObject: TableObject, fileDownloaded: Boolean) {
@@ -17,13 +17,11 @@ class TriggerAction : ITriggerAction {
     }
 
     override fun deleteTableObject(tableObject: TableObject) {
-        updateView(tableObject.tableId, false)
+        updateView(tableObject.tableId)
     }
 
-    private fun updateView(tableId: Int, fileDownloaded: Boolean){
-        if(tableId == FileManager.imageFileTableId ||
-                (tableId == FileManager.soundFileTableId && !fileDownloaded) ||
-                tableId == FileManager.soundTableId){
+    private fun updateView(tableId: Int){
+        if(tableId == FileManager.imageFileTableId || tableId == FileManager.soundFileTableId){
             // Update the sounds
             GlobalScope.launch(Dispatchers.Main) {
                 FileManager.itemViewHolder.allSoundsChanged = true
