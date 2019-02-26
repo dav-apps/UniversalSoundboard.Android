@@ -40,6 +40,7 @@ import com.gordonwong.materialsheetfab.MaterialSheetFab
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.category_list.*
+import kotlinx.android.synthetic.main.content_main.*
 import kotlinx.android.synthetic.main.playing_sound_bottom_sheet.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -171,6 +172,21 @@ class MainActivity :
             }
         })
 
+        FileManager.itemViewHolder.isProgressBarVisible.observe(this, Observer {
+            it ?: return@Observer
+
+            if(it){
+                background_dim.visibility = View.VISIBLE
+                progress_bar.visibility = View.VISIBLE
+                fab.isEnabled = false
+            }else{
+                background_dim.visibility = View.GONE
+                progress_bar.visibility = View.GONE
+                fab.isEnabled = true
+            }
+        })
+
+        // Set the correct fragment
         val transaction = supportFragmentManager.beginTransaction()
         transaction.add(R.id.fragment_container, soundFragment)
         transaction.add(R.id.fragment_container, settingsFragment)
@@ -256,12 +272,15 @@ class MainActivity :
             GlobalScope.launch(Dispatchers.Main) {
                 if(fileUri != null){
                     // One file selected
-                    viewModel.copySoundFile(fileUri, application.contentResolver, cacheDir)
+                    viewModel.addSounds(arrayListOf(fileUri), application.contentResolver, cacheDir)
                 }else if(clipData != null){
                     // Multiple files selected
+                    val fileUris = ArrayList<Uri>()
                     for(i in 0 until clipData.itemCount){
-                        viewModel.copySoundFile(clipData.getItemAt(i).uri, application.contentResolver, cacheDir)
+                        fileUris.add(clipData.getItemAt(i).uri)
                     }
+
+                    viewModel.addSounds(fileUris, application.contentResolver, cacheDir)
                 }
             }
         }

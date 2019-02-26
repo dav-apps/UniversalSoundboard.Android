@@ -16,7 +16,7 @@ class MainViewModel : ViewModel(){
     var categoryListAdapter: CategoryListAdapter? = null
     var playingSoundListAdapter: PlayingSoundListAdapter? = null
 
-    suspend fun copySoundFile(fileUri: Uri, contentResolver: ContentResolver, cacheDir: File){
+    private suspend fun copySoundFile(fileUri: Uri, contentResolver: ContentResolver, cacheDir: File){
         // Get the name
         val fileNameWithExt = fileUri.pathSegments.last().substringAfterLast("/")
         var fileName = fileNameWithExt
@@ -39,6 +39,15 @@ class MainViewModel : ViewModel(){
         val category: UUID? = if(currentCategory.uuid == Category.allSoundsCategory.uuid) null else currentCategory.uuid
 
         FileManager.addSound(null, fileName, category, file)
+    }
+
+    suspend fun addSounds(uris: ArrayList<Uri>, contentResolver: ContentResolver, cacheDir: File){
+        FileManager.itemViewHolder.setIsProgressBarVisible(true)
+
+        for(uri in uris){
+            copySoundFile(uri, contentResolver, cacheDir)
+        }
+
         FileManager.itemViewHolder.loadSounds()
     }
 
