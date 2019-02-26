@@ -18,6 +18,7 @@ class ItemViewHolder(){
         categoriesData.value = ArrayList<Category>()
         playingSoundsData.value = ArrayList<PlayingSound>()
         userData.value = null
+        isProgressBarVisibleData.value = true
     }
 
     private var isLoadingSounds = false
@@ -49,6 +50,9 @@ class ItemViewHolder(){
     private val userData = MutableLiveData<DavUser>()                           // userData holds the DavUser object
     val user: LiveData<DavUser>
         get() = userData
+    private val isProgressBarVisibleData = MutableLiveData<Boolean>()                // If true, the progress bar is visible
+    val isProgressBarVisible: LiveData<Boolean>
+        get() = isProgressBarVisibleData
 
     fun setTitle(value: String){
         titleData.value = value
@@ -64,6 +68,10 @@ class ItemViewHolder(){
 
     fun setUser(user: DavUser){
         userData.value = user
+    }
+
+    fun setIsProgressBarVisible(value: Boolean){
+        isProgressBarVisibleData.value = value
     }
 
     fun updateNotSavedPlayingSound(uuid: UUID, sounds: ArrayList<Sound>?, current: Int?, repetitions: Int?, randomly: Boolean?, volume: Double?){
@@ -88,6 +96,8 @@ class ItemViewHolder(){
         }else
             isLoadingSounds = true
 
+        isProgressBarVisibleData.value = true
+
         if(allSoundsChanged){
             allSoundsChanged = false
             // Get all sounds from the database
@@ -111,6 +121,7 @@ class ItemViewHolder(){
         }
 
         setShowPlayAllIcon(sounds.value?.size ?: 0 > 0)
+        isProgressBarVisibleData.value = false
     }
 
     suspend fun loadCategories(){
