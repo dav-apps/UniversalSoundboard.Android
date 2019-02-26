@@ -1,0 +1,62 @@
+<resources>
+    <string name="all_sounds">Alle Sounds</string>
+    <string name="settings">Einstellungen</string>
+    <string name="privacy_policy_link"><a href="https://dav-apps.tech/privacy">Datenschutzerklärung</a></string>
+    <string name="usb_on_github_link"><a href="https://github.com/Dav2070/UniversalSoundboard.Android">UniversalSoundboard auf GitHub</a></string>
+    <string name="usb_for_windows_link"><a href="https://www.microsoft.com/de-de/p/universalsoundboard/9nblggh51005">UniversalSoundboard für Windows 10</a></string>
+    <string name="dav_apps_link"><a href="https://dav-apps.tech/">Besuche dav-apps.tech</a></string>
+    <string name="login">Anmelden</string>
+    <string name="logout">Abmelden</string>
+    <string name="signup">Registrieren</string>
+    <string name="navigation_drawer_open">Navigationsmenü öffnen</string>
+    <string name="navigation_drawer_close">Navigationsmenü schließen</string>
+    <string name="action_edit_category">Kategorie bearbeiten</string>
+    <string name="action_delete_category">Kategorie löschen</string>
+    <string name="action_play_all">Sounds nacheinander abspielen</string>
+    <string name="notification_action_play">Abspielen</string>
+    <string name="notification_action_pause">Pausieren</string>
+    <string name="notification_action_next">Nächstes</string>
+    <string name="notification_action_previous">Vorheriges</string>
+    <string name="notification_action_stop">Stoppen</string>
+    <string name="dialog_negative_button">Abbrechen</string>
+    <string name="dialog_save">Speichern</string>
+    <string name="sound_list_item_image_description">Bild des Sounds</string>
+    <string name="category_list_item_icon_description">Icon der Kategorie</string>
+    <string name="bottom_category_list_settings_item_icon_description">Einstellungen Icon</string>
+    <string name="create_category_dialog_title">Kategorie hinzufügen</string>
+    <string name="create_category_dialog_name_edittext_hint">Name</string>
+    <string name="edit_category_dialog_title">Kategorie bearbeiten</string>
+    <string name="delete_sound_dialog_title">Sound löschen: %1$s</string>
+    <string name="delete_sound_dialog_message">Bist du sicher?</string>
+    <string name="delete_sound_dialog_positive_button_text">Löschen</string>
+    <string name="rename_sound_dialog_title">Umbenennen</string>
+    <string name="rename_sound_dialog_name_edittext_hint">Name</string>
+    <string name="delete_category_dialog_title">Kategorie löschen: %1$s</string>
+    <string name="delete_category_dialog_message">Bist du dir sicher? Es werden keine deiner Sounds gelöscht.</string>
+    <string name="delete_category_dialog_positive_button_text">Löschen</string>
+    <string name="set_category_dialog_title">Kategorien festlegen: %1$s</string>
+    <string name="logout_dialog_message">Bist du dir sicher, dass du dich abmelden möchtest?</string>
+    <string name="fab_sheet_item_new_sound">Sounds hinzufügen</string>
+    <string name="fab_sheet_item_new_category">Kategorie hinzufügen</string>
+    <string name="sound_item_context_menu_set_category">Kategorien festlegen</string>
+    <string name="sound_item_context_menu_change_image">Bild wechseln</string>
+    <string name="sound_item_context_menu_rename">Umbenennen</string>
+    <string name="sound_item_context_menu_delete">Löschen</string>
+    <string name="playing_sound_list_item_name_description">Der Name des Sounds</string>
+    <string name="playing_sound_list_item_skip_previous_description">Zum vorherigen springen</string>
+    <string name="playing_sound_list_item_play_pause_description">Abspielen oder pausieren</string>
+    <string name="playing_sound_list_item_skip_next_description">Zum nächsten springen</string>
+    <string name="playing_sound_list_item_clear_description">Entfernen</string>
+    <string name="playing_sound_list_item_options_description">Optionen</string>
+    <string name="playing_sound_list_item_context_menu_set_repetitions">Wiederholungen festlegen</string>
+    <string name="settings_play_one_sound_at_once_switch_text">Nur einen Sound auf einmal abspielen</string>
+    <string name="settings_save_playing_sounds_switch_text">Speichere spielende Sounds</string>
+    <string name="account_fragment_title">Dein Account</string>
+    <string name="account_fragment_caption_1">Sichere dein Soundboard und greife von überall darauf zu</string>
+    <string name="account_fragment_text_1">Nutze das gleiche Soundboard auf all deinen Geräten</string>
+    <string name="account_fragment_text_2">Stelle sicher, dass deine Sounds nicht verloren gehen, wenn du dein Gerät verlierst oder zurücksetzt</string>
+    <string name="account_fragment_text_3">Sehe, welche Sounds gerade auf deinen anderen Geräten abgespielt werden</string>
+    <string name="account_fragment_caption_2">Kostenlos ausprobieren</string>
+    <string name="account_fragment_upgrade_link"><a href="https://dav-apps.tech/pricing">Brauchst du mehr?</a></string>
+    <string name="account_fragment_used_storage">%s GB von %s GB verwendet</string>
+</resources>

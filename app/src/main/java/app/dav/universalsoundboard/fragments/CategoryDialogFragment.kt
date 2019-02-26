@@ -57,7 +57,7 @@ class CategoryDialogFragment : DialogFragment() {
 
         val alertDialog =  AlertDialog.Builder(activity)
                 .setView(layout)
-                .setPositiveButton(R.string.create_category_dialog_positive_button_text) { dialog, which ->
+                .setPositiveButton(R.string.dialog_save) { dialog, which ->
                     if(c != null){
                         // Update the current category
                         GlobalScope.launch(Dispatchers.Main) {

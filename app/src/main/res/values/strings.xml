@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">UniversalSoundboard</string>
+    <string name="app_name" translatable="false">UniversalSoundboard</string>
     <string name="all_sounds">All Sounds</string>
     <string name="settings">Settings</string>
     <string name="privacy_policy_link"><a href="https://dav-apps.tech/privacy">Privacy Policy</a></string>
     <string name="usb_on_github_link"><a href="https://github.com/Dav2070/UniversalSoundboard.Android">UniversalSoundboard on GitHub</a></string>
     <string name="usb_for_windows_link"><a href="https://www.microsoft.com/en-us/p/universalsoundboard/9nblggh51005">UniversalSoundboard for Windows 10</a></string>
     <string name="dav_apps_link"><a href="https://dav-apps.tech/">Visit dav-apps.tech</a></string>
-    <string name="version">Version 0.3.2</string>
-    <string name="copyright">Copyright © 2018 by dav</string>
+    <string name="version" translatable="false">Version 0.3.2</string>
+    <string name="copyright" translatable="false">Copyright © 2019 by dav</string>
     <string name="login">Log in</string>
     <string name="logout">Log out</string>
     <string name="signup">Sign up</string>
@@ -15,34 +15,32 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_edit_category">Edit category</string>
     <string name="action_delete_category">Delete category</string>
-    <string name="action_play_all">Play all</string>
+    <string name="action_play_all">Play sounds one after another</string>
     <string name="notification_action_play">Play</string>
     <string name="notification_action_pause">Pause</string>
     <string name="notification_action_next">Next</string>
     <string name="notification_action_previous">Previous</string>
     <string name="notification_action_stop">Stop</string>
-    <string name="notification_channel_name">Playback</string>
+    <string name="notification_channel_name" translatable="false">Playback</string>
     <string name="dialog_negative_button">Cancel</string>
+    <string name="dialog_save">Save</string>
     <string name="sound_list_item_image_description">Image of the sound</string>
     <string name="category_list_item_icon_description">Icon of the category</string>
     <string name="bottom_category_list_settings_item_icon_description">Settings Icon</string>
     <string name="create_category_dialog_title">New Category</string>
     <string name="create_category_dialog_name_edittext_hint">Name</string>
-    <string name="create_category_dialog_positive_button_text">Save</string>
     <string name="edit_category_dialog_title">Edit Category</string>
     <string name="delete_sound_dialog_title">Delete %1$s</string>
     <string name="delete_sound_dialog_message">Are you sure?</string>
     <string name="delete_sound_dialog_positive_button_text">Delete</string>
     <string name="rename_sound_dialog_title">Rename</string>
     <string name="rename_sound_dialog_name_edittext_hint">Name</string>
-    <string name="rename_sound_dialog_positive_button_text">Save</string>
     <string name="delete_category_dialog_title">Delete category %1$s</string>
     <string name="delete_category_dialog_message">Are you sure? Your sounds are not impacted.</string>
     <string name="delete_category_dialog_positive_button_text">Delete</string>
     <string name="set_category_dialog_title">Set categories: %1$s</string>
-    <string name="set_category_dialog_positive_button_text">Save</string>
     <string name="logout_dialog_message">Are you sure you want to log out?</string>
-    <string name="fab_sheet_item_new_sound">New Sound</string>
+    <string name="fab_sheet_item_new_sound">Add Sounds</string>
     <string name="fab_sheet_item_new_category">New Category</string>
     <string name="sound_item_context_menu_set_category">Set categories</string>
     <string name="sound_item_context_menu_change_image">Change image</string>

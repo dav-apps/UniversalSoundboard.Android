@@ -32,7 +32,7 @@ class RenameSoundDialogFragment : DialogFragment() {
 
         val alertDialog = AlertDialog.Builder(activity)
                 .setView(layout)
-                .setPositiveButton(R.string.rename_sound_dialog_positive_button_text, DialogInterface.OnClickListener { dialog, which ->
+                .setPositiveButton(R.string.dialog_save, DialogInterface.OnClickListener { dialog, which ->
                     val s = sound ?: return@OnClickListener
                     GlobalScope.launch(Dispatchers.Main) {
                         FileManager.renameSound(s.uuid, nameEditText.text.toString())
