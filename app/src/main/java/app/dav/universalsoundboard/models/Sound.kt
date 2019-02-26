@@ -4,4 +4,4 @@ import android.graphics.Bitmap
 import java.io.File
 import java.util.*
 
-class Sound(val uuid: UUID, var name: String, var category: Category?, var favourite: Boolean, var audioFile: File?, var image: Bitmap?)
+class Sound(val uuid: UUID, var name: String, var categories: ArrayList<Category>, var favourite: Boolean, var audioFile: File?, var image: Bitmap?)

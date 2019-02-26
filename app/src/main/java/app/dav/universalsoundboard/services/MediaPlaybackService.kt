@@ -290,7 +290,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
         }
 
         val builder = NotificationCompat.Builder(this, channelId)
-        if(sound.category != null) builder.setContentText(sound.category?.name)
+        if(sound.categories.size > 0) builder.setContentText(sound.categories.first().name)
 
         builder
                 .setContentTitle(sound.name)
@@ -523,8 +523,8 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
         mediaSession.setMetadata(MediaMetadataCompat.Builder()
                 .putString(MediaMetadataCompat.METADATA_KEY_TITLE, sound.name)
                 .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE, sound.name)
-                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, sound.category?.name)
-                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, sound.category?.name)
+                .putString(MediaMetadataCompat.METADATA_KEY_ALBUM, if(sound.categories.size > 0) sound.categories.first().name else "")
+                .putString(MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE, if(sound.categories.size > 0) sound.categories.first().name else "")
                 .putString(MediaMetadataCompat.METADATA_KEY_MEDIA_URI, playingSoundUuid.toString())
                 .build())
     }

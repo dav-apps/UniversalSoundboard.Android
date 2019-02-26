@@ -46,7 +46,7 @@ object DatabaseOperations {
         Dav.Database.getAllTableObjects(FileManager.soundTableId, false)
     }
 
-    suspend fun updateSound(uuid: UUID, name: String?, favourite: String?, soundUuid: String?, imageUuid: String?, categoryUuid: String?) = withContext(Dispatchers.IO) {
+    suspend fun updateSound(uuid: UUID, name: String?, favourite: String?, soundUuid: String?, imageUuid: String?, categoryUuids: ArrayList<UUID>?) = withContext(Dispatchers.IO) {
         // Get the sound table object
         val soundTableObject = Dav.Database.getTableObject(uuid) ?: return@withContext
         if(soundTableObject.tableId != FileManager.soundTableId) return@withContext
@@ -55,7 +55,7 @@ object DatabaseOperations {
         if(!favourite.isNullOrEmpty()) soundTableObject.setPropertyValue(FileManager.soundTableFavouritePropertyName, favourite)
         if(!soundUuid.isNullOrEmpty()) soundTableObject.setPropertyValue(FileManager.soundTableSoundUuidPropertyName, soundUuid)
         if(!imageUuid.isNullOrEmpty()) soundTableObject.setPropertyValue(FileManager.soundTableImageUuidPropertyName, imageUuid)
-        if(!categoryUuid.isNullOrEmpty()) soundTableObject.setPropertyValue(FileManager.soundTableCategoryUuidPropertyName, categoryUuid)
+        if(categoryUuids != null) soundTableObject.setPropertyValue(FileManager.soundTableCategoryUuidPropertyName, categoryUuids.joinToString(","))
     }
 
     suspend fun deleteSound(uuid: UUID) = withContext(Dispatchers.IO) {

@@ -26,7 +26,7 @@ object FileManager{
     const val playOneSoundAtOnce = false
     const val savePlayingSounds = true
 
-    val environment = DavEnvironment.Production
+    val environment = DavEnvironment.Development
 
     // dav Keys
     private const val apiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v"
@@ -34,31 +34,31 @@ object FileManager{
     val apiKey = if(environment == DavEnvironment.Production) apiKeyProduction else apiKeyDevelopment
 
     private const val loginImplicitUrlProduction = "https://dav-apps.tech/login_implicit"
-    private const val loginImplicitUrlDevelopment = "https://30d34bb4.ngrok.io/login_implicit"
+    private const val loginImplicitUrlDevelopment = "https://052dd674.ngrok.io/login_implicit"
     val loginImplicitUrl = if(environment == DavEnvironment.Production) loginImplicitUrlProduction else loginImplicitUrlDevelopment
 
     private const val appIdProduction = 1                   // Dev: 4, Prod: 1
-    private const val appIdDevelopment = 8                  // PC: 8, Laptop: 4
+    private const val appIdDevelopment = 4                  // PC: 8, Laptop: 4
     val appId = if(environment == DavEnvironment.Production) appIdProduction else appIdDevelopment
 
     private const val soundFileTableIdProduction = 6        // Dev: 7, Prod: 6
-    private const val soundFileTableIdDevelopment = 11       // PC: 11, Laptop: 7
+    private const val soundFileTableIdDevelopment = 7       // PC: 11, Laptop: 7
     val soundFileTableId = if(environment == DavEnvironment.Production) soundFileTableIdProduction else soundFileTableIdDevelopment
 
     private const val imageFileTableIdProduction = 7        // Dev: 9, Prod: 7
-    private const val imageFileTableIdDevelopment = 15       // PC: 15, Laptop: 9
+    private const val imageFileTableIdDevelopment = 9       // PC: 15, Laptop: 9
     val imageFileTableId = if(environment == DavEnvironment.Production) imageFileTableIdProduction else imageFileTableIdDevelopment
 
     private const val categoryTableIdProduction = 8         // Dev: 5, Prod: 8
-    private const val categoryTableIdDevelopment = 16        // PC: 16, Laptop: 5
+    private const val categoryTableIdDevelopment = 5        // PC: 16, Laptop: 5
     val categoryTableId = if(environment == DavEnvironment.Production) categoryTableIdProduction else categoryTableIdDevelopment
 
     private const val soundTableIdProduction = 5            // Dev: 6, Prod: 5
-    private const val soundTableIdDevelopment = 17           // PC: 17, Laptop: 6
+    private const val soundTableIdDevelopment = 6           // PC: 17, Laptop: 6
     val soundTableId = if(environment == DavEnvironment.Production) soundTableIdProduction else soundTableIdDevelopment
 
     private const val playingSoundTableIdProduction = 9     // Dev: 8, Prod: 9
-    private const val playingSoundTableIdDevelopment = 18    // PC: 18, Laptop: 8
+    private const val playingSoundTableIdDevelopment = 8    // PC: 18, Laptop: 8
     val playingSoundTableId = if(environment == DavEnvironment.Production) playingSoundTableIdProduction else playingSoundTableIdDevelopment
 
     const val soundTableNamePropertyName = "name"
@@ -121,7 +121,7 @@ object FileManager{
         val sounds = ArrayList<Sound>()
 
         for(sound in itemViewHolder.allSounds){
-            if(sound.category?.uuid == categoryUuid){
+            if(sound.categories.any { c -> c.uuid == categoryUuid }){
                 sounds.add(sound)
             }
         }
@@ -139,8 +139,8 @@ object FileManager{
         itemViewHolder.allSoundsChanged = true
     }
 
-    suspend fun setCategoryOfSound(soundUuid: UUID, categoryUuid: UUID){
-        DatabaseOperations.updateSound(soundUuid, null, null, null, null, categoryUuid.toString())
+    suspend fun setCategoriesOfSound(soundUuid: UUID, categoryUuids: ArrayList<UUID>){
+        DatabaseOperations.updateSound(soundUuid, null, null, null, null, categoryUuids)
         itemViewHolder.allSoundsChanged = true
     }
 
@@ -302,18 +302,20 @@ object FileManager{
         val name = tableObject.getPropertyValue(soundTableNamePropertyName) ?: ""
 
         // Get favourite
-        var favourite = false
         val favouriteString = tableObject.getPropertyValue(soundTableFavouritePropertyName)
-        favourite = if(favouriteString != null) favouriteString.toBoolean() else false
+        val favourite = if(favouriteString != null) favouriteString.toBoolean() else false
 
-        val sound = Sound(tableObject.uuid, name, null, favourite, FileManager.getAudioFileOfSound(tableObject.uuid), null)
+        val sound = Sound(tableObject.uuid, name, arrayListOf(), favourite, FileManager.getAudioFileOfSound(tableObject.uuid), null)
 
-        // Get category
-        val categoryUuidString = tableObject.getPropertyValue(soundTableCategoryUuidPropertyName)
-        if(categoryUuidString != null){
-            val categoryUuid = UUID.fromString(categoryUuidString)
-            val category = getCategory(categoryUuid)
-            if(category != null) sound.category = category
+        // Get the categories
+        val categoryUuidsString = tableObject.getPropertyValue(soundTableCategoryUuidPropertyName)
+        sound.categories = ArrayList<Category>()
+        if(!categoryUuidsString.isNullOrEmpty()){
+            for(cUuidString in categoryUuidsString.split(",")){
+                val categoryUuid = UUID.fromString(cUuidString)
+                val category = getCategory(categoryUuid)
+                if(category != null) sound.categories.add(category)
+            }
         }
 
         // Get image
