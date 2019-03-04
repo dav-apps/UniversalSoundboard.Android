@@ -23,7 +23,7 @@
     <string name="sound_list_item_image_description">Bild des Sounds</string>
     <string name="category_list_item_icon_description">Icon der Kategorie</string>
     <string name="bottom_category_list_settings_item_icon_description">Einstellungen Icon</string>
-    <string name="create_category_dialog_title">Kategorie hinzufügen</string>
+    <string name="create_category_dialog_title">Neue Kategorie</string>
     <string name="create_category_dialog_name_edittext_hint">Name</string>
     <string name="edit_category_dialog_title">Kategorie bearbeiten</string>
     <string name="delete_sound_dialog_title">Sound löschen: %1$s</string>
