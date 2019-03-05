@@ -11,6 +11,7 @@ import androidx.fragment.app.DialogFragment
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Sound
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -25,7 +26,7 @@ class RenameSoundDialogFragment : DialogFragment() {
     private fun createDialog() : AlertDialog?{
         if(sound == null) return null
         val layout = activity?.layoutInflater?.inflate(R.layout.dialog_rename_sound, null) ?: return null
-        val nameEditText = layout.findViewById<EditText>(R.id.rename_sound_dialog_name_edittext)
+        val nameEditText = layout.findViewById<TextInputEditText>(R.id.rename_sound_dialog_name_input)
 
         // Set the text of the EditText
         nameEditText.setText(sound?.name)
@@ -58,7 +59,7 @@ class RenameSoundDialogFragment : DialogFragment() {
             }
 
             override fun afterTextChanged(p0: Editable?) {
-                positiveButton.isEnabled = nameEditText.text.length > 1
+                positiveButton.isEnabled = nameEditText.text?.length ?: 0 > 1
             }
         })
 

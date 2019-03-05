@@ -18,17 +18,24 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Rename" />
 
-    <EditText
-        android:id="@+id/rename_sound_dialog_name_edittext"
-        android:layout_width="0dp"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/rename_sound_dialog_name_input_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="@string/rename_sound_dialog_name_edittext_hint"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:ems="10"
-        android:hint="@string/rename_sound_dialog_name_edittext_hint"
-        android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rename_sound_dialog_title_textview" />
+        app:layout_constraintTop_toBottomOf="@+id/rename_sound_dialog_title_textview">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/rename_sound_dialog_name_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

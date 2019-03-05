@@ -5,7 +5,6 @@ import android.app.Dialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
@@ -13,6 +12,7 @@ import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.utilities.ImageArrayAdapter
+import com.google.android.material.textfield.TextInputEditText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -28,7 +28,7 @@ class CategoryDialogFragment : DialogFragment() {
     private fun createDialog() : AlertDialog?{
         val layout = activity?.layoutInflater?.inflate(R.layout.dialog_category, null) ?: return null
         val spinner = layout.findViewById<Spinner>(R.id.create_category_dialog_icon_spinner)
-        val nameEditText = layout.findViewById<EditText>(R.id.create_category_dialog_name_edittext)
+        val nameEditText = layout.findViewById<TextInputEditText>(R.id.create_category_dialog_name_input)
         val titleTextView = layout.findViewById<TextView>(R.id.create_category_dialog_title_textview)
 
         // Create the spinner list
@@ -88,7 +88,7 @@ class CategoryDialogFragment : DialogFragment() {
             }
 
             override fun afterTextChanged(s: Editable?) {
-                positiveButton.isEnabled = nameEditText.text.length > 1
+                positiveButton.isEnabled = nameEditText.text?.length ?: 0 > 1
             }
         })
 
