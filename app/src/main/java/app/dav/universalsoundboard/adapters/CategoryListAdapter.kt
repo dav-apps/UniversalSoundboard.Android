@@ -1,13 +1,12 @@
 package app.dav.universalsoundboard.adapters
 
-import android.support.v7.recyclerview.extensions.ListAdapter
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import app.dav.universalsoundboard.databinding.CategoryListItemBinding
 import app.dav.universalsoundboard.models.Category
-import app.dav.universalsoundboard.models.Sound
 
 class CategoryListAdapter(
         private val onItemClickListener: OnItemClickListener)

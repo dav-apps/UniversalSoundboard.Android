@@ -1,6 +1,6 @@
 package app.dav.universalsoundboard.adapters
 
-import android.support.v7.util.DiffUtil
+import androidx.recyclerview.widget.DiffUtil
 import app.dav.universalsoundboard.models.PlayingSound
 
 class PlayingSoundDiffCallback : DiffUtil.ItemCallback<PlayingSound>() {

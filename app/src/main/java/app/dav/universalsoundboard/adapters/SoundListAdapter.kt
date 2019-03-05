@@ -1,11 +1,11 @@
 package app.dav.universalsoundboard.adapters
 
-import android.support.v7.recyclerview.extensions.ListAdapter
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.databinding.FragmentSoundListItemBinding
 import app.dav.universalsoundboard.models.Sound
