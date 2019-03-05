@@ -1,14 +1,10 @@
 package app.dav.universalsoundboard.data
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.net.ConnectivityManager
 import app.dav.davandroidlibrary.DavEnvironment
-import app.dav.davandroidlibrary.models.DavUser
 import app.dav.davandroidlibrary.models.TableObject
-import app.dav.universalsoundboard.MainActivity
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.PlayingSound
 import app.dav.universalsoundboard.models.Sound

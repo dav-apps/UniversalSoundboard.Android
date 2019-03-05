@@ -1,7 +1,7 @@
 package app.dav.universalsoundboard.data
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import app.dav.davandroidlibrary.models.DavUser
 import app.dav.universalsoundboard.MainActivity
 import app.dav.universalsoundboard.models.Category
