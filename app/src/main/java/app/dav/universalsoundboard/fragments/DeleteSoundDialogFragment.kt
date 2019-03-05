@@ -19,7 +19,7 @@ class DeleteSoundDialogFragment : DialogFragment() {
     }
 
     private fun createDialog() : AlertDialog{
-        return AlertDialog.Builder(activity)
+        return AlertDialog.Builder(activity, R.style.MaterialDesignAlertDialog)
                 .setTitle(getString(R.string.delete_sound_dialog_title, sound?.name))
                 .setMessage(R.string.delete_sound_dialog_message)
                 .setPositiveButton(R.string.delete_sound_dialog_positive_button_text) { dialog, which ->

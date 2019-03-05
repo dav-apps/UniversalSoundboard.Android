@@ -30,7 +30,7 @@ class RenameSoundDialogFragment : DialogFragment() {
         // Set the text of the EditText
         nameEditText.setText(sound?.name)
 
-        val alertDialog = AlertDialog.Builder(activity)
+        val alertDialog = AlertDialog.Builder(activity, R.style.MaterialDesignAlertDialog)
                 .setView(layout)
                 .setPositiveButton(R.string.dialog_save, DialogInterface.OnClickListener { dialog, which ->
                     val s = sound ?: return@OnClickListener

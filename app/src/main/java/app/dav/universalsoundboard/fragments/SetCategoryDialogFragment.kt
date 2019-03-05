@@ -43,7 +43,7 @@ class SetCategoryDialogFragment : DialogFragment() {
             categories[it].name
         }
 
-        val alertDialog = AlertDialog.Builder(activity)
+        val alertDialog = AlertDialog.Builder(activity, R.style.MaterialDesignAlertDialog)
                 .setTitle(getString(R.string.set_category_dialog_title, s.name))
                 .setMultiChoiceItems(categoriesNamesArray, selectedCategoriesBooleanArray) { dialogInterface: DialogInterface, index: Int, isChecked: Boolean -> }
                 .setPositiveButton(R.string.dialog_save) { dialog, which ->

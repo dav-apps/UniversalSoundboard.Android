@@ -20,7 +20,7 @@ class SetRepetitionsDialogFragment : DialogFragment() {
 
     private fun createDialog() : AlertDialog?{
         playingSound ?: return null
-        return AlertDialog.Builder(activity)
+        return AlertDialog.Builder(activity, R.style.MaterialDesignAlertDialog)
                 .setTitle(R.string.playing_sound_list_item_context_menu_set_repetitions)
                 .setItems(R.array.playing_sound_item_set_repetitions_options) { dialog, which ->
                     val p = playingSound ?: return@setItems

@@ -54,7 +54,7 @@ class CategoryDialogFragment : DialogFragment() {
             spinner.setSelection(Random().nextInt(resourcesArray.size))
         }
 
-        val alertDialog =  AlertDialog.Builder(activity)
+        val alertDialog =  AlertDialog.Builder(activity, R.style.MaterialDesignAlertDialog)
                 .setView(layout)
                 .setPositiveButton(R.string.dialog_save) { dialog, which ->
                     if(c != null){

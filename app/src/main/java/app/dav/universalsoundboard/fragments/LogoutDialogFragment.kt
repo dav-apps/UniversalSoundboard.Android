@@ -14,7 +14,7 @@ class LogoutDialogFragment : DialogFragment() {
     }
 
     private fun createDialog() : AlertDialog{
-        return AlertDialog.Builder(activity)
+        return AlertDialog.Builder(activity, R.style.MaterialDesignAlertDialog)
                 .setTitle(R.string.logout)
                 .setMessage(R.string.logout_dialog_message)
                 .setPositiveButton(R.string.logout) { dialog, which ->
