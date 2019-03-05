@@ -16,7 +16,7 @@
             type="app.dav.universalsoundboard.models.Sound" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
@@ -49,5 +49,5 @@
             app:layout_constraintStart_toEndOf="@+id/sound_list_item_image"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="TextView" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -29,7 +29,7 @@
             type="android.view.View.OnClickListener" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/playing_sound_list_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -60,7 +60,7 @@
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             app:srcCompat="@drawable/ic_skip_previous_white" />
 
-        <android.support.constraint.Barrier
+        <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -144,5 +144,5 @@
             app:layout_constraintTop_toBottomOf="@+id/playing_sound_list_item_name"
             app:srcCompat="@drawable/ic_more_vert_white" />
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

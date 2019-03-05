@@ -12,7 +12,7 @@
             type="app.dav.universalsoundboard.models.Category" />
     </data>
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
@@ -45,5 +45,5 @@
             app:layout_constraintStart_toEndOf="@+id/category_list_item_icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="TextView" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
