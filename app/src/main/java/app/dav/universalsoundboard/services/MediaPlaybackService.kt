@@ -12,13 +12,13 @@ import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.NotificationCompat
 import android.support.v4.media.MediaBrowserCompat
-import android.support.v4.media.MediaBrowserServiceCompat
 import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.session.MediaButtonReceiver
 import android.support.v4.media.session.MediaSessionCompat
 import android.support.v4.media.session.PlaybackStateCompat
+import androidx.core.app.NotificationCompat
+import androidx.media.MediaBrowserServiceCompat
+import androidx.media.session.MediaButtonReceiver
 import app.dav.universalsoundboard.MainActivity
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.DatabaseOperations
@@ -298,12 +298,12 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
                 .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.music_note))
                 .setDeleteIntent(
                         MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP))
-                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setColor(getColor(R.color.colorPrimary))
                 .setPriority(NotificationCompat.PRIORITY_LOW)
                 .setOngoing(isOngoing)
                 .setContentIntent(pendingMainActivityIntent)
-                .setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
+                .setStyle(androidx.media.app.NotificationCompat.MediaStyle()
                         .setShowActionsInCompactView(0)
                         .setMediaSession(mediaSession.sessionToken))
 

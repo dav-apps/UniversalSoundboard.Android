@@ -2,24 +2,23 @@ package app.dav.universalsoundboard
 
 import android.app.Activity
 import android.app.NotificationManager
-import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.CoordinatorLayout
-import android.support.v4.app.Fragment
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
-import android.support.v4.view.GravityCompat
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.PopupMenu
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.PopupMenu
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
+import androidx.core.view.GravityCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.LinearLayoutManager
 import app.dav.davandroidlibrary.Dav
 import app.dav.davandroidlibrary.common.ProjectInterface
 import app.dav.davandroidlibrary.models.DavUser
@@ -36,6 +35,7 @@ import app.dav.universalsoundboard.models.PlayingSound
 import app.dav.universalsoundboard.services.MediaPlaybackService
 import app.dav.universalsoundboard.services.NOTIFICATION_ID
 import app.dav.universalsoundboard.viewmodels.MainViewModel
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.gordonwong.materialsheetfab.MaterialSheetFab
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -362,7 +362,7 @@ class MainActivity :
         fragment.show(fragmentManager, "playing_sound_item_set_repetitions_dialog")
     }
 
-    private fun getCurrentFragment() : Fragment{
+    private fun getCurrentFragment() : Fragment {
         return when(currentFragment){
             CurrentFragment.SoundFragment -> soundFragment
             CurrentFragment.SettingsFragment -> settingsFragment

@@ -3,7 +3,6 @@ package app.dav.universalsoundboard.models
 import app.dav.universalsoundboard.R
 import java.util.*
 
-
 class Category(val uuid: UUID, var name: String, var icon: String){
 
     fun getIconImageResource() : Int {

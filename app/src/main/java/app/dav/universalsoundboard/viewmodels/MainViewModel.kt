@@ -1,9 +1,9 @@
 package app.dav.universalsoundboard.viewmodels
 
-import android.arch.lifecycle.ViewModel
 import android.content.ContentResolver
 import android.net.Uri
 import android.provider.OpenableColumns
+import androidx.lifecycle.ViewModel
 import app.dav.universalsoundboard.adapters.CategoryListAdapter
 import app.dav.universalsoundboard.adapters.PlayingSoundListAdapter
 import app.dav.universalsoundboard.data.FileManager
