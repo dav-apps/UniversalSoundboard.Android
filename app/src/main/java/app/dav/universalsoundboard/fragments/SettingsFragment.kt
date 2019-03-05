@@ -1,18 +1,17 @@
 package app.dav.universalsoundboard.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.data.FileManager.PLAY_ONE_SOUND_AT_ONCE_KEY
 import app.dav.universalsoundboard.data.FileManager.SAVE_PLAYING_SOUNDS_KEY
 import app.dav.universalsoundboard.data.FileManager.playOneSoundAtOnce
 import kotlinx.android.synthetic.main.fragment_settings.*
-
 
 class SettingsFragment : Fragment() {
     private var isInitialized = false

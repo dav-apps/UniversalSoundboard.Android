@@ -2,8 +2,8 @@ package app.dav.universalsoundboard.fragments
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.support.v4.app.DialogFragment
 import android.os.Bundle
+import androidx.fragment.app.DialogFragment
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Sound

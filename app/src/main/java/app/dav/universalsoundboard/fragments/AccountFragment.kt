@@ -1,15 +1,15 @@
 package app.dav.universalsoundboard.fragments
 
-import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory
 import android.text.method.LinkMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import app.dav.davandroidlibrary.models.DavPlan
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager

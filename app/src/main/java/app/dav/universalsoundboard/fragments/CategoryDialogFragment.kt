@@ -3,12 +3,12 @@ package app.dav.universalsoundboard.fragments
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.support.v4.app.DialogFragment
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.Spinner
 import android.widget.TextView
+import androidx.fragment.app.DialogFragment
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.models.Category
@@ -17,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.*
-
 
 class CategoryDialogFragment : DialogFragment() {
     var category: Category? = null
