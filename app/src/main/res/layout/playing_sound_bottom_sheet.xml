@@ -9,7 +9,7 @@
     android:background="@color/bottomSheetBackgroundColor"
     android:paddingBottom="5dp"
     app:behavior_peekHeight="50dp"
-    app:layout_behavior="android.support.design.widget.BottomSheetBehavior">
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/playing_sound_list"
