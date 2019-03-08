@@ -6,7 +6,7 @@
     <string name="usb_on_github_link"><a href="https://github.com/Dav2070/UniversalSoundboard.Android">UniversalSoundboard on GitHub</a></string>
     <string name="usb_for_windows_link"><a href="https://www.microsoft.com/en-us/p/universalsoundboard/9nblggh51005">UniversalSoundboard for Windows 10</a></string>
     <string name="dav_apps_link"><a href="https://dav-apps.tech/">Visit dav-apps.tech</a></string>
-    <string name="version" translatable="false">Version 0.3.2</string>
+    <string name="version" translatable="false">Version 0.4</string>
     <string name="copyright" translatable="false">Copyright © 2019 by dav</string>
     <string name="login">Log in</string>
     <string name="logout">Log out</string>
