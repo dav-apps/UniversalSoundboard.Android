@@ -22,7 +22,7 @@ object FileManager{
     const val playOneSoundAtOnce = false
     const val savePlayingSounds = true
 
-    val environment = DavEnvironment.Development
+    val environment = DavEnvironment.Production
 
     // dav Keys
     private const val apiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v"
@@ -30,7 +30,7 @@ object FileManager{
     val apiKey = if(environment == DavEnvironment.Production) apiKeyProduction else apiKeyDevelopment
 
     private const val loginImplicitUrlProduction = "https://dav-apps.tech/login_implicit"
-    private const val loginImplicitUrlDevelopment = "https://052dd674.ngrok.io/login_implicit"
+    private const val loginImplicitUrlDevelopment = "https://d622ac71.ngrok.io/login_implicit"
     val loginImplicitUrl = if(environment == DavEnvironment.Production) loginImplicitUrlProduction else loginImplicitUrlDevelopment
 
     private const val appIdProduction = 1                   // Dev: 4, Prod: 1
