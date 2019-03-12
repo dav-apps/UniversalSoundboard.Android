@@ -300,11 +300,11 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
                         MediaButtonReceiver.buildMediaButtonPendingIntent(this, PlaybackStateCompat.ACTION_STOP))
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setColor(getColor(R.color.colorPrimary))
-                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setOngoing(isOngoing)
                 .setContentIntent(pendingMainActivityIntent)
                 .setStyle(androidx.media.app.NotificationCompat.MediaStyle()
-                        .setShowActionsInCompactView(0)
+                        .setShowActionsInCompactView(0, 1, 2)
                         .setMediaSession(mediaSession.sessionToken))
 
         if(sound.image != null)
