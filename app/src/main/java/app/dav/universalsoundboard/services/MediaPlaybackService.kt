@@ -1,6 +1,5 @@
 package app.dav.universalsoundboard.services
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -232,7 +231,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
 
         if(notificationAction){
             val uuid = notificationPlayingSoundUuid
-            if(uuid != null) sendNotification(uuid, action != ACTION_PAUSE)
+            if(uuid != null) sendNotification(uuid, action != ACTION_PAUSE, false)
         }
 
         return super.onStartCommand(intent, flags, startId)
@@ -271,7 +270,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
         GlobalScope.launch(Dispatchers.Main) { FileManager.deletePlayingSound(uuid) }
     }
 
-    private fun sendNotification(uuid: UUID, isOngoing: Boolean){
+    private fun sendNotification(uuid: UUID, isOngoing: Boolean, showProgressBar: Boolean){
         val playingSound = playingSounds.find { p -> p.uuid == uuid } ?: return
         val sound = playingSound.sounds[playingSound.currentSound]
         val player = players[uuid] ?: return
@@ -290,7 +289,6 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
         }
 
         val builder = NotificationCompat.Builder(this, channelId)
-        if(sound.categories.size > 0) builder.setContentText(sound.categories.first().name)
 
         builder
                 .setContentTitle(sound.name)
@@ -304,35 +302,40 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
                 .setOngoing(isOngoing)
                 .setContentIntent(pendingMainActivityIntent)
 
-        var actions = 0
         if(sound.image != null)
             builder.setLargeIcon(sound.image)
         else
             builder.setLargeIcon(BitmapFactory.decodeResource(this.resources, R.drawable.music_note))
 
-        if(playingSound.sounds.count() > 1 && playingSound.currentSound != 0){
-            builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_previous, getString(R.string.notification_action_previous), getPendingPreviousIntent()).build())
-            actions++
-        }
-
-        if(player.isPlaying){
-            builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_pause, getString(R.string.notification_action_pause), getPendingPauseIntent()).build())
+        if(showProgressBar){
+            builder.setProgress(0, 0, true)
         }else{
-            builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_play_arrow, getString(R.string.notification_action_play), getPendingPlayIntent()).build())
-        }
+            var actions = 0
+            if(playingSound.sounds.count() > 1 && playingSound.currentSound != 0){
+                builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_previous, getString(R.string.notification_action_previous), getPendingPreviousIntent()).build())
+                actions++
+            }
 
-        if(playingSound.sounds.count() > 1 && playingSound.currentSound != playingSound.sounds.count() - 1){
-            builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_next, getString(R.string.notification_action_next), getPendingNextIntent()).build())
-            actions++
-        }
+            if(player.isPlaying){
+                builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_pause, getString(R.string.notification_action_pause), getPendingPauseIntent()).build())
+            }else{
+                builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_play_arrow, getString(R.string.notification_action_play), getPendingPlayIntent()).build())
+            }
 
-        val style = androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(mediaSession.sessionToken)
-        when (actions) {
-            0 -> style.setShowActionsInCompactView(0)
-            1 -> style.setShowActionsInCompactView(0, 1)
-            else -> style.setShowActionsInCompactView(0, 1, 2)
+            if(playingSound.sounds.count() > 1 && playingSound.currentSound != playingSound.sounds.count() - 1){
+                builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_next, getString(R.string.notification_action_next), getPendingNextIntent()).build())
+                actions++
+            }
+
+            val style = androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(mediaSession.sessionToken)
+            when (actions) {
+                0 -> style.setShowActionsInCompactView(0)
+                1 -> style.setShowActionsInCompactView(0, 1)
+                else -> style.setShowActionsInCompactView(0, 1, 2)
+            }
+            builder.setStyle(style)
+            if(sound.categories.size > 0) builder.setContentText(sound.categories.first().name)
         }
-        builder.setStyle(style)
 
         notificationManager?.notify(NOTIFICATION_ID, builder.build())
     }
@@ -382,7 +385,11 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
                 val soundFileUuidString = soundTableObject.getPropertyValue(FileManager.soundTableSoundUuidPropertyName) ?: return@async
                 val soundFileUuid = UUID.fromString(soundFileUuidString)
                 val soundFileTableObject = DatabaseOperations.getObject(soundFileUuid) ?: return@async
+
+                // Send notification and show progress bars
+                sendNotification(uuid, true, true)
                 setPlaybackState(uuid, PlaybackStateCompat.STATE_BUFFERING)
+
                 val playingSoundCurrentSound = playingSound.currentSound
 
                 soundFileTableObject.downloadFile(null).await()
@@ -400,7 +407,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
             player.reset()
             player.setDataSource(currentSoundPath)
             player.prepare()
-            sendNotification(uuid, true)
+            sendNotification(uuid, true, false)
         }
     }
 
@@ -410,7 +417,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
         if(!player.isPlaying){
             requestAudioFocus()
             players[uuid]?.start()
-            sendNotification(uuid, true)
+            sendNotification(uuid, true, false)
             setPlaybackState(uuid, PlaybackStateCompat.STATE_PLAYING)
         }
     }
@@ -420,7 +427,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
 
         if(player.isPlaying){
             players[uuid]?.pause()
-            sendNotification(uuid, false)
+            sendNotification(uuid, false, false)
             setPlaybackState(uuid, PlaybackStateCompat.STATE_PAUSED)
         }
     }
