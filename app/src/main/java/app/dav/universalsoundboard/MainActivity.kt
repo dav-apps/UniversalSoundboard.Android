@@ -251,13 +251,8 @@ class MainActivity :
             }
             R.id.action_play_all -> {
                 val sounds = FileManager.itemViewHolder.sounds.value ?: return true
-                if(sounds.size <= 0) return true
-
-                GlobalScope.launch(Dispatchers.Main) {
-                    // Create a PlayingSound
-                    FileManager.addPlayingSound(null, sounds, 0, 0, false, 1.0)
-                    FileManager.itemViewHolder.playingSounds.value?.last()?.playOrPause(applicationContext)
-                }
+                if(sounds.size == 0) return true
+                SoundFragment.playSounds(sounds, this)
                 true
             }
             else -> super.onOptionsItemSelected(item)
