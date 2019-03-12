@@ -303,10 +303,8 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
                 .setPriority(NotificationCompat.PRIORITY_MAX)
                 .setOngoing(isOngoing)
                 .setContentIntent(pendingMainActivityIntent)
-                .setStyle(androidx.media.app.NotificationCompat.MediaStyle()
-                        .setShowActionsInCompactView(0, 1, 2)
-                        .setMediaSession(mediaSession.sessionToken))
 
+        var actions = 0
         if(sound.image != null)
             builder.setLargeIcon(sound.image)
         else
@@ -314,6 +312,7 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
 
         if(playingSound.sounds.count() > 1 && playingSound.currentSound != 0){
             builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_previous, getString(R.string.notification_action_previous), getPendingPreviousIntent()).build())
+            actions++
         }
 
         if(player.isPlaying){
@@ -324,7 +323,16 @@ class MediaPlaybackService : MediaBrowserServiceCompat(), AudioManager.OnAudioFo
 
         if(playingSound.sounds.count() > 1 && playingSound.currentSound != playingSound.sounds.count() - 1){
             builder.addAction(NotificationCompat.Action.Builder(R.drawable.ic_skip_next, getString(R.string.notification_action_next), getPendingNextIntent()).build())
+            actions++
         }
+
+        val style = androidx.media.app.NotificationCompat.MediaStyle().setMediaSession(mediaSession.sessionToken)
+        when (actions) {
+            0 -> style.setShowActionsInCompactView(0)
+            1 -> style.setShowActionsInCompactView(0, 1)
+            else -> style.setShowActionsInCompactView(0, 1, 2)
+        }
+        builder.setStyle(style)
 
         notificationManager?.notify(NOTIFICATION_ID, builder.build())
     }
