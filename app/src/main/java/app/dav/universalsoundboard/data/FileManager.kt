@@ -19,7 +19,7 @@ object FileManager{
     const val SAVE_PLAYING_SOUNDS_KEY = "$PACKAGE_NAME.savePlayingSounds"
 
     // Default values
-    const val playOneSoundAtOnce = false
+    const val playOneSoundAtOnce = true
     const val savePlayingSounds = true
 
     val environment = DavEnvironment.Production
