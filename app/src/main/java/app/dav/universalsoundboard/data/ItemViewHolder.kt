@@ -14,6 +14,8 @@ class ItemViewHolder(){
         titleData.value = title
         showCategoryIconsData.value = false
         showPlayAllIconData.value = false
+        showSoundTabsData.value = false
+
         soundsData.value = ArrayList<Sound>()
         categoriesData.value = ArrayList<Category>()
         playingSoundsData.value = ArrayList<PlayingSound>()
@@ -35,6 +37,10 @@ class ItemViewHolder(){
     private val showPlayAllIconData = MutableLiveData<Boolean>()                // when showPlayAllIconData is true, the Play All button is visible
     val showPlayAllIcon: LiveData<Boolean>
         get() = showPlayAllIconData
+    private val showSoundTabsData = MutableLiveData<Boolean>()                  // when true shows the Sounds and Favourites tabs on the SoundFragment
+    val showSoundTabs: LiveData<Boolean>
+        get() = showSoundTabsData
+
     val allSounds = ArrayList<Sound>()                                          // allSounds holds all sounds
     var allSoundsChanged = true                                                 // when allSoundsChanged is true, the sounds will be reloaded from the database
     private val soundsData = MutableLiveData<ArrayList<Sound>>()                // soundsData holds the sounds that are currently displayed in the list
@@ -64,6 +70,10 @@ class ItemViewHolder(){
 
     fun setShowPlayAllIcon(showPlayAllIcon: Boolean){
         showPlayAllIconData.value = showPlayAllIcon
+    }
+
+    fun setShowSoundTabs(value: Boolean){
+        showSoundTabsData.value = value
     }
 
     fun setUser(user: DavUser){

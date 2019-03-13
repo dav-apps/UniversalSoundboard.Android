@@ -41,6 +41,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.category_list.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.fragment_sound.*
 import kotlinx.android.synthetic.main.playing_sound_bottom_sheet.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -183,6 +184,22 @@ class MainActivity :
                 background_dim.visibility = View.GONE
                 progress_bar.visibility = View.GONE
                 fab.isEnabled = true
+            }
+        })
+
+        FileManager.itemViewHolder.showSoundTabs.observe(this, Observer {
+            it ?: return@Observer
+
+            if(it){
+                // Show the tabs and hide the original list
+                tablayout.visibility = View.VISIBLE
+                viewpager.visibility = View.VISIBLE
+                sound_list.visibility = View.GONE
+            }else{
+                // Hide the tabs and show the original list
+                tablayout.visibility = View.GONE
+                tablayout.visibility = View.GONE
+                sound_list.visibility = View.VISIBLE
             }
         })
 
