@@ -10,7 +10,7 @@ import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.data.FileManager.PLAY_ONE_SOUND_AT_ONCE_KEY
 import app.dav.universalsoundboard.data.FileManager.SAVE_PLAYING_SOUNDS_KEY
-import app.dav.universalsoundboard.data.FileManager.playOneSoundAtOnce
+import app.dav.universalsoundboard.data.FileManager.playOneSoundAtOnceDefault
 import kotlinx.android.synthetic.main.fragment_settings.*
 
 class SettingsFragment : Fragment() {
@@ -42,8 +42,8 @@ class SettingsFragment : Fragment() {
     fun updateValues(){
         isInitialized = false
 
-        val playOneSoundAtOnce = FileManager.getBooleanValue(PLAY_ONE_SOUND_AT_ONCE_KEY, playOneSoundAtOnce)
-        val savePlayingSounds = FileManager.getBooleanValue(SAVE_PLAYING_SOUNDS_KEY, FileManager.savePlayingSounds)
+        val playOneSoundAtOnce = FileManager.getBooleanValue(PLAY_ONE_SOUND_AT_ONCE_KEY, playOneSoundAtOnceDefault)
+        val savePlayingSounds = FileManager.getBooleanValue(SAVE_PLAYING_SOUNDS_KEY, FileManager.savePlayingSoundsDefault)
 
         // Set the values of the switches
         settings_play_one_sound_at_once_switch.isChecked = playOneSoundAtOnce

@@ -15,12 +15,14 @@ import kotlin.collections.ArrayList
 object FileManager{
     // Keys for shared preferences
     const val PACKAGE_NAME = "app.dav.universalsoundboard"
-    const val PLAY_ONE_SOUND_AT_ONCE_KEY = "$PACKAGE_NAME.playOneSoundAtOnce"
-    const val SAVE_PLAYING_SOUNDS_KEY = "$PACKAGE_NAME.savePlayingSounds"
+    const val PLAY_ONE_SOUND_AT_ONCE_KEY = "$PACKAGE_NAME.playOneSoundAtOnceDefault"
+    const val SAVE_PLAYING_SOUNDS_KEY = "$PACKAGE_NAME.savePlayingSoundsDefault"
+    const val SHOW_SOUND_TABS_KEY = "$PACKAGE_NAME.showSoundTabs"
 
     // Default values
-    const val playOneSoundAtOnce = true
-    const val savePlayingSounds = true
+    const val playOneSoundAtOnceDefault = true
+    const val savePlayingSoundsDefault = true
+    const val showSoundTabsDefault = true
 
     val environment = DavEnvironment.Production
 
@@ -228,7 +230,7 @@ object FileManager{
         val playingSound = PlayingSound(newUuid, current, sounds, repetitions, randomly, newVolume)
 
         // Check if playing sounds should be saved
-        if(getBooleanValue(SAVE_PLAYING_SOUNDS_KEY, savePlayingSounds)){
+        if(getBooleanValue(SAVE_PLAYING_SOUNDS_KEY, savePlayingSoundsDefault)){
             DatabaseOperations.createPlayingSound(newUuid, sounds, current, repetitions, randomly, newVolume)
         }else{
             itemViewHolder.notSavedPlayingSounds.add(playingSound)

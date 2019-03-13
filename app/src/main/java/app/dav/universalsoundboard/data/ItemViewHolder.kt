@@ -14,13 +14,14 @@ class ItemViewHolder(){
         titleData.value = title
         showCategoryIconsData.value = false
         showPlayAllIconData.value = false
-        showSoundTabsData.value = false
-
         soundsData.value = ArrayList<Sound>()
         categoriesData.value = ArrayList<Category>()
         playingSoundsData.value = ArrayList<PlayingSound>()
         userData.value = null
         isProgressBarVisibleData.value = true
+
+        // Settings values
+        showSoundTabsData.value = FileManager.showSoundTabsDefault
     }
 
     private var isLoadingSounds = false
@@ -37,10 +38,6 @@ class ItemViewHolder(){
     private val showPlayAllIconData = MutableLiveData<Boolean>()                // when showPlayAllIconData is true, the Play All button is visible
     val showPlayAllIcon: LiveData<Boolean>
         get() = showPlayAllIconData
-    private val showSoundTabsData = MutableLiveData<Boolean>()                  // when true shows the Sounds and Favourites tabs on the SoundFragment
-    val showSoundTabs: LiveData<Boolean>
-        get() = showSoundTabsData
-
     val allSounds = ArrayList<Sound>()                                          // allSounds holds all sounds
     var allSoundsChanged = true                                                 // when allSoundsChanged is true, the sounds will be reloaded from the database
     private val soundsData = MutableLiveData<ArrayList<Sound>>()                // soundsData holds the sounds that are currently displayed in the list
@@ -60,6 +57,12 @@ class ItemViewHolder(){
     val isProgressBarVisible: LiveData<Boolean>
         get() = isProgressBarVisibleData
 
+    // Settings values
+    private val showSoundTabsData = MutableLiveData<Boolean>()                  // if true shows the Sounds and Favourites tabs on the SoundFragment
+    val showSoundTabs: LiveData<Boolean>
+        get() = showSoundTabsData
+
+
     fun setTitle(value: String){
         titleData.value = value
     }
@@ -72,16 +75,16 @@ class ItemViewHolder(){
         showPlayAllIconData.value = showPlayAllIcon
     }
 
-    fun setShowSoundTabs(value: Boolean){
-        showSoundTabsData.value = value
-    }
-
     fun setUser(user: DavUser){
         userData.value = user
     }
 
     fun setIsProgressBarVisible(value: Boolean){
         isProgressBarVisibleData.value = value
+    }
+
+    fun setShowSoundTabs(value: Boolean){
+        showSoundTabsData.value = value
     }
 
     fun updateNotSavedPlayingSound(uuid: UUID, sounds: ArrayList<Sound>?, current: Int?, repetitions: Int?, randomly: Boolean?, volume: Double?){

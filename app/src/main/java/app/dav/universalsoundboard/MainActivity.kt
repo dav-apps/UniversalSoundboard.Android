@@ -29,6 +29,7 @@ import app.dav.universalsoundboard.common.LocalDataSettings
 import app.dav.universalsoundboard.common.RetrieveConstants
 import app.dav.universalsoundboard.common.TriggerAction
 import app.dav.universalsoundboard.data.FileManager
+import app.dav.universalsoundboard.data.FileManager.SHOW_SOUND_TABS_KEY
 import app.dav.universalsoundboard.fragments.*
 import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.PlayingSound
@@ -68,6 +69,7 @@ class MainActivity :
         setSupportActionBar(toolbar)
 
         init()
+        initSettingsValues()
     }
 
     private fun init(){
@@ -215,6 +217,12 @@ class MainActivity :
         // Initialize the TabLayout
         viewpager.adapter = SoundTabsPagerAdapter(supportFragmentManager)
         tablayout.setupWithViewPager(viewpager)
+    }
+
+    private fun initSettingsValues(){
+        // showSoundTabs
+        val showSoundTabs = FileManager.getBooleanValue(SHOW_SOUND_TABS_KEY, FileManager.showSoundTabsDefault)
+        FileManager.itemViewHolder.setShowSoundTabs(showSoundTabs)
     }
 
     override fun onBackPressed() {
