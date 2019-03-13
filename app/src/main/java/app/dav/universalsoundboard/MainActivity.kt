@@ -194,6 +194,10 @@ class MainActivity :
         transaction.hide(settingsFragment)
         transaction.hide(accountFragment)
         transaction.commit()
+
+        // Initialize the TabLayout
+        viewpager.adapter = SoundTabsPagerAdapter(supportFragmentManager)
+        tablayout.setupWithViewPager(viewpager)
     }
 
     override fun onBackPressed() {

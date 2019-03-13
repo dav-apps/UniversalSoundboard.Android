@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentPagerAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -177,6 +179,26 @@ class SoundFragment :
                 FileManager.addPlayingSound(null, sounds, 0, 0, false, 1.0)
                 FileManager.itemViewHolder.playingSounds.value?.last()?.playOrPause(context)
             }
+        }
+    }
+}
+
+class SoundTabsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm){
+    override fun getItem(position: Int): Fragment {
+        return when(position){
+            0 -> SoundFragmentSoundsTab()
+            else -> SoundFragmentFavouritesTab()
+        }
+    }
+
+    override fun getCount(): Int {
+        return 2;
+    }
+
+    override fun getPageTitle(position: Int): CharSequence? {
+        return when(position){
+            0 -> "Sounds"
+            else -> "Favourites"
         }
     }
 }
