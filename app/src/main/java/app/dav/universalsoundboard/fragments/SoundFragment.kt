@@ -162,7 +162,7 @@ class SoundFragment :
         fun playSounds(sounds: ArrayList<Sound>, context: Context){
             GlobalScope.launch(Dispatchers.Main) {
                 // If playOneSoundAtOnce, remove all playing sounds first
-                if(FileManager.getBooleanValue(PLAY_ONE_SOUND_AT_ONCE_KEY, FileManager.playOneSoundAtOnce)){
+                if(FileManager.getBooleanValue(PLAY_ONE_SOUND_AT_ONCE_KEY, FileManager.playOneSoundAtOnceDefault)){
                     val playingSounds = FileManager.itemViewHolder.playingSounds.value
                     if(playingSounds != null){
                         for (p in playingSounds){
