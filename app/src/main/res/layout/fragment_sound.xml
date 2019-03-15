@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.viewpager.widget.ViewPager
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/sound_viewpager"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:orientation="horizontal">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/sound_list"
+        android:name="app.dav.universalsoundboard.Fragments.SoundFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".fragments.SoundFragment"
+        tools:listitem="@layout/fragment_sound_list_item" />
+
+    <androidx.viewpager.widget.ViewPager
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/sound_viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</LinearLayout>

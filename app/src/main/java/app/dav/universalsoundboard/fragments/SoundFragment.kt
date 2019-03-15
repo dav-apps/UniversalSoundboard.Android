@@ -41,6 +41,7 @@ class SoundFragment :
     private var columnCount = 1
     private lateinit var viewModel: SoundViewModel
     private var selectedSound: Sound? = null
+    private var showSoundTabsAtBeginning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,27 +59,35 @@ class SoundFragment :
             if(it != null) viewModel.soundListAdapter?.submitList(it)
             viewModel.soundListAdapter?.notifyDataSetChanged()
         })
+
+        showSoundTabsAtBeginning = FileManager.itemViewHolder.showSoundTabs.value == true
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_sound, container, false)
+        val viewpager = view.findViewById<ViewPager>(R.id.sound_viewpager)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.sound_list)
 
-        // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
+        if(FileManager.itemViewHolder.showSoundTabs.value == true){
+            // Show the tabs and the viewpager
+            viewpager.adapter = SoundTabsPagerAdapter(childFragmentManager)
+            setupTabLayout(viewpager)
+
+            // Hide the recyclerView
+            recyclerView.visibility = View.GONE
+        }else{
+            // Show the recyclerView
+            with(recyclerView) {
                 layoutManager = when {
                     columnCount <= 1 -> LinearLayoutManager(context)
                     else -> GridLayoutManager(context, columnCount)
                 }
                 adapter = viewModel.soundListAdapter
             }
-        }
 
-        if(view is ViewPager){
-            // Initialize the TabLayout
-            view.adapter = SoundTabsPagerAdapter(childFragmentManager)
-            setupTabLayout(view)
+            // Hide the viewpager
+            viewpager.visibility = View.GONE
         }
 
         return view
@@ -86,6 +95,7 @@ class SoundFragment :
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
+
         if(hidden){
             hideTabLayout()
         }else{
@@ -93,10 +103,28 @@ class SoundFragment :
         }
     }
 
-    private fun setupTabLayout(pager: ViewPager?){
+    private fun setupTabLayout(viewpager: ViewPager?){
         val tablayout = activity?.findViewById<TabLayout>(R.id.tablayout)
-        tablayout?.visibility = View.VISIBLE
-        tablayout?.setupWithViewPager(pager ?: sound_viewpager)
+
+        // Reload the fragment if the show favourites setting changed
+        if(showSoundTabsAtBeginning != (FileManager.itemViewHolder.showSoundTabs.value == true)){
+            val ft = fragmentManager!!.beginTransaction()
+            ft.detach(this).attach(this).commit()
+            showSoundTabsAtBeginning = FileManager.itemViewHolder.showSoundTabs.value == true
+        }
+
+        if(FileManager.itemViewHolder.showSoundTabs.value == true){
+            tablayout?.setupWithViewPager(viewpager ?: sound_viewpager)
+            tablayout?.visibility = View.VISIBLE
+            viewpager?.visibility = View.VISIBLE
+            sound_viewpager?.visibility = View.VISIBLE
+            sound_list?.visibility = View.GONE
+        }else{
+            tablayout?.visibility = View.GONE
+            viewpager?.visibility = View.GONE
+            sound_viewpager?.visibility = View.GONE
+            sound_list?.visibility = View.VISIBLE
+        }
     }
 
     private fun hideTabLayout(){
