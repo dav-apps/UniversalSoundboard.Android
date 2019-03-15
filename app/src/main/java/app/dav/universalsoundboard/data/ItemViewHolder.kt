@@ -8,6 +8,7 @@ import app.dav.universalsoundboard.models.Category
 import app.dav.universalsoundboard.models.PlayingSound
 import app.dav.universalsoundboard.models.Sound
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ItemViewHolder(){
     constructor(title: String) : this() {
@@ -43,6 +44,9 @@ class ItemViewHolder(){
     private val soundsData = MutableLiveData<ArrayList<Sound>>()                // soundsData holds the sounds that are currently displayed in the list
     val sounds: LiveData<ArrayList<Sound>>
         get() = soundsData
+    private val favouriteSoundsData = MutableLiveData<ArrayList<Sound>>()           // favouriteSoundsData holds the the favourite sounds that are currently displayed in the favourite sounds list
+    val favouriteSounds: LiveData<ArrayList<Sound>>
+        get() = favouriteSoundsData
     private val categoriesData = MutableLiveData<ArrayList<Category>>()         // categoriesData holds all categories that are currently displayed in the list
     val categories: LiveData<ArrayList<Category>>
         get() = categoriesData
@@ -126,6 +130,10 @@ class ItemViewHolder(){
             // Get the sounds of the selected category
             FileManager.getSoundsOfCategory(currentCategory.uuid)
         }
+
+        // Get the favourite sounds
+        val soundsList = soundsData.value
+        favouriteSoundsData.value = soundsList?.filter { it.favourite } as ArrayList<Sound>
 
         isLoadingSounds = false
         if(loadSoundsAgain){
