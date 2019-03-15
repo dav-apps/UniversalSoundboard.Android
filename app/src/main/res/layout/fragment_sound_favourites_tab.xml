@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<androidx.recyclerview.widget.RecyclerView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sound_list_favourites_tab"
+    android:name="app.dav.universalsoundboard.Fragments.SoundFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_red_dark">
-
-</LinearLayout>
+    tools:context=".fragments.SoundFragment"
+    tools:listitem="@layout/fragment_sound_list_item" />
