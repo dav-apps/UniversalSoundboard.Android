@@ -189,22 +189,6 @@ class MainActivity :
             }
         })
 
-        FileManager.itemViewHolder.showSoundTabs.observe(this, Observer {
-            it ?: return@Observer
-
-            if(it){
-                // Show the tabs and hide the original list
-                tablayout.visibility = View.VISIBLE
-                viewpager.visibility = View.VISIBLE
-                sound_list.visibility = View.GONE
-            }else{
-                // Hide the tabs and show the original list
-                tablayout.visibility = View.GONE
-                tablayout.visibility = View.GONE
-                sound_list.visibility = View.VISIBLE
-            }
-        })
-
         // Set the correct fragment
         val transaction = supportFragmentManager.beginTransaction()
         transaction.add(R.id.fragment_container, soundFragment)
@@ -213,10 +197,6 @@ class MainActivity :
         transaction.hide(settingsFragment)
         transaction.hide(accountFragment)
         transaction.commit()
-
-        // Initialize the TabLayout
-        viewpager.adapter = SoundTabsPagerAdapter(supportFragmentManager)
-        tablayout.setupWithViewPager(viewpager)
     }
 
     private fun initSettingsValues(){

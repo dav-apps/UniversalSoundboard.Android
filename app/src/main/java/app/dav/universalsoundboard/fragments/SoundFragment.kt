@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.adapters.SoundListAdapter
 import app.dav.universalsoundboard.data.FileManager
@@ -23,6 +24,8 @@ import app.dav.universalsoundboard.data.FileManager.PLAY_ONE_SOUND_AT_ONCE_KEY
 import app.dav.universalsoundboard.models.Sound
 import app.dav.universalsoundboard.viewmodels.SoundViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.fragment_sound.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -72,7 +75,33 @@ class SoundFragment :
             }
         }
 
+        if(view is ViewPager){
+            // Initialize the TabLayout
+            view.adapter = SoundTabsPagerAdapter(childFragmentManager)
+            setupTabLayout(view)
+        }
+
         return view
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if(hidden){
+            hideTabLayout()
+        }else{
+            setupTabLayout(null)
+        }
+    }
+
+    private fun setupTabLayout(pager: ViewPager?){
+        val tablayout = activity?.findViewById<TabLayout>(R.id.tablayout)
+        tablayout?.visibility = View.VISIBLE
+        tablayout?.setupWithViewPager(pager ?: sound_viewpager)
+    }
+
+    private fun hideTabLayout(){
+        val tablayout = activity?.findViewById<TabLayout>(R.id.tablayout)
+        tablayout?.visibility = View.GONE
     }
 
     override fun onItemClicked(sound: Sound) {
