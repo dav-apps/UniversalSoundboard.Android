@@ -5,6 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
+        <import type="android.view.View"/>
+
         <variable
             name="onClickListener"
             type="android.view.View.OnClickListener" />
@@ -35,18 +37,33 @@
             app:layout_constraintTop_toTopOf="parent"
             android:src="@drawable/ic_music_note"/>
 
+        <ImageView
+            android:id="@+id/sound_list_item_favourite_star"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:src="@drawable/ic_star_border"
+            android:contentDescription="@string/sound_list_item_favourite_star_description"
+            android:visibility="@{sound.favourite ? View.VISIBLE : View.GONE}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/sound_list_item_image"
+            app:layout_constraintTop_toTopOf="@+id/sound_list_item_image" />
+
         <TextView
             android:id="@+id/sound_list_item_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginStart="4dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginBottom="8dp"
             android:text="@{sound.name}"
+            android:textColor="@android:color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/sound_list_item_image"
+            app:layout_constraintStart_toEndOf="@+id/sound_list_item_favourite_star"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="TextView" />
     </androidx.constraintlayout.widget.ConstraintLayout>

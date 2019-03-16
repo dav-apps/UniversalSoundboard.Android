@@ -25,6 +25,7 @@
     <string name="dialog_negative_button">Cancel</string>
     <string name="dialog_save">Save</string>
     <string name="sound_list_item_image_description">Image of the sound</string>
+    <string name="sound_list_item_favourite_star_description">Favorite</string>
     <string name="category_list_item_icon_description">Icon of the category</string>
     <string name="bottom_category_list_settings_item_icon_description">Settings Icon</string>
     <string name="create_category_dialog_title">New Category</string>
