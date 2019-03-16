@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import app.dav.universalsoundboard.R
+import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.databinding.FragmentSoundListItemBinding
 import app.dav.universalsoundboard.models.Sound
 
@@ -45,6 +46,7 @@ class SoundListAdapter(
             binding.onClickListener = onClickListener
             binding.onLongClickListener = onLongClickListener
             binding.sound = item
+            binding.showCategoryIcons = FileManager.itemViewHolder.showCategoriesOfSounds.value!!
 
             if(item.image != null){
                 binding.root.findViewById<ImageView>(R.id.sound_list_item_image).setImageBitmap(item.image)
@@ -54,6 +56,11 @@ class SoundListAdapter(
 
             val categoryIconsLinearLayout = binding.root.findViewById<LinearLayout>(R.id.sound_list_category_icons_linear_layout)
             categoryIconsLinearLayout.removeAllViews()
+
+            FileManager.itemViewHolder.showCategoriesOfSounds.observeForever {
+                binding.showCategoryIcons = it
+            }
+
             for(category in item.categories){
                 val icon = category.getIconImageResource()
 
