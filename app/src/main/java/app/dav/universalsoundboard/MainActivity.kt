@@ -259,7 +259,12 @@ class MainActivity :
                 true
             }
             R.id.action_play_all -> {
-                val sounds = FileManager.itemViewHolder.sounds.value ?: return true
+                val sounds =
+                        (if(tablayout.visibility == View.VISIBLE && tablayout.selectedTabPosition == 1)
+                            FileManager.itemViewHolder.favouriteSounds.value
+                        else
+                            FileManager.itemViewHolder.sounds.value) ?: return true
+
                 if(sounds.size == 0) return true
                 SoundFragment.playSounds(sounds, this)
                 true
