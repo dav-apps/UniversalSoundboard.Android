@@ -52,6 +52,7 @@
     <string name="playing_sound_list_item_options_description">Optionen</string>
     <string name="playing_sound_list_item_context_menu_set_repetitions">Wiederholungen festlegen</string>
     <string name="settings_play_one_sound_at_once_switch_text">Nur einen Sound auf einmal abspielen</string>
+    <string name="settings_show_favourites_switch_text">Favoriten anzeigen</string>
     <string name="settings_save_playing_sounds_switch_text">Speichere spielende Sounds</string>
     <string name="account_fragment_title">Dein Account</string>
     <string name="account_fragment_caption_1">Sichere dein Soundboard und greife von überall darauf zu</string>
