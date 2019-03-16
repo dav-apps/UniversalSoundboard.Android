@@ -12,6 +12,7 @@ import app.dav.universalsoundboard.data.FileManager.PLAY_ONE_SOUND_AT_ONCE_KEY
 import app.dav.universalsoundboard.data.FileManager.SAVE_PLAYING_SOUNDS_KEY
 import app.dav.universalsoundboard.data.FileManager.SHOW_SOUND_TABS_KEY
 import app.dav.universalsoundboard.data.FileManager.playOneSoundAtOnceDefault
+import app.dav.universalsoundboard.data.FileManager.savePlayingSoundsDefault
 import app.dav.universalsoundboard.data.FileManager.showSoundTabsDefault
 import kotlinx.android.synthetic.main.fragment_settings_general_tab.*
 
@@ -47,17 +48,16 @@ class SettingsFragmentGeneralTab : Fragment() {
         }
     }
 
-    fun init(){
-        isInitialized = false
-
+    private fun init(){
         val playOneSoundAtOnce = FileManager.getBooleanValue(PLAY_ONE_SOUND_AT_ONCE_KEY, playOneSoundAtOnceDefault)
         val showFavourites = FileManager.getBooleanValue(SHOW_SOUND_TABS_KEY, showSoundTabsDefault)
-        val savePlayingSounds = FileManager.getBooleanValue(SAVE_PLAYING_SOUNDS_KEY, FileManager.savePlayingSoundsDefault)
+        val savePlayingSounds = FileManager.getBooleanValue(SAVE_PLAYING_SOUNDS_KEY, savePlayingSoundsDefault)
 
         // Set the values of the switches
         settings_play_one_sound_at_once_switch.isChecked = playOneSoundAtOnce
         settings_show_favourites_switch.isChecked = showFavourites
         settings_save_playing_sounds_switch.isChecked = savePlayingSounds
+
         isInitialized = true
     }
 }

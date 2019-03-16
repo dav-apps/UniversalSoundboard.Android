@@ -18,11 +18,15 @@ object FileManager{
     const val PLAY_ONE_SOUND_AT_ONCE_KEY = "$PACKAGE_NAME.playOneSoundAtOnceDefault"
     const val SAVE_PLAYING_SOUNDS_KEY = "$PACKAGE_NAME.savePlayingSoundsDefault"
     const val SHOW_SOUND_TABS_KEY = "$PACKAGE_NAME.showSoundTabs"
+    const val SHOW_PLAYING_SOUNDS_KEY = "$PACKAGE_NAME.showPlayingSounds"
+    const val SHOW_CATEGORIES_OF_SOUNDS_KEY = "$PACKAGE_NAME.showCategoriesOfSounds"
 
     // Default values
     const val playOneSoundAtOnceDefault = true
     const val savePlayingSoundsDefault = true
     const val showSoundTabsDefault = true
+    const val showPlayingSoundsDefault = true
+    const val showCategoriesOfSoundsDefault = true
 
     val environment = DavEnvironment.Production
 
