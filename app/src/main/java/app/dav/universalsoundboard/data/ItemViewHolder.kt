@@ -23,6 +23,8 @@ class ItemViewHolder(){
 
         // Settings values
         showSoundTabsData.value = FileManager.showSoundTabsDefault
+        showPlayingSoundsData.value = FileManager.showPlayingSoundsDefault
+        showCategoriesOfSoundsData.value = FileManager.showCategoriesOfSoundsDefault
     }
 
     private var isLoadingSounds = false
@@ -65,7 +67,12 @@ class ItemViewHolder(){
     private val showSoundTabsData = MutableLiveData<Boolean>()                  // if true shows the Sounds and Favourites tabs on the SoundFragment
     val showSoundTabs: LiveData<Boolean>
         get() = showSoundTabsData
-
+    private val showPlayingSoundsData = MutableLiveData<Boolean>()              // if true, the playing sounds list is visible
+    val showPlayingSounds: LiveData<Boolean>
+        get() = showPlayingSoundsData
+    private val showCategoriesOfSoundsData = MutableLiveData<Boolean>()         // If true, the sound items show the icons of it's categories
+    val showCategoriesOfSounds: LiveData<Boolean>
+        get() = showCategoriesOfSoundsData
 
     fun setTitle(value: String){
         titleData.value = value
@@ -89,6 +96,14 @@ class ItemViewHolder(){
 
     fun setShowSoundTabs(value: Boolean){
         showSoundTabsData.value = value
+    }
+
+    fun setShowPlayingSounds(value: Boolean){
+        showPlayingSoundsData.value = value
+    }
+
+    fun setShowCategoriesOfSounds(value: Boolean){
+        showCategoriesOfSoundsData.value = value
     }
 
     fun updateNotSavedPlayingSound(uuid: UUID, sounds: ArrayList<Sound>?, current: Int?, repetitions: Int?, randomly: Boolean?, volume: Double?){

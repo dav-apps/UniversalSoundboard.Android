@@ -27,11 +27,13 @@ class SettingsFragmentDesignTab : Fragment() {
         settings_show_playing_sounds_switch.setOnCheckedChangeListener { buttonView, isChecked ->
             if(!isInitialized) return@setOnCheckedChangeListener
             FileManager.setBooleanValue(SHOW_PLAYING_SOUNDS_KEY, isChecked)
+            FileManager.itemViewHolder.setShowPlayingSounds(isChecked)
         }
 
         settings_show_categories_of_sounds_switch.setOnCheckedChangeListener { buttonView, isChecked ->
             if(!isInitialized) return@setOnCheckedChangeListener
             FileManager.setBooleanValue(SHOW_CATEGORIES_OF_SOUNDS_KEY, isChecked)
+            FileManager.itemViewHolder.setShowCategoriesOfSounds(isChecked)
         }
     }
 

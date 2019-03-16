@@ -29,6 +29,8 @@ import app.dav.universalsoundboard.common.LocalDataSettings
 import app.dav.universalsoundboard.common.RetrieveConstants
 import app.dav.universalsoundboard.common.TriggerAction
 import app.dav.universalsoundboard.data.FileManager
+import app.dav.universalsoundboard.data.FileManager.SHOW_CATEGORIES_OF_SOUNDS_KEY
+import app.dav.universalsoundboard.data.FileManager.SHOW_PLAYING_SOUNDS_KEY
 import app.dav.universalsoundboard.data.FileManager.SHOW_SOUND_TABS_KEY
 import app.dav.universalsoundboard.fragments.*
 import app.dav.universalsoundboard.models.Category
@@ -203,6 +205,14 @@ class MainActivity :
         // showSoundTabs
         val showSoundTabs = FileManager.getBooleanValue(SHOW_SOUND_TABS_KEY, FileManager.showSoundTabsDefault)
         FileManager.itemViewHolder.setShowSoundTabs(showSoundTabs)
+
+        // showPlayingSounds
+        val showPlayingSounds = FileManager.getBooleanValue(SHOW_PLAYING_SOUNDS_KEY, FileManager.showPlayingSoundsDefault)
+        FileManager.itemViewHolder.setShowPlayingSounds(showPlayingSounds)
+
+        // showCategoriesOfSounds
+        val showCategoriesOfSounds = FileManager.getBooleanValue(SHOW_CATEGORIES_OF_SOUNDS_KEY, FileManager.showCategoriesOfSoundsDefault)
+        FileManager.itemViewHolder.setShowCategoriesOfSounds(showCategoriesOfSounds)
     }
 
     override fun onBackPressed() {
