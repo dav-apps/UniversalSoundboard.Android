@@ -39,6 +39,8 @@
     <string name="fab_sheet_item_new_sound">Sounds hinzufügen</string>
     <string name="fab_sheet_item_new_category">Kategorie hinzufügen</string>
     <string name="sound_item_context_menu_set_category">Kategorien festlegen</string>
+    <string name="sound_item_context_menu_add_to_favourites">Zu Favoriten hinzufügen</string>
+    <string name="sound_item_context_menu_remove_from_favourites">Von Favoriten entfernen</string>
     <string name="sound_item_context_menu_change_image">Bild wechseln</string>
     <string name="sound_item_context_menu_rename">Umbenennen</string>
     <string name="sound_item_context_menu_delete">Löschen</string>

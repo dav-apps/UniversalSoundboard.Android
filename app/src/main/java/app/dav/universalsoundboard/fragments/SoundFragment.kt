@@ -141,11 +141,21 @@ class SoundFragment :
 
         val dialog = BottomSheetDialog(context!!)
         val layout = layoutInflater.inflate(R.layout.fragment_sound_item_menu_dialog, null)
+        val setFavouritesTextView = layout.findViewById<TextView>(R.id.sound_item_menu_dialog_add_to_favourites_item)
+
+        setFavouritesTextView.text =
+                if(sound.favourite) resources.getString(R.string.sound_item_context_menu_remove_from_favourites)
+                else resources.getString(R.string.sound_item_context_menu_add_to_favourites)
 
         // Set the click listeners for the menu items
         layout.findViewById<TextView>(R.id.sound_item_menu_dialog_set_category_item).setOnClickListener {
             dialog.dismiss()
             showSetCategoryDialog(sound)
+        }
+
+        layout.findViewById<TextView>(R.id.sound_item_menu_dialog_add_to_favourites_item).setOnClickListener {
+            dialog.dismiss()
+            toggleSoundFavouriteValue(sound)
         }
 
         layout.findViewById<TextView>(R.id.sound_item_menu_dialog_change_image_item).setOnClickListener {
@@ -172,6 +182,13 @@ class SoundFragment :
         val fragment = SetCategoryDialogFragment()
         fragment.sound = sound
         fragment.show(fragmentManager, "set_category")
+    }
+
+    private fun toggleSoundFavouriteValue(sound: Sound){
+        GlobalScope.launch(Dispatchers.Main) {
+            FileManager.setSoundAsFavourite(sound.uuid, !sound.favourite)
+            FileManager.itemViewHolder.loadSounds()
+        }
     }
 
     private fun changeSoundImage(){

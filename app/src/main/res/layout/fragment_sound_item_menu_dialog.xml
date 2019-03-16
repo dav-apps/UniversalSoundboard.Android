@@ -13,6 +13,13 @@
         style="@style/SheetListItem" />
 
     <TextView
+        android:id="@+id/sound_item_menu_dialog_add_to_favourites_item"
+        android:layout_width="match_parent"
+        android:drawableStart="@drawable/ic_star"
+        android:text="@string/sound_item_context_menu_add_to_favourites"
+        style="@style/SheetListItem" />
+
+    <TextView
         android:id="@+id/sound_item_menu_dialog_change_image_item"
         android:layout_width="match_parent"
         android:drawableStart="@drawable/ic_photo"
