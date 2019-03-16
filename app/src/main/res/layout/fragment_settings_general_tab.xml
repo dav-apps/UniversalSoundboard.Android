@@ -13,33 +13,18 @@
 
         <Switch
             android:id="@+id/settings_play_one_sound_at_once_switch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginEnd="14dp"
-            android:text="@string/settings_play_one_sound_at_once_switch_text"
-            android:textSize="16sp" />
+            style="@style/SettingsEntryStyle"
+            android:text="@string/settings_play_one_sound_at_once_switch_text" />
 
         <Switch
             android:id="@+id/settings_show_favourites_switch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginEnd="14dp"
-            android:text="@string/settings_show_favourites_switch_text"
-            android:textSize="16sp" />
+            style="@style/SettingsEntryStyle"
+            android:text="@string/settings_show_favourites_switch_text" />
 
         <Switch
             android:id="@+id/settings_save_playing_sounds_switch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="14dp"
-            android:layout_marginEnd="14dp"
-            android:text="@string/settings_save_playing_sounds_switch_text"
-            android:textSize="16sp" />
+            style="@style/SettingsEntryStyle"
+            android:text="@string/settings_save_playing_sounds_switch_text" />
 
         <TextView
             android:id="@+id/privacy_policy_textview"
