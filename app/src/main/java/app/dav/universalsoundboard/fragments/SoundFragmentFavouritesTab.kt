@@ -20,7 +20,7 @@ class SoundFragmentFavouritesTab : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(SoundViewModel::class.java)
-        viewModel.soundListAdapter = SoundListAdapter(parentFragment as SoundFragment, parentFragment as SoundFragment)
+        viewModel.soundListAdapter = SoundListAdapter(context!!, parentFragment as SoundFragment, parentFragment as SoundFragment)
 
         FileManager.itemViewHolder.favouriteSounds.observe(this, Observer {
             if(it != null) viewModel.soundListAdapter?.submitList(it)

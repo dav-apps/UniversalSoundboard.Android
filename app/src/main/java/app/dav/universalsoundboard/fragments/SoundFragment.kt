@@ -46,7 +46,7 @@ class SoundFragment :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(SoundViewModel::class.java)
-        viewModel.soundListAdapter = SoundListAdapter(this, this)
+        viewModel.soundListAdapter = SoundListAdapter(context!!, this, this)
 
         arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
