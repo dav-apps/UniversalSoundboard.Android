@@ -55,6 +55,8 @@
     <string name="settings_play_one_sound_at_once_switch_text">Nur einen Sound auf einmal abspielen</string>
     <string name="settings_show_favourites_switch_text">Favoriten anzeigen</string>
     <string name="settings_save_playing_sounds_switch_text">Speichere spielende Sounds</string>
+    <string name="settings_show_playing_sounds_switch_text">Zeige spielende Sounds</string>
+    <string name="settings_show_categories_of_sounds_switch_text">Kategorien der Sounds anzeigen</string>
     <string name="account_fragment_title">Dein Account</string>
     <string name="account_fragment_caption_1">Sichere dein Soundboard und greife von überall darauf zu</string>
     <string name="account_fragment_text_1">Nutze das gleiche Soundboard auf all deinen Geräten</string>
