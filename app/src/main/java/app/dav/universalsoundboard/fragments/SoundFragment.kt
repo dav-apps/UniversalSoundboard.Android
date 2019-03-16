@@ -271,8 +271,8 @@ class SoundTabsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm){
 
     override fun getPageTitle(position: Int): CharSequence? {
         return when(position){
-            0 -> "Sounds"
-            else -> "Favourites"
+            0 -> FileManager.itemViewHolder.mainActivity?.resources?.getString(R.string.sound_fragment_sounds_tab) ?: "Sounds"
+            else -> FileManager.itemViewHolder.mainActivity?.resources?.getString(R.string.sound_fragment_favourites_tab) ?: "Favorites"
         }
     }
 }

@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import androidx.viewpager.widget.ViewPager
 import app.dav.universalsoundboard.R
+import app.dav.universalsoundboard.data.FileManager
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_settings.*
 
@@ -64,8 +65,8 @@ class SettingsTabsPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm){
 
     override fun getPageTitle(position: Int): CharSequence? {
         return when(position){
-            0 -> "General"
-            else -> "Design"
+            0 -> FileManager.itemViewHolder.mainActivity?.resources?.getString(R.string.settings_fragment_general_tab) ?: "General"
+            else -> FileManager.itemViewHolder.mainActivity?.resources?.getString(R.string.settings_fragment_design_tab) ?: "Design"
         }
     }
 }

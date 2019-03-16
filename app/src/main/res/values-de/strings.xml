@@ -61,4 +61,8 @@
     <string name="account_fragment_caption_2">Kostenlos ausprobieren</string>
     <string name="account_fragment_upgrade_link"><a href="https://dav-apps.tech/pricing">Brauchst du mehr?</a></string>
     <string name="account_fragment_used_storage">%s GB von %s GB verwendet</string>
+    <string name="settings_fragment_general_tab">Allgemein</string>
+    <string name="settings_fragment_design_tab">Design</string>
+    <string name="sound_fragment_sounds_tab">Sounds</string>
+    <string name="sound_fragment_favourites_tab">Favoriten</string>
 </resources>
