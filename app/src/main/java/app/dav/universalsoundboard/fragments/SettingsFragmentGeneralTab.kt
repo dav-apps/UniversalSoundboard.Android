@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import app.dav.universalsoundboard.R
 import app.dav.universalsoundboard.data.FileManager
 import app.dav.universalsoundboard.data.FileManager.PLAY_ONE_SOUND_AT_ONCE_KEY
@@ -45,6 +46,7 @@ class SettingsFragmentGeneralTab : Fragment() {
         settings_save_playing_sounds_switch.setOnCheckedChangeListener { buttonView, isChecked ->
             if(!isInitialized) return@setOnCheckedChangeListener
             FileManager.setBooleanValue(SAVE_PLAYING_SOUNDS_KEY, isChecked)
+            FileManager.itemViewHolder.setSavePlayingSounds(isChecked)
         }
     }
 
@@ -57,6 +59,11 @@ class SettingsFragmentGeneralTab : Fragment() {
         settings_play_one_sound_at_once_switch.isChecked = playOneSoundAtOnce
         settings_show_favourites_switch.isChecked = showFavourites
         settings_save_playing_sounds_switch.isChecked = savePlayingSounds
+
+        FileManager.itemViewHolder.showPlayingSounds.observe(this, Observer {
+            // Show or hide the Save playing sounds switch
+            settings_save_playing_sounds_switch.visibility = if(it) View.VISIBLE else View.GONE
+        })
 
         isInitialized = true
     }
