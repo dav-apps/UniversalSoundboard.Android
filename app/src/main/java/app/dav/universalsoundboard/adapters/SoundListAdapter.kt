@@ -1,6 +1,7 @@
 package app.dav.universalsoundboard.adapters
 
 import android.content.Context
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,12 +62,13 @@ class SoundListAdapter(
                 binding.showCategoryIcons = it
             }
 
+            val widthPx = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15f, context.resources.displayMetrics).toInt()
             for(category in item.categories){
                 val icon = category.getIconImageResource()
 
                 val imageView = ImageView(context)
-                imageView.minimumWidth = 20
-                imageView.minimumHeight = 20
+                imageView.minimumWidth = widthPx
+                imageView.minimumHeight = widthPx
                 imageView.setImageResource(icon)
 
                 categoryIconsLinearLayout.addView(imageView)
