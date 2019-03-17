@@ -29,6 +29,7 @@ import app.dav.universalsoundboard.common.LocalDataSettings
 import app.dav.universalsoundboard.common.RetrieveConstants
 import app.dav.universalsoundboard.common.TriggerAction
 import app.dav.universalsoundboard.data.FileManager
+import app.dav.universalsoundboard.data.FileManager.SAVE_PLAYING_SOUNDS_KEY
 import app.dav.universalsoundboard.data.FileManager.SHOW_CATEGORIES_OF_SOUNDS_KEY
 import app.dav.universalsoundboard.data.FileManager.SHOW_PLAYING_SOUNDS_KEY
 import app.dav.universalsoundboard.data.FileManager.SHOW_SOUND_TABS_KEY
@@ -209,6 +210,12 @@ class MainActivity :
         // showPlayingSounds
         val showPlayingSounds = FileManager.getBooleanValue(SHOW_PLAYING_SOUNDS_KEY, FileManager.showPlayingSoundsDefault)
         FileManager.itemViewHolder.setShowPlayingSounds(showPlayingSounds)
+
+        // savePlayingSounds
+        val savePlayingSounds =
+                if(showPlayingSounds) FileManager.getBooleanValue(SAVE_PLAYING_SOUNDS_KEY, FileManager.savePlayingSoundsDefault)
+                else false
+        FileManager.itemViewHolder.setSavePlayingSounds(savePlayingSounds)
 
         // showCategoriesOfSounds
         val showCategoriesOfSounds = FileManager.getBooleanValue(SHOW_CATEGORIES_OF_SOUNDS_KEY, FileManager.showCategoriesOfSoundsDefault)
@@ -448,6 +455,7 @@ class MainActivity :
 
     private fun showBottomSheet(){
         if(FileManager.itemViewHolder.playingSounds.value?.count() ?: 0 == 0) return
+        if(FileManager.itemViewHolder.showPlayingSounds.value != true) return
 
         if(bottomSheetBehavior.state == BottomSheetBehavior.STATE_HIDDEN){
             // The bottom sheet was hidden

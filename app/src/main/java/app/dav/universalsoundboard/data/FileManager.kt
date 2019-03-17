@@ -234,7 +234,7 @@ object FileManager{
         val playingSound = PlayingSound(newUuid, current, sounds, repetitions, randomly, newVolume)
 
         // Check if playing sounds should be saved
-        if(getBooleanValue(SAVE_PLAYING_SOUNDS_KEY, savePlayingSoundsDefault)){
+        if(FileManager.itemViewHolder.savePlayingSounds.value == true){
             DatabaseOperations.createPlayingSound(newUuid, sounds, current, repetitions, randomly, newVolume)
         }else{
             itemViewHolder.notSavedPlayingSounds.add(playingSound)

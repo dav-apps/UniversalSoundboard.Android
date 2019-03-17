@@ -67,6 +67,9 @@ class ItemViewHolder(){
     private val showSoundTabsData = MutableLiveData<Boolean>()                  // if true shows the Sounds and Favourites tabs on the SoundFragment
     val showSoundTabs: LiveData<Boolean>
         get() = showSoundTabsData
+    private val savePlayingSoundsData = MutableLiveData<Boolean>()              // if true, the playing sounds are being saved in the database
+    val savePlayingSounds: LiveData<Boolean>
+        get() = savePlayingSoundsData
     private val showPlayingSoundsData = MutableLiveData<Boolean>()              // if true, the playing sounds list is visible
     val showPlayingSounds: LiveData<Boolean>
         get() = showPlayingSoundsData
@@ -96,6 +99,10 @@ class ItemViewHolder(){
 
     fun setShowSoundTabs(value: Boolean){
         showSoundTabsData.value = value
+    }
+
+    fun setSavePlayingSounds(value: Boolean){
+        savePlayingSoundsData.value = value
     }
 
     fun setShowPlayingSounds(value: Boolean){
